@@ -1,5 +1,6 @@
 asgiref==3.7.2
-Django==5.0.1
+Django==4.2.10
+python-decouple==3.8
 sqlparse==0.4.4
 typing_extensions==4.9.0
 tzdata==2023.4
