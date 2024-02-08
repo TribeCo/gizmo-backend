@@ -14,20 +14,15 @@ from datetime import date
     api's in api_views.py :
 
     1- BrandCreateAPIView --> create a brand
-    2- FoodAllListAPIView --> List of all foods
-    3- FoodDetailView  --> Getting the information of a food with ID
-    4- FoodDeleteView --> Remove a food with an ID
-    5- FoodUpdateView --> Update food information with ID
+    2- BrandAllListAPIView --> List of all brand
+    3- BrandDetailView  --> Getting the information of a brand with ID
+    4- BrandDeleteView --> Remove a brand with an ID
+    5- BrandUpdateView --> Update brand information with ID
 
 """
 #---------------------------
 messages_for_front = {
     'brand_created' : 'برند جدید ساخته شد.',
-    'food_reserved' : 'غذا رزرو شد.',
-    'food_is_over' : 'موجودی غذا تمام شده است.',
-    'food_not_found' : 'غذا پیدا نشد.',
-    'image_updated' : 'عکس اپدیت شد.',
-    'food_reservation_updated' : 'رزرو غذا اپدیت شد.',
 }
 #---------------------------
 class BrandCreateAPIView(APIView):
