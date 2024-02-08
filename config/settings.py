@@ -24,6 +24,8 @@ else:
     # ip_find = config('IPFIND')
     DEBUG = True
 
+
+AUTH_USER_MODEL = 'accounts.User'
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [

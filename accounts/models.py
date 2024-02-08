@@ -49,9 +49,6 @@ class User(AbstractBaseUser):
     def __str__(self):
         return str(self.phoneNumber) + " - " + str(self.full_name)
 
-    # def full_name(self):
-    #     return str(self.full_name) + " " + str(self.lastName)
-
     def blog_articles(self):
         return reverse("blog:author_articles",args=[1,self.id])
 
@@ -71,7 +68,6 @@ class User(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
-
 #---------------------------
 class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="addresses")
@@ -81,15 +77,12 @@ class Address(models.Model):
     phone_number = models.CharField(max_length=20,blank=True,null=True)
     current = models.BooleanField(default=False)
 
-
-
     def __str__(self):
         return str(self.user) + " - " + str(self.postal_code)
 
 #---------------------------
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
-    # product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="comments")
     text = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     valid = models.BooleanField(default=False)
@@ -130,11 +123,11 @@ class ArticleComment(Comment):
     def __str__(self):
         return f"{self.user.full_name} - {self.article.title}"
 #---------------------------
-class WatchedProduct(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name="wacthed")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(auto_now_add=True)
+# class WatchedProduct(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE,related_name="wacthed")
+#     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+#     timestamp = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"{self.user.full_name} - {self.product.name} - {self.timestamp}"
-#-----------------------------------------------------------------------------------
+#     def __str__(self):
+#         return f"{self.user.full_name} - {self.product.name} - {self.timestamp}"
+#---------------------------

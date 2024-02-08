@@ -27,11 +27,6 @@ class Category(models.Model):
 
     def count_articles(self):
         return self.articles.all().count()
-
-
-    # class Meta:
-    #     verbose_name = "دسته بندی"
-    #     verbose_name_plural = "دسته بندی ها"
 #---------------------------
 class Article(models.Model):
     status_ch = (
@@ -40,9 +35,6 @@ class Article(models.Model):
         ('i', "در انتظار انتشار"),
         ('b',"برگشت داده شده"),
     )
-
-
-
     title = models.CharField(max_length=50,verbose_name="تیتر")
     text = models.TextField(verbose_name="متن")
     Author = models.ForeignKey(User,on_delete=models.CASCADE,related_name="articles",verbose_name="نویسنده")
@@ -62,14 +54,9 @@ class Article(models.Model):
 
     objects = ArticleManager()
 
-    # class Meta:
-    #     verbose_name = "پست"
-    #     verbose_name_plural = "پست ها"
-
     def preview(self):
         txtperview = self.text[:123] + " .... "
         return txtperview
-
 
     def get_absolute_url(self):
         return reverse("blog:article",args=[self.slug])
@@ -103,18 +90,4 @@ class Article(models.Model):
     def get_popular_articles():
         popular_articles = Article.objects.order_by('-views')[:5]
         return popular_articles
-#---------------------------
-class publicitar(models.Model):
-    title = models.CharField(max_length=200)
-    image = models.ImageField(upload_to='media/publicitar/%Y/%m/')
-    main_link = models.CharField(max_length=200)
-    out_link = models.CharField(max_length=200)
-    arg = models.CharField(max_length=200,null=True,blank=True)
-
-
-    def __str__(self):
-        return self.title
-
-    def get_absolute_url(self):
-        return reverse(f"{self.main_link}:{self.out_link}",args=self.arg)
 #---------------------------
