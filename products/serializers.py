@@ -5,7 +5,7 @@ class BrandSerializer(serializers.ModelSerializer):
     logo = serializers.ImageField()
     class Meta:
         model = Brand
-        fields = ('name', 'slug', 'logo', 'description',)
+        fields = ('name', 'slug', 'logo', 'description','id')
 #---------------------------
 #---------------------------
 #---------------------------
