@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView,DestroyAPIView,RetrieveAPIView,UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from .serializers import *
-from .models import Food
+from .models import Brand
 from django.utils import timezone
 from datetime import date
 #---------------------------
@@ -13,7 +13,7 @@ from datetime import date
     The codes related to the site's products are in this app.
     api's in api_views.py :
 
-    1- FoodCreateAPIView --> create a food
+    1- BrandCreateAPIView --> create a brand
     2- FoodAllListAPIView --> List of all foods
     3- FoodDetailView  --> Getting the information of a food with ID
     4- FoodDeleteView --> Remove a food with an ID

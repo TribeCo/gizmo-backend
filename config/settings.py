@@ -25,6 +25,9 @@ else:
     DEBUG = True
 
 
+CORS_ORIGIN_ALLOW_ALL=True
+
+
 AUTH_USER_MODEL = 'accounts.User'
 ALLOWED_HOSTS = []
 
@@ -36,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 'rest_framework',
+    'corsheaders',
 ]
 
 INSTALLED_APPS += [
