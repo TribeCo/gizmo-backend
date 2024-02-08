@@ -54,19 +54,19 @@ class BrandAllListAPIView(ListAPIView):
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
 #---------------------------
-class FoodDetailView(RetrieveAPIView):
+class BrandDetailView(RetrieveAPIView):
     """Getting the information of a Brand with ID(domain.com/..../pk/)"""
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
     lookup_field = 'pk'
 #---------------------------
-class FoodDeleteView(DestroyAPIView):
+class BrandDeleteView(DestroyAPIView):
     """Remove a Brand with an ID(domain.com/..../pk/)"""
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
     lookup_field = 'pk'
 #---------------------------
-class FoodUpdateView(UpdateAPIView):
+class BrandUpdateView(UpdateAPIView):
     """Update Brand information with ID(domain.com/..../pk/)"""
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer

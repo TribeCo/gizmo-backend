@@ -3,7 +3,8 @@ from .views import *
 
 urlpatterns = [
     path('brand/', BrandCreateAPIView.as_view(),name="brand_create"),
-    path('brand/<int:id>/', FoodDetailView.as_view(),name="brand_read"),
-    path('brand/<int:id>/', FoodUpdateView.as_view(),name="brand_update"),
-    path('brand/<int:id>/', FoodDeleteView.as_view(),name="brand_delete"),
+    path('brand/<int:pk>/', BrandDetailView.as_view(),name="brand_read"),
+    path('brand/all/', BrandAllListAPIView.as_view(),name="brand_read_all"),
+    path('brand/update/<int:pk>/', BrandUpdateView.as_view(),name="brand_update"),
+    path('brand/delete/<int:pk>/', BrandDeleteView.as_view(),name="brand_delete"),
 ]
