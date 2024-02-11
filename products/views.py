@@ -23,6 +23,7 @@ from datetime import date
 #---------------------------
 messages_for_front = {
     'brand_created' : 'برند جدید ساخته شد.',
+    'product_created': 'محصول جدید ساخته شد',
 }
 #---------------------------
 class BrandCreateAPIView(APIView):
@@ -66,4 +67,37 @@ class BrandUpdateView(UpdateAPIView):
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
     lookup_field = 'pk'
+#---------------------------
+    """Products API views"""
+
+class ProductCreatAPIView(APIView):
+    """Create a Product"""
+    def post(self, request):    
+        serializer = ProductSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': messages_for_front['product_created']})
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#---------------------------
+class ProductDetailview(RetrieveAPIView):
+    """Getting the information of a Product with ID(domain.com/..../pk/)"""
+    serializer_class = ProductSerializer
+    queryset = Product.objects.all()
+#---------------------------
+class ProductListView(ListAPIView):
+    """List of all Products"""
+    serializer_class  = ProductSerializer
+    queryset = Product.objects.all()
+#---------------------------
+class ProductDeleteView(DestroyAPIView):
+    """Remove a Product with an ID(domain.com/..../pk/)"""
+    serializer_class = ProductSerializer
+    queryset = Product.objects.all()
+#---------------------------
+class ProductUpdateView(UpdateAPIView):
+    """Update Product information with ID(domain.com/..../pk/)"""
+    serializer_class = ProductSerializer
+    queryset = Product.objects.all()
 #---------------------------
