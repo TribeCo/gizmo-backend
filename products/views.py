@@ -1,4 +1,3 @@
-
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -81,10 +80,16 @@ class ProductCreatAPIView(APIView):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------
-class ProductDetailview(RetrieveAPIView):
+class ProductDetailView(RetrieveAPIView):
     """Getting the information of a Product with ID(domain.com/..../pk/)"""
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
+#---------------------------
+class ProductDetailViewBySlug(RetrieveAPIView):
+    """Getting the information of a Product with slug(domain.com/..../slug/)"""
+    serializer_class = ProductSerializer
+    queryset = Product.objects.all()
+    lookup_field = 'slug'
 #---------------------------
 class ProductListView(ListAPIView):
     """List of all Products"""
