@@ -63,6 +63,20 @@ class CategoryListAPIView(generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 #---------------------------
+class CategoryArticlesAPIView(generics.ListAPIView):    
+    """Listing all of the articles of one Categories"""        
+    def get(self, request, category_title):
+        
+        try:
+            category = Category.objects.get(title = category_title)
+        except:
+            return Response({'message': 'دسته مورد نظر وجود ندارد'}, status=status.HTTP_404_NOT_FOUND)
+
+        articles = category.articles.all()
+        serializer = ArticleSerializer(articles, many=True)
+        
+        return Response({'data': serializer.data})        
+#---------------------------        
 class CategoryUpdateAPIVeiw(generics.UpdateAPIView):
     """Updating the informations of a Category with ID(domain.com/..../pk/)"""    
     queryset = Category.objects.all()
