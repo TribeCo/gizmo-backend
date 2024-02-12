@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import User
-from .models import Comment
+from .models import Comment,ArticleComment,ProductComment
 #---------------------------
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,3 +18,12 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ('id', 'user', 'user_full_name', 'text', 'created', 'valid', 'rating', 'likes', 'dislikes', 'parent_comment')
 #---------------------------
+class ArticleCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ArticleComment
+        fields = '__all__'
+#---------------------------
+class ProductCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductComment
+        fields = '__all__'
