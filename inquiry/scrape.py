@@ -79,6 +79,41 @@ def nike(url,soup):
                 print(e)
 
 
+def adidas(url,soup):
+    try:
+        
+        #product name
+        name=soup.find('h1',class_='product-name')
+        if name:
+            product_name=name.text
+            out_put["product name"] = product_name.strip()
+        else:
+            print('product name tag not found')
+
+        #img
+        div_tag=soup.find('div',class_='main_image sub_img')
+        if div_tag:
+            img_tag = div_tag.find('img', class_='img-fluid')
+            if img_tag:
+                out_put["img src"] = img_tag['src']
+            else:
+                print('img tag not found')
+        else:
+                    print('img tag not found')
+
+        #price
+        div_tag = soup.find('div', class_='price')
+        if div_tag:
+            span_tag=div_tag.find('span',class_='value')
+            out_put["price"] = span_tag.text.strip()
+        else:
+            print('price tag not found')
+
+    
+    except Exception as e:
+        print(f"An error occurred while scraping the URL: {url}")
+        print(e)
+
 
 def scrape(url):
 
@@ -104,7 +139,9 @@ def scrape(url):
     elif site_name.startswith('nike'):
         status='nike'
         nike(url,soup)
-    
+    elif site_name.startswith('adidas'):
+        status='adidas'
+        adidas(url,soup)
             
     out_put["site kind"] = status      
     # print(f"site kind:{status}")
