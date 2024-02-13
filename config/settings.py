@@ -1,10 +1,10 @@
 from pathlib import Path
 import os
 from decouple import config
+from datetime import timedelta
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 
 deploy = False
@@ -16,12 +16,14 @@ if(deploy):
     merchant = os.getenv('MERCHANT', 'LIARA_URL is not set.')
     DEBUG = os.getenv('DEBUG', 'LIARA_URL is not set.')
     admin_url = os.getenv('ADMIN', 'LIARA_URL is not set.')
+    JWT_SECRET_KEY = os.getenv('JWT_SECERT_KEY', 'LIARA_URL is not set.')
 else:
     # local
     SECRET_KEY = config('SECRET_KEY')
     # hotel_email = config('EMAIL_HOST')
     # password_email = config('EMAIL_HOST_PASSWORD')
     # merchant = config('MERCHANT')
+    JWT_SECRET_KEY = config('JWT_SECERT_KEY')
     admin_url = config('ADMIN')
     DEBUG = True
 
@@ -171,7 +173,7 @@ STATIC_ROOT = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-JWT_SECRET_KEY = 'er9238fnwi7fy2d3n3f239r87dcjknwq0e92'
+
 JWT_ALGORITHM = 'HS256'
 
 REST_FRAMEWORK = {
@@ -184,9 +186,7 @@ REST_FRAMEWORK = {
     
 }
 
-from datetime import timedelta
-
-# Django project settings.py
+# JWT project config
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
