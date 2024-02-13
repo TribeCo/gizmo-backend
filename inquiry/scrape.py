@@ -5,7 +5,7 @@ import chardet
 
 #amazon
 
-def scrape(url):
+def amazon(url):
     try:
         page=requests.get(url)
         # print(page.text)
@@ -42,3 +42,10 @@ def scrape(url):
     except Exception as e:
         print(f"An error occurred while scraping the URL: {url}")
         print(e)
+
+def scrape(url):
+    site_name = url[12:]
+    if site_name.startswith('amazon'):
+        status='amazon'
+        print(f"site kind:{status}")
+        return amazon(url)
