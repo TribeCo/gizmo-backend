@@ -138,14 +138,14 @@ class Product(models.Model):
         product_ids = []
         for category in self.category.all():
             product_ids.extend(category.products.filter(available=True).exclude(id=self.id).values_list('id', flat=True)[:6])
-
-        remain = 6 - len(product_ids)
-        while(remain > 0):
             product_ids.extend(Product.objects.filter(available=True).exclude(id=self.id).values_list('id', flat=True))
-            product_ids = list(set(product_ids))
-            remain = 6 - len(product_ids)
-
-        product_ids = product_ids[:6]
+                
+        # remain = 6 - len(product_ids)
+        # while(remain > 0):
+        
+        #     product_ids = list(set(product_ids))    
+        #     remain = 6 - len(product_ids)            
+        #product_ids = product_ids[:6]
 
         similar_products = Product.objects.filter(id__in=product_ids).distinct()
 
