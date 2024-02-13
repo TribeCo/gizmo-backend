@@ -1,9 +1,13 @@
+import random
+from urllib import response
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import UserSerializer,UserReadSerializer,ArticleCommentSerializer,ProductCommentSerializer,CommentSerializer
 from .models import User,Article,Product,Comment,ProductComment,ArticleComment
+from config.settings import SMS_PASSWORD,SMS_USERNAME
+import requests
 #---------------------------
 """
     The codes related to the site's products are in this app.
@@ -153,3 +157,58 @@ class UpdateCommentAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#---------------------------
+class SignUpAPIView(APIView):
+    """Sign up for frontend"""
+    def post(self, request):
+        text_sms = "name عزیز به گیزموشاپ خوش آمدید.\nکد احرازسنجی شما: code"
+        link_sms = f"https://www.0098sms.com/sendsmslink.aspx?FROM=50002220096&TO=PhoneNumberUser&TEXT=TextCode&USERNAME={SMS_USERNAME}&PASSWORD={SMS_PASSWORD}&DOMAIN=0098"
+        
+        
+        serializer = UserSerializer(data=request.data)
+
+        if serializer.is_valid():
+
+            if(not serializer.validated_data.get('full_name')):
+                return Response({'message': "users must have full name"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            user = User(
+                phoneNumber = serializer.validated_data['phoneNumber'],
+                email = serializer.validated_data['email'],
+                full_name = serializer.validated_data['full_name'],
+            )
+
+            user.set_password(serializer.validated_data['password'])
+            user.is_active = False
+            code = random.randint(10000, 99999)
+            user.code = code
+
+            user.save()
+
+            # send code to user
+            text_sms = text_sms.replace("name" ,user.full_name)
+            text_sms = text_sms.replace("code" , str(user.code))
+
+            send_sms = link_sms.replace("PhoneNumberUser",user.phoneNumber)
+            send_sms = send_sms.replace("TextCode",text_sms)
+
+            # response = requests.get(send_sms)
+
+            response_data = {
+                'phoneNumber' : user.phoneNumber,
+                'full_name' : user.full_name,
+                'id' : user.id
+            }
+            
+
+            return Response({'data' : response_data}, status=status.HTTP_201_CREATED)
+
+            # if response.status_code == 200:
+            #     return Response({'data' : response_data,'response_sms': response.json()}, status=status.HTTP_201_CREATED)
+            # else:
+            #     print('درخواست با خطا مواجه شد:', response.status_code)
+
+            
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

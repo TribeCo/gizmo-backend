@@ -7,6 +7,7 @@ from datetime import timedelta
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+
 deploy = False
 if(deploy):
     # deploy
@@ -17,6 +18,8 @@ if(deploy):
     DEBUG = os.getenv('DEBUG', 'LIARA_URL is not set.')
     admin_url = os.getenv('ADMIN', 'LIARA_URL is not set.')
     JWT_SECRET_KEY = os.getenv('JWT_SECERT_KEY', 'LIARA_URL is not set.')
+    SMS_PASSWORD = os.getenv('SMS_PASSWORD', 'LIARA_URL is not set.')
+    SMS_USERNAME = os.getenv('SMS_USERNAME', 'LIARA_URL is not set.')
 else:
     # local
     SECRET_KEY = config('SECRET_KEY')
@@ -25,6 +28,8 @@ else:
     # merchant = config('MERCHANT')
     JWT_SECRET_KEY = config('JWT_SECERT_KEY')
     admin_url = config('ADMIN')
+    SMS_PASSWORD = config('SMS_PASSWORD')
+    SMS_USERNAME = config('SMS_USERNAME')
     DEBUG = True
 
 ALLOWED_HOSTS = ["*","89.199.35.132","192.168.45.68",]
