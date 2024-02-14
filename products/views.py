@@ -145,9 +145,14 @@ class NewProductAPIView(APIView):
 #---------------------------
 class ObservedProductAPIView(APIView):
     """This API returns the user's viewed products"""
+    permission_classes = [IsAuthenticated]
     def get(self, request):    
-        new_products = Product.objects.all()
-        serializer = ProductSerializer(new_products,many=True)
+        watched = WatchedProduct.objects.filter(user = request.user)
+        products = []
+        for wp in watched:
+            products.append(wp.product)
+
+        serializer = ProductSerializer(products,many=True)
         return Response(serializer.data)
 #---------------------------  
 #Category API views
