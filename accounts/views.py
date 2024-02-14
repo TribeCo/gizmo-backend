@@ -33,7 +33,8 @@ messages_for_front = {
     'article_not_found' : 'مقاله یافت نشد',
     'product_not_found' : 'محصول یافت نشد',
     'comment_not_found' : 'نظر یافت نشد',
-    'comment_deleted' : 'نظر حذف شد'
+    'comment_deleted' : 'نظر حذف شد',
+    'user_found' : 'کاربر یافت شد.',
     
 }
 #---------------------------
@@ -158,6 +159,15 @@ class UpdateCommentAPIView(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------
+class CheckPhoneNumberAPIView(APIView):
+    """This API checks whether the phone number is in the database or not"""
+    def get(self, request,phone_number):
+        try:
+            user = User.objects.get(phoneNumber=phone_number)
+        except User.DoesNotExist:
+            return Response({'message': messages_for_front['user_not_found'],'in_database':'fasle'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'message': messages_for_front['user_found'],'in_database':'true'}, status=status.HTTP_200_OK)
+#---------------------------
 class SignUpAPIView(APIView):
     """Sign up for frontend"""
     def post(self, request):
@@ -211,4 +221,4 @@ class SignUpAPIView(APIView):
             
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+#---------------------------
