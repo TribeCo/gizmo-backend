@@ -7,6 +7,7 @@ from .serializers import *
 from .models import Brand
 from django.utils import timezone
 from datetime import timedelta
+from accounts.models import WatchedProduct
 #---------------------------
 """
     The codes related to the site's products are in this app.
@@ -19,6 +20,7 @@ from datetime import timedelta
     5- BrandUpdateView --> Update brand information with ID
 
     6- NewProductAPIView --> get 10 New Product
+    7- ObservedProductAPIView --> This API returns the user's viewed products
 
 """
 #---------------------------
@@ -27,6 +29,7 @@ messages_for_front = {
     'product_created': 'محصول جدید ساخته شد',
     'category_created': 'دسته جدید ساخته شد',
     'category_not_found': 'دسته مورد نظر وجود ندارد',
+    'product_not_found' : 'محصول مورد نظر وجود ندارد.',
     }
 #---------------------------
 class BrandCreateAPIView(APIView):
@@ -84,16 +87,38 @@ class ProductCreateAPIView(APIView):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------
-class ProductDetailAPIView(RetrieveAPIView):
+class ProductDetailAPIView(APIView):
     """Getting the information of a Product with ID(domain.com/..../pk/)"""
-    serializer_class = ProductSerializer
-    queryset = Product.objects.all()
+    def get(self, request,pk):    
+        try:
+            product = Product.objects.get(id=pk)
+        except Product.DoesNotExist:
+            return Response({'message': messages_for_front['product_not_found']}, status=status.HTTP_404_NOT_FOUND)
+        
+        if(request.user.is_authenticated):
+            wp = WatchedProduct(user=request.user,product=product)
+            wp.save()
+
+        serializer = ProductSerializer(product)
+
+        return Response(serializer.data)
+    
 #---------------------------
-class ProductDetailAPIViewBySlug(RetrieveAPIView):
+class ProductDetailAPIViewBySlug(APIView):
     """Getting the information of a Product with slug(domain.com/..../slug/)"""
-    serializer_class = ProductSerializer
-    queryset = Product.objects.all()
-    lookup_field = 'slug'
+    def get(self, request,slug):    
+        try:
+            product = Product.objects.get(slug=slug)
+        except Product.DoesNotExist:
+            return Response({'message': messages_for_front['product_not_found']}, status=status.HTTP_404_NOT_FOUND)
+
+        if(request.user.is_authenticated):
+            wp = WatchedProduct(user=request.user,product=product)
+            wp.save()
+
+        serializer = ProductSerializer(product)
+        
+        return Response(serializer.data)
 #---------------------------
 class ProductListAPIView(ListAPIView):
     """List of all Products"""    
@@ -118,7 +143,12 @@ class NewProductAPIView(APIView):
         serializer = ProductSerializer(new_products,many=True)
         return Response(serializer.data)
 #---------------------------
-
+class ObservedProductAPIView(APIView):
+    """This API returns the user's viewed products"""
+    def get(self, request):    
+        new_products = Product.objects.all()
+        serializer = ProductSerializer(new_products,many=True)
+        return Response(serializer.data)
 #---------------------------  
 #Category API views
     
