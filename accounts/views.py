@@ -4,7 +4,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserSerializer,UserReadSerializer,ArticleCommentSerializer,ProductCommentSerializer,CommentSerializer
+from .serializers import SignUpSerializer,UserSerializer,UserReadSerializer,ArticleCommentSerializer,ProductCommentSerializer,CommentSerializer
 from .models import User,Article,Product,Comment,ProductComment,ArticleComment
 from config.settings import SMS_PASSWORD,SMS_USERNAME
 import requests
@@ -168,27 +168,21 @@ class CheckPhoneNumberAPIView(APIView):
             return Response({'message': messages_for_front['user_not_found'],'in_database':'fasle'}, status=status.HTTP_404_NOT_FOUND)
         return Response({'message': messages_for_front['user_found'],'in_database':'true'}, status=status.HTTP_200_OK)
 #---------------------------
-class SignUpAPIView(APIView):
-    """Sign up for frontend"""
+class CreateUserWithPhoneNumberAPIView(APIView):
+    """Create user with phone number"""
     def post(self, request):
         text_sms = "name عزیز به گیزموشاپ خوش آمدید.\nکد احرازسنجی شما: code"
         link_sms = f"https://www.0098sms.com/sendsmslink.aspx?FROM=50002220096&TO=PhoneNumberUser&TEXT=TextCode&USERNAME={SMS_USERNAME}&PASSWORD={SMS_PASSWORD}&DOMAIN=0098"
         
         
-        serializer = UserSerializer(data=request.data)
+        serializer = SignUpSerializer(data=request.data)
 
-        if serializer.is_valid():
-
-            if(not serializer.validated_data.get('full_name')):
-                return Response({'message': "users must have full name"}, status=status.HTTP_400_BAD_REQUEST)
-            
+        if serializer.is_valid():      
             user = User(
                 phoneNumber = serializer.validated_data['phoneNumber'],
-                email = serializer.validated_data['email'],
-                full_name = serializer.validated_data['full_name'],
+                email = f"{serializer.validated_data['phoneNumber']}@gmail.com",
             )
 
-            user.set_password(serializer.validated_data['password'])
             user.is_active = False
             code = random.randint(10000, 99999)
             user.code = code
@@ -196,7 +190,7 @@ class SignUpAPIView(APIView):
             user.save()
 
             # send code to user
-            text_sms = text_sms.replace("name" ,user.full_name)
+            # text_sms = text_sms.replace("name" ,user.full_name)
             text_sms = text_sms.replace("code" , str(user.code))
 
             send_sms = link_sms.replace("PhoneNumberUser",user.phoneNumber)
@@ -206,7 +200,6 @@ class SignUpAPIView(APIView):
 
             response_data = {
                 'phoneNumber' : user.phoneNumber,
-                'full_name' : user.full_name,
                 'id' : user.id
             }
             
@@ -221,4 +214,86 @@ class SignUpAPIView(APIView):
             
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#---------------------------
+class CheckCodeAPIView(APIView):
+    """Sign up for frontend"""
+    def post(self, request):
+
+        code = request.data['code']
+        phoneNumber = request.data['phoneNumber']
+
+        if(not phoneNumber):
+            return Response({'message': "users must have phoneNumber"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if(not code):
+            return Response({'message': "users must have code"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try :
+            user = User.objects.get(phoneNumber = phoneNumber)
+        except User.DoesNotExist:
+            return Response({'message': messages_for_front['user_not_found']}, status=status.HTTP_400_BAD_REQUEST)
+
+        if(str(user.code) == str(code)):
+            return Response({'message' : 'code is valid.'}, status=status.HTTP_200_OK)
+        return Response({'message' : 'code is not valid.'}, status=status.HTTP_400_BAD_REQUEST)
+
+#---------------------------
+class UpdateSignUpAPIView(APIView):
+    """Sign up for frontend"""
+    def post(self, request):
+
+        phoneNumber = request.data['phoneNumber']
+        email = request.data['email']
+        full_name = request.data['full_name']
+        password = request.data['password']
+
+
+        if(not phoneNumber):
+            return Response({'message': "users must have phoneNumber"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if(not email):
+            return Response({'message': "users must have email"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if(not full_name):
+            return Response({'message': "users must have full name"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if(not password):
+            return Response({'message': "users must have password"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try :
+            user = User.objects.get(email = email)
+            return Response({'message': "use another email"}, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            pass
+
+        
+        try :
+            user = User.objects.get(phoneNumber = phoneNumber)
+        except User.DoesNotExist:
+            return Response({'message': messages_for_front['user_not_found']}, status=status.HTTP_400_BAD_REQUEST)
+
+        if(user.is_active):
+            return Response({'message': "can not update"}, status=status.HTTP_400_BAD_REQUEST)
+
+        
+        user.full_name = full_name
+        user.email = email
+        user.set_password(password)
+        user.is_active = True
+        code = random.randint(10000, 99999)
+        user.code = code
+
+        user.save()
+
+
+        response_data = {
+            'phoneNumber' : user.phoneNumber,
+            'full_name' : user.full_name,
+            'id' : user.id
+        }       
+
+        return Response({'data' : response_data}, status=status.HTTP_200_OK)
+            
+        
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------

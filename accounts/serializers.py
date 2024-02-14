@@ -3,6 +3,11 @@ from .models import User
 from .models import Comment,ArticleComment,ProductComment
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 #---------------------------
+class SignUpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('phoneNumber',)
+#---------------------------
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
