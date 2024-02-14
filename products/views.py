@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import *
 from .models import Brand
 from django.utils import timezone
-from datetime import date
+from datetime import timedelta
 #---------------------------
 """
     The codes related to the site's products are in this app.
@@ -17,6 +17,8 @@ from datetime import date
     3- BrandDetailView  --> Getting the information of a brand with ID
     4- BrandDeleteView --> Remove a brand with an ID
     5- BrandUpdateView --> Update brand information with ID
+
+    6- NewProductAPIView --> get 10 New Product
 
 """
 #---------------------------
@@ -108,7 +110,16 @@ class ProductUpdateAPIView(UpdateAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
 #---------------------------
-    
+class NewProductAPIView(APIView):
+    """get 10 New Product"""
+    def get(self, request):    
+        four_days_ago = timezone.now() - timedelta(days=4)
+        new_products = Product.objects.filter(updated__gte=four_days_ago)
+        serializer = ProductSerializer(new_products,many=True)
+        return Response(serializer.data)
+#---------------------------
+
+#---------------------------  
 #Category API views
     
 class CategoryCreateAPIView(APIView):
