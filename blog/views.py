@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.views import APIView
-from .serializers import ArticleSerializer, CategorySerializer
+from .serializers import ArticleSerializer, BlogCategorySerializer
 from .models import Article, Category
 
 
@@ -46,7 +46,7 @@ class ArticleListView(generics.ListAPIView):
 class CategoryCreateAPIView(APIView):
     """Creating a Category"""
     def post(self, request):
-        serializer = CategorySerializer(data=request.data)
+        serializer = BlogCategorySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({'message': 'دسته جدید ساخته شد', 'data': serializer.data})
@@ -56,14 +56,14 @@ class CategoryCreateAPIView(APIView):
 class CategoryDetailAPIVeiw(generics.RetrieveAPIView):
     """Getting the details of a Category with ID(domain.com/..../pk/)"""
     queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    serializer_class = BlogCategorySerializer
 #---------------------------
 class CategoryListAPIView(generics.ListAPIView):    
     """Listing all of the Categories"""
     queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    serializer_class = BlogCategorySerializer
 #---------------------------
-class CategoryArticlesAPIView(generics.ListAPIView):    
+class CategoryArticlesAPIView(APIView):    
     """Listing all of the articles of one Categories"""        
     def get(self, request, category_title):
         
@@ -80,10 +80,10 @@ class CategoryArticlesAPIView(generics.ListAPIView):
 class CategoryUpdateAPIVeiw(generics.UpdateAPIView):
     """Updating the informations of a Category with ID(domain.com/..../pk/)"""    
     queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    serializer_class = BlogCategorySerializer
 #---------------------------
 class CategoryDeleteAPIVew(generics.DestroyAPIView):
     """Deleting a Category with ID(domain.com/..../pk/)"""    
     queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    serializer_class = BlogCategorySerializer
 #---------------------------
