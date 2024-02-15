@@ -136,11 +136,14 @@ def namshi(url,soup):
             print('Div tag not found')
 
         #price
-        price_tag = soup.find('span', class_='ProductPrice_value__hnFSS')
-        if price_tag:
-            out_put["price"] = price_tag.text.strip()
+        span1_tag = soup.find('span', class_='ProductPrice_sellingPrice__y8kib ProductPrice_xLarge__6DRdu')
+        if span1_tag:
+            span2_tag = span1_tag.find('span', class_='ProductPrice_value__hnFSS')
+            out_put["price"] = span2_tag.text
         else:
-            print('Div tag not found')
+            div_tag=soup.find('div',class_='ProductPrice_preReductionPrice__S72wT') #in discount
+            if div_tag:
+                out_put["price"] = div_tag.text
 
     except Exception as e:
         print(f"An error occurred while scraping the URL: {url}")
