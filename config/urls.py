@@ -8,6 +8,7 @@ urlpatterns = [
     path('api/', include('products.urls')),
     path('api/blog/', include('blog.urls')),
     path('api/', include('accounts.urls')),
+    path('api/', include('layout.urls')),
 ]
 
 if settings.DEBUG:

@@ -87,7 +87,7 @@ for_what_choices = (
 #     def __str__(self):
 #         return self.name
 #---------------------------
-class banner(models.Model):
+class Banner(models.Model):
     bigTitle = models.CharField(max_length=200)
     smallTitle = models.CharField(max_length=200)
     image = models.ImageField(upload_to='media/banners/%Y/%m/')
@@ -108,7 +108,7 @@ class banner(models.Model):
 
     @staticmethod
     def filter():
-        banners = banner.objects.all()
+        banners = Banner.objects.all()
         result = {}
 
         for what in for_what_choices:
