@@ -63,12 +63,11 @@ def nike(url,soup):
             print('img tag not found')
 
         #price
-        div_tag = soup.find('span', class_='price__regular')
-        if div_tag:
-            span_tag=div_tag.find('span',class_='value')
-            out_put["price"] = div_tag.text.strip()
+        span_tag = soup.find('span', class_='value')
+        if span_tag:
+            out_put["price"] = span_tag['content'].strip() #in both
         else:
-            print('price tag not found')
+            print('Div tag not found')
                     
             
     except Exception as e:
@@ -149,8 +148,8 @@ def namshi(url,soup):
 
 
 #---------------------------
-#product name
-        
+
+#product name        
 def sharafdg(url,soup):
     try:
         name=soup.find('h1',class_='product_title entry-title')
