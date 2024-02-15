@@ -6,8 +6,7 @@ out_put={}
 
 #You can use the commented codes to test the code
 
-#amazon
-
+#---------------------------
 def amazon(url,soup):
     out_put={}
     try:  
@@ -38,13 +37,11 @@ def amazon(url,soup):
             else:
                 print('price tag not found')   
 
-        
-
     except Exception as e:
         print(f"An error occurred while scraping the URL: {url}")
         print(e)
     
-
+#---------------------------
 
 def nike(url,soup):
     try:
@@ -78,6 +75,7 @@ def nike(url,soup):
                 print(f"An error occurred while scraping the URL: {url}")
                 print(e)
 
+#---------------------------
 
 def adidas(url,soup):
     try:
@@ -114,6 +112,41 @@ def adidas(url,soup):
         print(f"An error occurred while scraping the URL: {url}")
         print(e)
 
+#---------------------------
+
+def namshi(url,soup):
+    
+    try:
+        #product name
+        name=soup.find('h1',class_='ProductConversion_productTitle__dvlc5')
+        if name:
+            product_name = name.text
+            out_put["product name"] = product_name.strip()
+        else:
+            print('name tag not found')
+
+        #img
+        div_tag = soup.find('div', class_='ImageGallery_imageContainer__jmn93')
+        final_src = ""
+        if div_tag:
+            img_tag = div_tag.find('img')
+            if img_tag:
+                final_src = f"https://www.namshi.com{img_tag['src']}"
+                out_put["img src"] = final_src
+        else:
+            print('Div tag not found')
+
+        #price
+        price_tag = soup.find('span', class_='ProductPrice_value__hnFSS')
+        if price_tag:
+            out_put["price"] = price_tag.text.strip()
+        else:
+            print('Div tag not found')
+
+    except Exception as e:
+        print(f"An error occurred while scraping the URL: {url}")
+        print(e)
+#---------------------------
 
 def scrape(url):
 
@@ -142,7 +175,9 @@ def scrape(url):
     elif site_name.startswith('adidas'):
         status='adidas'
         adidas(url,soup)
-            
+    elif site_name.startswith('namshi'):
+      status='namshi'
+      namshi(url,soup)       
     out_put["site kind"] = status      
     # print(f"site kind:{status}")
         
