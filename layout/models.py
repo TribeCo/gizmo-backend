@@ -54,20 +54,20 @@ for_what_choices = (
 
 #     def __str__(self):
 #         return f"{self.email} - {self.name}"
-#---------------------------
-# class FAQGroup(models.Model):
-#     bigTitle = models.CharField(max_length=100)
+#--------------------------
+class FAQGroup(models.Model):
+     title = models.CharField(max_length=100)
 
-#     def __str__(self):
-#         return self.bigTitle
+     def __str__(self):
+         return self.title
 #---------------------------
-# class FAQ(models.Model):
-#     group = models.ForeignKey(FAQGroup,on_delete=models.CASCADE,related_name="faqs")
-#     question = models.CharField(max_length=100)
-#     answer = models.TextField()
+class FAQ(models.Model):
+     group = models.ForeignKey(FAQGroup,on_delete=models.CASCADE,related_name="faqs")
+     question = models.CharField(max_length=100)
+     answer = models.TextField()
 
-#     def __str__(self):
-#         return self.question
+     def __str__(self):
+         return self.question
 #---------------------------
 # class Rule(models.Model):
 #     title = models.CharField(max_length=100)
