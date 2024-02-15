@@ -115,7 +115,7 @@ def adidas(url,soup):
 #---------------------------
 
 def namshi(url,soup):
-    
+
     try:
         #product name
         name=soup.find('h1',class_='ProductConversion_productTitle__dvlc5')
@@ -146,8 +146,45 @@ def namshi(url,soup):
     except Exception as e:
         print(f"An error occurred while scraping the URL: {url}")
         print(e)
-#---------------------------
 
+
+#---------------------------
+#product name
+        
+def sharafdg(url,soup):
+    try:
+        name=soup.find('h1',class_='product_title entry-title')
+        if name:
+            product_name=name.text
+            out_put["product name"] = product_name.strip() 
+        else:
+            print('Div tag not found')
+        
+        #img
+        img_tag = soup.find('img', class_='img-responsive elevateZoom')
+        if img_tag:
+            out_put["img src"] = img_tag['src'] #img src
+        else:
+            print('Div tag not found')
+
+        #price 
+            
+        div_tag = soup.find('span', class_='strike') #in Discount
+        if div_tag:
+            out_put["price"] = div_tag.text.strip()
+        else:
+            div_tag = soup.find('div', class_='price no-marign')
+            if div_tag:
+                span_tag = div_tag.find('span', class_='total--sale-price')
+                if span_tag :
+                    out_put["price"] = span_tag.text.strip()
+            else:print('Div tag not found')
+    
+    except Exception as e:
+        print(f"An error occurred while scraping the URL: {url}")
+        print(e)
+
+#---------------------------
 def scrape(url):
 
     headers = {
@@ -176,8 +213,15 @@ def scrape(url):
         status='adidas'
         adidas(url,soup)
     elif site_name.startswith('namshi'):
-      status='namshi'
-      namshi(url,soup)       
+        status='namshi'
+        namshi(url,soup)
+    elif "sharafdg" in site_name:
+        status='sharafdg'
+        sharafdg(url,soup)
+        
+
+
+
     out_put["site kind"] = status      
     # print(f"site kind:{status}")
         
