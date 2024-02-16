@@ -108,7 +108,7 @@ def adidas(url,soup):
         div_tag = soup.find('div', class_='price')
         if div_tag:
             span_tag=div_tag.find('span',class_='value')
-            out_put["price"] = span_tag.text.strip()
+            out_put["price"] = span_tag['content'].strip()
         else:
             print('price tag not found')
 
