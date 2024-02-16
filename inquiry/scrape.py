@@ -30,12 +30,18 @@ def amazon(url,soup):
                 print('img tag not found')
 
             #price
-            price_tag = soup.find('span', class_='a-offscreen')
-            if price_tag:
-                out_put["price"] = price_tag.text.strip()
-                # print(f"price:{price_tag.text}")
+            span1_tag = soup.find('span', class_='a-price a-text-price')
+            if span1_tag:
+                span2_tag=span1_tag.find('span' , class_='a-offscreen')
+                if span2_tag: 
+                    out_put["price"] = span2_tag.text.strip() #in discount
             else:
-                print('price tag not found')   
+                # span 
+                span_tag = soup.find('span', class_='a-price aok-align-center reinventPricePriceToPayMargin priceToPay')
+                if span_tag:
+                    out_put["price"]=span_tag.text.strip()
+                else:
+                    print('span tag not found') 
 
     except Exception as e:
         print(f"An error occurred while scraping the URL: {url}")
