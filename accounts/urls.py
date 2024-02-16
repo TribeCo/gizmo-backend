@@ -3,7 +3,8 @@ from .views import (UserCreateAPIView,UserRetrieveAPIView,UserListAPIView,UserDe
         UserUpdateAPIView,CreateCommentForArticleAPIView,CheckCodeAPIView,
         CreateCommentForProductAPIView,CheckPhoneNumberAPIView,UpdateSignUpAPIView,
         ReadCommentForProductAPIView,CreateUserWithPhoneNumberAPIView,
-        ReadCommentForArticleAPIView,DeleteCommentAPIView,UpdateCommentAPIView)
+        ReadCommentForArticleAPIView,DeleteCommentAPIView,UpdateCommentAPIView,
+        CreateAddressAPIView,ReadAddressAPIView,UpdateAddressAPIView,DeleteAddressAPIView)
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -21,6 +22,10 @@ urlpatterns = [
     path('articles/comments/<int:comment_id>/', ReadCommentForArticleAPIView.as_view(), name='read_comment_for_article'),
     path('comments/delete/<int:comment_id>/', DeleteCommentAPIView.as_view(), name='delete_comment'),
     path('comments/update/<int:comment_id>/', UpdateCommentAPIView.as_view(), name='update_comment'),
+    path('addresses/create/', CreateAddressAPIView.as_view(), name='create_address'),
+    path('addresses/read/', ReadAddressAPIView.as_view(), name='read_addresses'),
+    path('addresses/update/<int:pk>/', UpdateAddressAPIView.as_view(), name='update_address'),
+    path('addresses/delete/<int:pk>/', DeleteAddressAPIView.as_view(), name='delete_address'),
     
 
     path('users/sign_up/', UpdateSignUpAPIView.as_view(), name='sign_up'),
