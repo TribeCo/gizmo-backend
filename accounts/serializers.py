@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User,Address
 from .models import Comment,ArticleComment,ProductComment
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 #---------------------------
@@ -12,6 +12,20 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+#---------------------------
+class PasswordChangeRequestSerializer(serializers.ModelSerializer):
+    phoneNumber = serializers.CharField()
+    class Meta:
+        model = User
+        fields = [ 'phoneNumber']
+#---------------------------
+class PasswordChangeSerializer(serializers.ModelSerializer):
+    phoneNumber = serializers.CharField()
+    code = serializers.CharField()
+    password = serializers.CharField()
+    class Meta:
+        model = User
+        fields = [ 'phoneNumber', 'code','password']
 #---------------------------
 class UserReadSerializer(serializers.ModelSerializer):
     class Meta:
@@ -46,3 +60,8 @@ class EnhancedTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['is_active'] = user.is_active
         # ...
         return token
+#---------------------------
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = ['id', 'user', 'text', 'postal_code', 'city', 'phone_number', 'current']
