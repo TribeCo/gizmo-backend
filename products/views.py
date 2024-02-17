@@ -29,7 +29,9 @@ messages_for_front = {
     'product_created': 'محصول جدید ساخته شد',
     'category_created': 'دسته جدید ساخته شد',
     'category_not_found': 'دسته مورد نظر وجود ندارد',
+    'discounted_product_not_found': 'کالای تخفیف خورده وجود ندارد'
     'product_not_found' : 'محصول مورد نظر وجود ندارد.',
+    'categoty_for_landing_not_found': 'دسته ای فعال برای صفحه لندینگ وجود ندارد',
     }
 #---------------------------
 class BrandCreateAPIView(APIView):
@@ -135,6 +137,28 @@ class ProductUpdateAPIView(UpdateAPIView):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
 #---------------------------
+class ProductDiscountedListAPIView(APIView):
+    def get(self, request):        
+        try:
+            products = Product.objects.filter(discounted=True)
+        except:
+            return Response({"message": messages_for_front['discounted_product_not_found']})
+        
+        print(f'thisssss isss {products}')
+        serializer = ProductSerializer(products, many=True)
+
+        return Response({"data": serializer.data})
+#---------------------------
+class SimilarProductsAPIView(APIView):
+    def post(self, request):
+        ID = request.data.get('id')        
+        product = Product.objects.get(id = ID)
+        similar_products = product.get_similar_products()
+
+        products = ProductSerializer(similar_products, many=True)
+
+        return Response({'data': products.data})
+    
 class NewProductAPIView(APIView):
     """get 10 New Product"""
     def get(self, request):    
@@ -197,5 +221,16 @@ class CategoryProductsListAPIView(APIView):
 
         articles = category.products.all()
         serializer = CategorySerializer(articles, many=True)
+
+        return Response({'data': serializer.data})
+#---------------------------
+class CategotyLandingListAPIView(APIView):
+    def get(self, request):        
+        try:
+            catgories = Category.objects.filter(is_for_landing=True)[:4]
+        except:
+            return Response({'message': messages_for_front['categoty_for_landing_not_found']}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = CategorySerializer(catgories, many=True)
 
         return Response({'data': serializer.data})

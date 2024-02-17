@@ -24,6 +24,10 @@ import requests
     9- ReadCommentForarticleAPIView --> read comment for a article
     10- DeleteCommentAPIView --> delete comment with id
     11- UpdateCommentAPIView --> update comment with id
+    12- CreateAddressAPIView --> create an address
+    13- ReadAddressAPIView --> read all addresses
+    14- UpdateAddressAPIView --> update address with id
+    15- DeleteAddressAPIView --> delete address with id
 
 """
 #---------------------------
@@ -368,3 +372,41 @@ class ChangePassword(APIView):
         else:
             return Response(info.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------
+class CreateAddressAPIView(APIView):
+    """create an address"""
+    def post(self, request):
+        serializer = AddressSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#---------------------------
+class ReadAddressAPIView(APIView):
+    """read all addresses"""
+    def get(self, request):
+        addresses = Address.objects.all()
+        serializer = AddressSerializer(addresses, many=True)
+        return Response(serializer.data)
+#---------------------------
+class UpdateAddressAPIView(APIView):
+    """update address with id"""
+    def put(self, request, pk):
+        try:
+            address = Address.objects.get(pk=pk)
+            serializer = AddressSerializer(address, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Address.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+#---------------------------
+class DeleteAddressAPIView(APIView):
+    """delete address with id"""
+    def delete(self, request, pk):
+        try:
+            address = Address.objects.get(pk=pk)
+            address.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Address.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
