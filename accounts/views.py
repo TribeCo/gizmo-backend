@@ -4,8 +4,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import SignUpSerializer,UserSerializer,UserReadSerializer,ArticleCommentSerializer,ProductCommentSerializer,CommentSerializer,AddressSerializer
-from .models import User,Article,Product,Comment,ProductComment,ArticleComment,Address
+from .serializers import *
+from .models import User,Article,Product,Comment,ProductComment,ArticleComment
 from config.settings import SMS_PASSWORD,SMS_USERNAME
 import requests
 #---------------------------
@@ -39,6 +39,10 @@ messages_for_front = {
     'comment_not_found' : 'نظر یافت نشد',
     'comment_deleted' : 'نظر حذف شد',
     'user_found' : 'کاربر یافت شد.',
+    'password_changed' : 'پسورد با موفقیت تغییر کرد.',
+    'wrong_coode' : 'کد اعتبارسنجی نامعتبر است.',
+    'right_code' : 'کد اعتبارسنجی صحیح است.',
+    'code_sent' : 'کد ارسال شد.',
     
 }
 #---------------------------
@@ -300,6 +304,73 @@ class UpdateSignUpAPIView(APIView):
             
         
         # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#---------------------------
+class PasswordChangeRequest(APIView):
+    def post(self, request):
+        """
+            Password change request
+            urls : domain.com/..../users/update/password/
+            Sample json :
+            {
+            "phoneNumber" : "09303615324",
+            }
+
+        """
+
+        info = PasswordChangeRequestSerializer(data=request.data)
+        
+
+        if info.is_valid():
+            try :
+                user = User.objects.get(phoneNumber = info.validated_data['phoneNumber'])
+            except User.DoesNotExist:
+                return Response({'message': messages_for_front['user_not_found']}, status=status.HTTP_400_BAD_REQUEST)
+
+            user.can_change_password = True
+            code = random.randint(10000, 99999)
+            user.code = code
+            user.save()
+
+            # send Code to User
+            
+            return Response({'message': messages_for_front['code_sent']}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(info.errors, status=status.HTTP_400_BAD_REQUEST)
+#---------------------------
+class ChangePassword(APIView):
+    """
+            It change user password if can_change_password is active.
+            urls : domain.com/..../users/change/password/
+            Sample json :
+            {
+            "phoneNumber" : "09345454678,
+            "password" : "338dsfs3fsaengh7",
+            "code" : 7676
+            }
+
+    """
+    def post(self, request):
+        info = PasswordChangeSerializer(data=request.data)    
+
+        if info.is_valid():
+            try :
+                user = User.objects.get(phoneNumber = info.validated_data['phoneNumber'])
+            except User.DoesNotExist:
+                return Response({'message': messages_for_front['user_not_found']}, status=status.HTTP_400_BAD_REQUEST)
+            if (user.can_change_password):
+                if(str(user.code) == str(info.validated_data['code'])):
+
+                    user.set_password(info.validated_data.get('password'))
+                    user.can_change_password = False
+                    user.code = random.randint(10000, 99999)
+                    user.save()
+
+                    return Response({'message': messages_for_front['password_changed']}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'message': messages_for_front['wrong_coode']}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(info.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(info.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------
 class CreateAddressAPIView(APIView):
     """create an address"""

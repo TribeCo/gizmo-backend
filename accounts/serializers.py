@@ -13,6 +13,20 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
 #---------------------------
+class PasswordChangeRequestSerializer(serializers.ModelSerializer):
+    phoneNumber = serializers.CharField()
+    class Meta:
+        model = User
+        fields = [ 'phoneNumber']
+#---------------------------
+class PasswordChangeSerializer(serializers.ModelSerializer):
+    phoneNumber = serializers.CharField()
+    code = serializers.CharField()
+    password = serializers.CharField()
+    class Meta:
+        model = User
+        fields = [ 'phoneNumber', 'code','password']
+#---------------------------
 class UserReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
