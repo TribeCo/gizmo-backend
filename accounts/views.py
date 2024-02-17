@@ -1,9 +1,13 @@
+import random
+from urllib import response
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import UserSerializer,UserReadSerializer,ArticleCommentSerializer,ProductCommentSerializer,CommentSerializer
-from .models import User,Article,Product,Comment,ProductComment,ArticleComment
+from .serializers import SignUpSerializer,UserSerializer,UserReadSerializer,ArticleCommentSerializer,ProductCommentSerializer,CommentSerializer,AddressSerializer
+from .models import User,Article,Product,Comment,ProductComment,ArticleComment,Address
+from config.settings import SMS_PASSWORD,SMS_USERNAME
+import requests
 #---------------------------
 """
     The codes related to the site's products are in this app.
@@ -20,6 +24,10 @@ from .models import User,Article,Product,Comment,ProductComment,ArticleComment
     9- ReadCommentForarticleAPIView --> read comment for a article
     10- DeleteCommentAPIView --> delete comment with id
     11- UpdateCommentAPIView --> update comment with id
+    12- CreateAddressAPIView --> create an address
+    13- ReadAddressAPIView --> read all addresses
+    14- UpdateAddressAPIView --> update address with id
+    15- DeleteAddressAPIView --> delete address with id
 
 """
 #---------------------------
@@ -29,7 +37,8 @@ messages_for_front = {
     'article_not_found' : 'مقاله یافت نشد',
     'product_not_found' : 'محصول یافت نشد',
     'comment_not_found' : 'نظر یافت نشد',
-    'comment_deleted' : 'نظر حذف شد'
+    'comment_deleted' : 'نظر حذف شد',
+    'user_found' : 'کاربر یافت شد.',
     
 }
 #---------------------------
@@ -153,3 +162,180 @@ class UpdateCommentAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#---------------------------
+class CheckPhoneNumberAPIView(APIView):
+    """This API checks whether the phone number is in the database or not"""
+    def get(self, request,phone_number):
+        try:
+            user = User.objects.get(phoneNumber=phone_number)
+        except User.DoesNotExist:
+            return Response({'message': messages_for_front['user_not_found'],'in_database':'fasle'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'message': messages_for_front['user_found'],'in_database':'true'}, status=status.HTTP_200_OK)
+#---------------------------
+class CreateUserWithPhoneNumberAPIView(APIView):
+    """Create user with phone number"""
+    def post(self, request):
+        text_sms = "name عزیز به گیزموشاپ خوش آمدید.\nکد احرازسنجی شما: code"
+        link_sms = f"https://www.0098sms.com/sendsmslink.aspx?FROM=50002220096&TO=PhoneNumberUser&TEXT=TextCode&USERNAME={SMS_USERNAME}&PASSWORD={SMS_PASSWORD}&DOMAIN=0098"
+        
+        
+        serializer = SignUpSerializer(data=request.data)
+
+        if serializer.is_valid():      
+            user = User(
+                phoneNumber = serializer.validated_data['phoneNumber'],
+                email = f"{serializer.validated_data['phoneNumber']}@gmail.com",
+            )
+
+            user.is_active = False
+            code = random.randint(10000, 99999)
+            user.code = code
+
+            user.save()
+
+            # send code to user
+            # text_sms = text_sms.replace("name" ,user.full_name)
+            text_sms = text_sms.replace("code" , str(user.code))
+
+            send_sms = link_sms.replace("PhoneNumberUser",user.phoneNumber)
+            send_sms = send_sms.replace("TextCode",text_sms)
+
+            # response = requests.get(send_sms)
+
+            response_data = {
+                'phoneNumber' : user.phoneNumber,
+                'id' : user.id
+            }
+            
+
+            return Response({'data' : response_data}, status=status.HTTP_201_CREATED)
+
+            # if response.status_code == 200:
+            #     return Response({'data' : response_data,'response_sms': response.json()}, status=status.HTTP_201_CREATED)
+            # else:
+            #     print('درخواست با خطا مواجه شد:', response.status_code)
+
+            
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#---------------------------
+class CheckCodeAPIView(APIView):
+    """Sign up for frontend"""
+    def post(self, request):
+
+        code = request.data['code']
+        phoneNumber = request.data['phoneNumber']
+
+        if(not phoneNumber):
+            return Response({'message': "users must have phoneNumber"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if(not code):
+            return Response({'message': "users must have code"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try :
+            user = User.objects.get(phoneNumber = phoneNumber)
+        except User.DoesNotExist:
+            return Response({'message': messages_for_front['user_not_found']}, status=status.HTTP_400_BAD_REQUEST)
+
+        if(str(user.code) == str(code)):
+            return Response({'message' : 'code is valid.'}, status=status.HTTP_200_OK)
+        return Response({'message' : 'code is not valid.'}, status=status.HTTP_400_BAD_REQUEST)
+
+#---------------------------
+class UpdateSignUpAPIView(APIView):
+    """Sign up for frontend"""
+    def post(self, request):
+
+        phoneNumber = request.data['phoneNumber']
+        email = request.data['email']
+        full_name = request.data['full_name']
+        password = request.data['password']
+
+
+        if(not phoneNumber):
+            return Response({'message': "users must have phoneNumber"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if(not email):
+            return Response({'message': "users must have email"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if(not full_name):
+            return Response({'message': "users must have full name"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if(not password):
+            return Response({'message': "users must have password"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try :
+            user = User.objects.get(email = email)
+            return Response({'message': "use another email"}, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            pass
+
+        
+        try :
+            user = User.objects.get(phoneNumber = phoneNumber)
+        except User.DoesNotExist:
+            return Response({'message': messages_for_front['user_not_found']}, status=status.HTTP_400_BAD_REQUEST)
+
+        if(user.is_active):
+            return Response({'message': "can not update"}, status=status.HTTP_400_BAD_REQUEST)
+
+        
+        user.full_name = full_name
+        user.email = email
+        user.set_password(password)
+        user.is_active = True
+        code = random.randint(10000, 99999)
+        user.code = code
+
+        user.save()
+
+
+        response_data = {
+            'phoneNumber' : user.phoneNumber,
+            'full_name' : user.full_name,
+            'id' : user.id
+        }       
+
+        return Response({'data' : response_data}, status=status.HTTP_200_OK)
+            
+        
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#---------------------------
+class CreateAddressAPIView(APIView):
+    """create an address"""
+    def post(self, request):
+        serializer = AddressSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#---------------------------
+class ReadAddressAPIView(APIView):
+    """read all addresses"""
+    def get(self, request):
+        addresses = Address.objects.all()
+        serializer = AddressSerializer(addresses, many=True)
+        return Response(serializer.data)
+#---------------------------
+class UpdateAddressAPIView(APIView):
+    """update address with id"""
+    def put(self, request, pk):
+        try:
+            address = Address.objects.get(pk=pk)
+            serializer = AddressSerializer(address, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Address.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+#---------------------------
+class DeleteAddressAPIView(APIView):
+    """delete address with id"""
+    def delete(self, request, pk):
+        try:
+            address = Address.objects.get(pk=pk)
+            address.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Address.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
