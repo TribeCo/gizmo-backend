@@ -92,7 +92,7 @@ class Comment(models.Model):
     dislikes = models.ManyToManyField(User, related_name='disliked_comments', blank=True)
 
     parent_comment = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
-
+    anonymous = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.full_name}"
