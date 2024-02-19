@@ -193,17 +193,25 @@ def sharafdg(url,soup):
 
         #price 
             
-        div_tag = soup.find('span', class_='strike') #in Discount
+        out_put["discount"] = False
+        div_tag = soup.find('span', class_='strike')
         if div_tag:
-            out_put["price"] = div_tag.text.strip()
-        else:
-            div_tag = soup.find('div', class_='price no-marign')
-            if div_tag:
-                span_tag = div_tag.find('span', class_='total--sale-price')
-                if span_tag :
+            out_put["discount"] = True
+            out_put["price_out"] = div_tag.text.strip()
+        
+        div_tag = soup.find('div', class_='price')
+        if div_tag:
+            span_tag = div_tag.find('span', class_='total--sale-price')
+            if span_tag :
+                if "discount" in out_put and out_put["discount"]:
+                    out_put["price_in"] = span_tag.text.strip()
+                else:
                     out_put["price"] = span_tag.text.strip()
-            else:print('Div tag not found')
+                    
+            else:
+                print('Div tag not found')
     
+
     except Exception as e:
         print(f"An error occurred while scraping the URL: {url}")
         print(e)
