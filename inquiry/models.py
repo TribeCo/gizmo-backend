@@ -10,7 +10,7 @@ class ForeignOrder(models.Model):
     discounted_price = models.IntegerField(null=True,blank=True)
     image = models.ImageField()
     admin_checked = models.BooleanField(default=False)
-    profit = models.IntegerField()
+    profit = models.IntegerField(default=0)
 
 
 
