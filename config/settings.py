@@ -59,6 +59,7 @@ INSTALLED_APPS += [
     'layout.apps.LayoutConfig',
     'orders.apps.OrdersConfig',
     'products.apps.ProductsConfig',
+    'inquiry.apps.InquiryConfig',
 ]
 
 
