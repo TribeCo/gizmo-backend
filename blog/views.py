@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.views import APIView
-from .serializers import ArticleSerializer, BlogCategorySerializer
+from .serializers import *
 from .models import Article, Category
 
 
@@ -85,7 +85,6 @@ class CategoryUpdateAPIVeiw(generics.UpdateAPIView):
 class CategoryDeleteAPIVew(generics.DestroyAPIView):
     """Deleting a Category with ID(domain.com/..../pk/)"""    
     queryset = Category.objects.all()
-    Blog-CRUD
     serializer_class = CategorySerializer
 #---------------------------
 class LastThreeGizmologs(APIView):

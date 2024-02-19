@@ -410,3 +410,4 @@ class DeleteAddressAPIView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Address.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+#---------------------------
