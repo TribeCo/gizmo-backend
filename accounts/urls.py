@@ -1,10 +1,5 @@
 from django.urls import path
-from .views import (UserCreateAPIView,UserRetrieveAPIView,UserListAPIView,UserDeleteAPIView,
-        UserUpdateAPIView,CreateCommentForArticleAPIView,CheckCodeAPIView,
-        CreateCommentForProductAPIView,CheckPhoneNumberAPIView,UpdateSignUpAPIView,
-        ReadCommentForProductAPIView,CreateUserWithPhoneNumberAPIView,
-        ReadCommentForArticleAPIView,DeleteCommentAPIView,UpdateCommentAPIView,
-        CreateAddressAPIView,ReadAddressAPIView,UpdateAddressAPIView,DeleteAddressAPIView)
+from .views import *
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -26,7 +21,9 @@ urlpatterns = [
     path('addresses/read/', ReadAddressAPIView.as_view(), name='read_addresses'),
     path('addresses/update/<int:pk>/', UpdateAddressAPIView.as_view(), name='update_address'),
     path('addresses/delete/<int:pk>/', DeleteAddressAPIView.as_view(), name='delete_address'),
-    
+    path('favorites/', FavoriteProductsAPIView.as_view(), name='favorite_products'),
+    path('favorites/add/<int:pk>', AddFavoriteProductAPIView.as_view(), name='favorite_product_addtion'),
+    path('favorites/delete/<int:pk>', DeleteFvaoriteProductAPIView.as_view(), name='favorite_product_deletion'),
 
     path('users/sign_up/', UpdateSignUpAPIView.as_view(), name='sign_up'),
     path('users/create/phone/', CreateUserWithPhoneNumberAPIView.as_view(), name='create_phone'),

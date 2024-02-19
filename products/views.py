@@ -29,7 +29,7 @@ messages_for_front = {
     'product_created': 'محصول جدید ساخته شد',
     'category_created': 'دسته جدید ساخته شد',
     'category_not_found': 'دسته مورد نظر وجود ندارد',
-    'discounted_product_not_found': 'کالای تخفیف خورده وجود ندارد'
+    'discounted_product_not_found': 'کالای تخفیف خورده وجود ندارد',
     'product_not_found' : 'محصول مورد نظر وجود ندارد.',
     'categoty_for_landing_not_found': 'دسته ای فعال برای صفحه لندینگ وجود ندارد',
     }
