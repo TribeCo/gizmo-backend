@@ -452,3 +452,5 @@ class DeleteFvaoriteProductAPIView(APIView):
         user.save()
 
         return Response({'message': messages_for_front['product_removed_from_wishlist']}, status=status.HTTP_200_OK)
+#---------------------------
+
