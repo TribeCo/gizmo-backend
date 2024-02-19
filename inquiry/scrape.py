@@ -69,9 +69,20 @@ def nike(url,soup):
             print('img tag not found')
 
         #price
-        span_tag = soup.find('span', class_='value')
+
+        span=soup.find('span', class_="strike-through list")  
+        if span: #discount
+            out_put["discount"] = True
+            sp=span.find('span',class_='value')
+            out_put["price_out"]=sp['content'].strip()
+        span_tag = soup.find('span', class_='sales')
         if span_tag:
-            out_put["price"] = span_tag['content'].strip() #in both
+            sp=span_tag.find('span',class_='value')
+            if "discount" in out_put and out_put["discount"]:
+                out_put["price_in"] = sp.text.strip()
+            else:
+                out_put["price"] = sp.text.strip()
+
         else:
             print('Div tag not found')
                     
