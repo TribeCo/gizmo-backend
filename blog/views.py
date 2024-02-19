@@ -85,5 +85,19 @@ class CategoryUpdateAPIVeiw(generics.UpdateAPIView):
 class CategoryDeleteAPIVew(generics.DestroyAPIView):
     """Deleting a Category with ID(domain.com/..../pk/)"""    
     queryset = Category.objects.all()
+    Blog-CRUD
+    serializer_class = CategorySerializer
+#---------------------------
+class LastThreeGizmologs(APIView):
+    def get(self, request):
+        try:
+            articles = Article.objects.order_by('-publish').filter(is_for_landing=True)[ :3]
+        except:
+            return Response({'message': 'مقاله ای وجود ندارد'}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = ArticleSerializer(articles, many=True)
+        return Response({'data': serializer.data})
+
     serializer_class = BlogCategorySerializer
 #---------------------------
+
