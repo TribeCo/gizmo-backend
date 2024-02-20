@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import *
 from .models import User,Article,Product,Comment,ProductComment,ArticleComment
+from inquiry.models import ForeignOrder
+from orders.models import Order
 from config.settings import SMS_PASSWORD,SMS_USERNAME
 import requests
 from products.serializers import ProductSerializer
@@ -453,4 +455,14 @@ class DeleteFvaoriteProductAPIView(APIView):
 
         return Response({'message': messages_for_front['product_removed_from_wishlist']}, status=status.HTTP_200_OK)
 #---------------------------
+class UserOrdersCountAPIView(APIView):
+    """Retrieve the count of orders and returns for the logged-in user"""
+    def get(self, request):
+        if request.user.is_authenticated:
+            orders_count = Order.objects.filter(user=request.user).count()
+            returns_count = Order.objects.filter(user=request.user, returned=True).count()
+            foreign_returns_count = ForeignOrder.objects.filter(user=request.user).count()
+            return Response({'orders_count': orders_count, 'returns_count': returns_count, 'foreign_returns_count': foreign_returns_count}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'User is not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
