@@ -275,6 +275,53 @@ def noon(url,soup):
     except Exception as e:
         print(f"An error occurred while scraping the URL: {url}")
         print(e)
+
+#---------------------------
+
+def carre(url,soup):
+    try:
+        #product name
+        name=soup.find('h1',class_='css-106scfp')
+        if name:
+            product_name=name.text
+            out_put["product name"] = product_name.strip() 
+        else:
+            print('name tag not found')
+
+        #img  
+        div_tag = soup.find('div', class_='css-1d0skzn')
+        if div_tag:
+            img_tag = div_tag.find('img')
+            if img_tag:
+                out_put["img src"] = img_tag['src']
+        else:
+            print('img tag not found')
+
+        #price    
+        div_tag = soup.find('div', class_='css-1oh8fze')
+        if div_tag:
+            price_out = div_tag.find('span', class_='css-rmycza')
+            if price_out:
+                out_put["price_out"] = price_out.text
+                out_put["discount"] = True
+                price_in= div_tag.find('h2',class_='css-1i90gmp')
+                input_string = price_in.text
+                start_index = input_string.find("AED ")  
+                end_index = input_string.find("AED ", start_index + 1)  
+                if start_index != -1 and end_index != -1:
+                    modified_string = input_string[start_index:end_index]
+                    out_put["price_in"] = modified_string  
+                else:
+                    print("AED not found in the input string")   
+            else:
+                price = div_tag.find('h2', class_='css-17ctnp')
+                if price:
+                    out_put["price"] = price.text
+                    out_put["discount"] = False
+
+    except Exception as e:
+        print(f"An error occurred while scraping the URL: {url}")
+        print(e)
 #---------------------------
 def scrape(url):
 
@@ -312,6 +359,9 @@ def scrape(url):
     elif site_name.startswith('noon'):
         status='noon'
         noon(url,soup)
+    elif site_name.startswith('carrefouruae'):
+        status='carrefouruae'
+        carre(url,soup)
         
 
 
