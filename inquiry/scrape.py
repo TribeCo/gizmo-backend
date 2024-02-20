@@ -237,6 +237,45 @@ def sharafdg(url,soup):
         print(e)
 
 #---------------------------
+def noon(url,soup):
+
+    try:
+        #product name  
+        name=soup.find('h1',class_='sc-f5f69516-18 cmxvfi')
+        if name:
+            product_name=name.text
+            out_put["product name"] = product_name.strip() 
+        else:
+            print('name tag not found')
+
+        #img 
+        div_tag = soup.find('div', class_='sc-d8caf424-2 fJBKzl')
+        if div_tag:
+            img_tag = div_tag.find('img')
+            if img_tag:
+                out_put["img src"] = img_tag['src']
+        else:
+            print('img tag not found')
+
+        #price
+        div_tag = soup.find('div', class_='sc-4de52a49-0 deGxov')
+        if div_tag:
+            price_out = div_tag.find('div', class_='priceWas')
+            price_in= div_tag.find('div',class_='priceNow')
+            if price_out: #discount
+                out_put["discount"] = True
+                out_put["price_out"] = price_out.text
+                out_put["price_in"] = price_in.text
+            else:
+                out_put["price"] = price_in.text
+                out_put["discount"] = False
+        else:
+            print("price tag not found")
+
+    except Exception as e:
+        print(f"An error occurred while scraping the URL: {url}")
+        print(e)
+#---------------------------
 def scrape(url):
 
     headers = {
@@ -270,6 +309,9 @@ def scrape(url):
     elif "sharafdg" in site_name:
         status='sharafdg'
         sharafdg(url,soup)
+    elif site_name.startswith('noon'):
+        status='noon'
+        noon(url,soup)
         
 
 
