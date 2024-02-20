@@ -74,7 +74,7 @@ def nike(url,soup):
         if span: #discount
             out_put["discount"] = True
             sp=span.find('span',class_='value')
-            out_put["price_out"]=sp['content'].strip()
+            out_put["price_out"] = sp['content'].strip()
         span_tag = soup.find('span', class_='sales')
         if span_tag:
             sp=span_tag.find('span',class_='value')
@@ -118,10 +118,21 @@ def adidas(url,soup):
         #price
         div_tag = soup.find('div', class_='price')
         if div_tag:
-            span_tag=div_tag.find('span',class_='value')
-            out_put["price"] = span_tag['content'].strip()
+            span_tag=div_tag.find('span',class_='sales')
+            price_in=span_tag.find('span',class_='value')
+            print(f"price in:{price_in['content']}")
+            price_out=div_tag.find('span',class_='value')
+            print(f"price out:{price_out['content']}")
+            if price_in['content'] == price_out['content'] : 
+                out_put["price"] = price_in
+                out_put["discount"] = False
+            else:
+
+                out_put["price_out"] = price_out
+                out_put["price_in"] = price_in
+                out_put["discount"] = True
         else:
-            print('price tag not found')
+            print('Div tag not found')
 
     
     except Exception as e:
