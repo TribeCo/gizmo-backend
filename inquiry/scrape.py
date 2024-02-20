@@ -29,19 +29,28 @@ def amazon(url,soup):
             else:
                 print('img tag not found')
 
-            #price
-            span1_tag = soup.find('span', class_='a-price a-text-price')
-            if span1_tag:
-                span2_tag=span1_tag.find('span' , class_='a-offscreen')
-                if span2_tag: 
-                    out_put["price"] = span2_tag.text.strip() #in discount
+            #price  
+            span_tag = soup.find('span', class_='a-price a-text-price')
+            if span_tag:
+                price_out=span_tag.find('span' , class_='a-offscreen')
+                if price_out: #in discount
+                    out_put["discount"] = True
+                    out_put["price_out"] = price_out.text.strip()
+            
+                    price_in = soup.find('span', class_='a-price aok-align-center reinventPricePriceToPayMargin priceToPay')
+                    if price_in:
+                        out_put["price_in"] = price_in.text.strip()
+                    else:
+                        print('tag not found')  
             else:
-                # span 
-                span_tag = soup.find('span', class_='a-price aok-align-center reinventPricePriceToPayMargin priceToPay')
-                if span_tag:
-                    out_put["price"]=span_tag.text.strip()
+                price = soup.find('span', class_='a-price aok-align-center reinventPricePriceToPayMargin priceToPay')
+                if price:
+                    out_put["price"] = price.text.strip()
+                    out_put["discount"] = False
                 else:
-                    print('span tag not found') 
+                    print('tag not found')
+
+
 
     except Exception as e:
         print(f"An error occurred while scraping the URL: {url}")
