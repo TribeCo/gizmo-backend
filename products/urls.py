@@ -26,4 +26,5 @@ urlpatterns = [
     path('<str:category_name>/products/', CategoryProductsListAPIView.as_view(),name="category_articles_list"),
     path('category/update/<int:pk>/', CategoryUpdateAPIView.as_view(),name="category_update"),
     path('category/delete/<int:pk>/', CategoryDeleteAPIView.as_view(),name="category_delete"),
+    path('products/search/<slug:slug>/', ProductSearchAPIView.as_view(), name='product_search'),
 ]
