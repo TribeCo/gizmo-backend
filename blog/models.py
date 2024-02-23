@@ -91,3 +91,10 @@ class Article(models.Model):
         popular_articles = Article.objects.order_by('-views')[:5]
         return popular_articles
 #---------------------------
+from accounts.models import Comment
+class ArticleComment(Comment):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name="comments")
+
+    def __str__(self):
+        return f"{self.user.full_name} - {self.article.title}"
+#---------------------------

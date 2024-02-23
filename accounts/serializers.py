@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import User,Address
-from .models import Comment,ArticleComment,ProductComment
+from .models import Comment,ProductComment
+from blog.models import ArticleComment
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 #---------------------------
 class SignUpSerializer(serializers.ModelSerializer):

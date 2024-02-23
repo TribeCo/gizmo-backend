@@ -4,10 +4,10 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
 from cart.models import Cart
 from .serializers import *
-from .models import User,Article,Product,Comment,ProductComment,ArticleComment
+from .models import User,Product,Comment,ProductComment
+from blog.models import Article,ArticleComment
 from inquiry.models import ForeignOrder
 from orders.models import Order
 from config.settings import SMS_PASSWORD,SMS_USERNAME

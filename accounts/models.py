@@ -116,13 +116,6 @@ class ProductComment(Comment):
     def __str__(self):
         return f"{self.user.full_name} - {self.product.name}"
 #---------------------------
-from blog.models import Article
-class ArticleComment(Comment):
-    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name="comments")
-
-    def __str__(self):
-        return f"{self.user.full_name} - {self.article.title}"
-#---------------------------
 class WatchedProduct(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,related_name="wacthed")
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
