@@ -1,5 +1,5 @@
 from django.db import models
-from products.models import Product 
+from products.models import Color, Product 
 from accounts.models import User
 #---------------------------
 def formatPay(pay):
@@ -35,6 +35,7 @@ class CartItem(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='cart_items')
     price = models.IntegerField()
     quantity = models.PositiveSmallIntegerField(default=1)
+    color = models.ForeignKey(Color,on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.id)

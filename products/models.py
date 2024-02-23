@@ -79,6 +79,8 @@ class Product(models.Model):
     # dirham_rate = models.IntegerField(blank=True,null=True) 
     # transit_price = models.IntegerField(blank=True,null=True)
 
+    code = models.CharField(max_length=10,blank=True,null=True)
+
     
 
 
