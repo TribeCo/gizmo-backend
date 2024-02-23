@@ -25,6 +25,9 @@ messages_for_front = {
     'item_not_found' : 'محصول یافت نشد.',
     'add_product' : 'محصول با موفقیت به سبد خرید اضافه شد.',
     'update_product' : 'محصول آپدیت شد.',
+    'coupon_not_found' : 'کد تخفیف یافت نشد.',
+    'coupon_is_not_valid' : 'کد تخفیف معتبر نیست.',
+    'coupon_applied' : 'کد تخفیف با موفقیت اعمال شد.',
     
 }
 #---------------------------
@@ -118,4 +121,24 @@ class CouponUpdateView(UpdateAPIView):
     queryset = Coupon.objects.all()
     serializer_class = CouponSerializer
     lookup_field = 'pk'
+#---------------------------
+class ApplyCouponToCartAPIView(APIView):
+    """Apply coupon to cart"""
+    def post(self, request,pk):
+
+        try:
+            coupon = Coupon.objects.get(id=pk)
+        except Coupon.DoesNotExist:
+            return Response({'message':messages_for_front['coupon_not_found']}, status=status.HTTP_404_NOT_FOUND)
+
+        cart = request.user.cart
+
+
+        if coupon.is_valid():
+            
+            cart.discount = coupon.discount
+            cart.save()
+            return Response({'message':messages_for_front['coupon_applied']}, status=status.HTTP_201_CREATED)
+        
+        return Response({'message':messages_for_front['coupon_is_not_valid']}, status=status.HTTP_400_BAD_REQUEST)  
 #---------------------------
