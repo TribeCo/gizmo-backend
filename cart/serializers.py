@@ -19,7 +19,7 @@ class UserSerializerForCart(serializers.ModelSerializer):
         model = User
         fields = ('phoneNumber', 'full_name')
 #---------------------------
-class CartItemSerializer(serializers.ModelSerializer):
+class CartItemSerializerForCart(serializers.ModelSerializer):
     product = ProductSerializerForCart()
     color = ColorSerializerForCart()
     class Meta:
@@ -28,8 +28,13 @@ class CartItemSerializer(serializers.ModelSerializer):
 #--------------------------- 
 class CartSerializer(serializers.ModelSerializer):
     user = UserSerializerForCart()
-    items = CartItemSerializer(many=True)
+    items = CartItemSerializerForCart(many=True)
     class Meta:
         model = Cart
         fields = ['user','items']
+#---------------------------
+class CartItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CartItem
+        fields = ['quantity','color','product']  
 #---------------------------
