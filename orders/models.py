@@ -94,7 +94,7 @@ class OrderItem(models.Model):
     quantity = models.PositiveSmallIntegerField(default=1)
 
     def __str__(self):
-        return str(self.id)
+        return f"{self.id}-{self.product}"
 
 
     def get_cost(self):
@@ -102,15 +102,4 @@ class OrderItem(models.Model):
 
     def get_cost_from_product(self):
         return format(self.product.discounted_price_int * self.quantity)
-#---------------------------
-class Coupon(models.Model):
-    code = models.CharField(max_length=30,unique=True)
-    valid_from = models.DateTimeField()
-    valid_to = models.DateTimeField()
-    discount = models.IntegerField(validators=[MinValueValidator(0),MaxValueValidator(100)])
-    active = models.BooleanField(default=False)
-
-
-    def __str__(self):
-        return self.code
 #---------------------------
