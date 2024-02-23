@@ -8,6 +8,7 @@ from .models import Brand
 from django.utils import timezone
 from datetime import timedelta
 from accounts.models import WatchedProduct
+from django.http import Http404
 #---------------------------
 """
     The codes related to the site's products are in this app.
@@ -21,6 +22,7 @@ from accounts.models import WatchedProduct
 
     6- NewProductAPIView --> get 10 New Product
     7- ObservedProductAPIView --> This API returns the user's viewed products
+    8- ProductSearchAPIView --> Search for products
 
 """
 #---------------------------
@@ -29,7 +31,7 @@ messages_for_front = {
     'product_created': 'محصول جدید ساخته شد',
     'category_created': 'دسته جدید ساخته شد',
     'category_not_found': 'دسته مورد نظر وجود ندارد',
-    'discounted_product_not_found': 'کالای تخفیف خورده وجود ندارد'
+    'discounted_product_not_found': 'کالای تخفیف خورده وجود ندارد',
     'product_not_found' : 'محصول مورد نظر وجود ندارد.',
     'categoty_for_landing_not_found': 'دسته ای فعال برای صفحه لندینگ وجود ندارد',
     }
@@ -220,7 +222,7 @@ class CategoryProductsListAPIView(APIView):
             return Response({'message':messages_for_front['category_not_found']}, status=status.HTTP_404_NOT_FOUND)
 
         articles = category.products.all()
-        serializer = CategorySerializer(articles, many=True)
+        serializer = ProductSerializer(articles, many=True)
 
         return Response({'data': serializer.data})
 #---------------------------
@@ -234,3 +236,15 @@ class CategotyLandingListAPIView(APIView):
         serializer = CategorySerializer(catgories, many=True)
 
         return Response({'data': serializer.data})
+#---------------------------
+class ProductSearchAPIView(APIView):
+    """ Search for products """
+    def get(self, request, slug):
+        product = Product.objects.filter(slug=slug)
+        products = Product.objects.filter(name__icontains=slug)
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+        
+        
+        

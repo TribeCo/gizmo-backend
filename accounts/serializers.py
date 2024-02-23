@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import User,Address
-from .models import Comment,ArticleComment,ProductComment
+from .models import Comment,ProductComment
+from blog.models import ArticleComment
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 #---------------------------
 class SignUpSerializer(serializers.ModelSerializer):
@@ -36,7 +37,7 @@ class CommentSerializer(serializers.ModelSerializer):
     user_full_name = serializers.ReadOnlyField(source='user.full_name')
     class Meta:
         model = Comment
-        fields = ('id', 'user', 'user_full_name', 'text', 'created', 'valid', 'rating', 'likes', 'dislikes', 'parent_comment')
+        fields = ('id', 'user', 'user_full_name', 'text', 'created', 'valid', 'rating', 'likes', 'dislikes', 'parent_comment','anonymous')
 #---------------------------
 class ArticleCommentSerializer(serializers.ModelSerializer):
     class Meta:

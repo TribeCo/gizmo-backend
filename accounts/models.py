@@ -92,7 +92,7 @@ class Comment(models.Model):
     dislikes = models.ManyToManyField(User, related_name='disliked_comments', blank=True)
 
     parent_comment = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
-
+    anonymous = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.full_name}"
@@ -115,13 +115,6 @@ class ProductComment(Comment):
 
     def __str__(self):
         return f"{self.user.full_name} - {self.product.name}"
-#---------------------------
-from blog.models import Article
-class ArticleComment(Comment):
-    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name="comments")
-
-    def __str__(self):
-        return f"{self.user.full_name} - {self.article.title}"
 #---------------------------
 class WatchedProduct(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,related_name="wacthed")
