@@ -4,6 +4,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
+from cart.models import Cart
 from .serializers import *
 from .models import User,Article,Product,Comment,ProductComment,ArticleComment
 from inquiry.models import ForeignOrder
@@ -200,6 +202,10 @@ class CreateUserWithPhoneNumberAPIView(APIView):
             user.is_active = False
             code = random.randint(10000, 99999)
             user.code = code
+
+            cart = Cart(user = user)
+            cart.save()
+            user.cart = cart
 
             user.save()
 
