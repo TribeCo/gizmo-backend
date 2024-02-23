@@ -41,14 +41,14 @@ def amazon(url,soup):
                     if price_in:
                         out_put["price_in"] = price_in.text.strip()
                     else:
-                        print('tag not found')  
+                        print('price not found')  
             else:
                 price = soup.find('span', class_='a-price aok-align-center reinventPricePriceToPayMargin priceToPay')
                 if price:
                     out_put["price"] = price.text.strip()
                     out_put["discount"] = False
                 else:
-                    print('tag not found')
+                    print('price not found')
 
 
 
@@ -93,7 +93,7 @@ def nike(url,soup):
                 out_put["price"] = sp.text.strip()
 
         else:
-            print('Div tag not found')
+            print('price tag not found')
                     
             
     except Exception as e:
@@ -128,20 +128,18 @@ def adidas(url,soup):
         div_tag = soup.find('div', class_='price')
         if div_tag:
             span_tag=div_tag.find('span',class_='sales')
-            price_in=span_tag.find('span',class_='value')
-            print(f"price in:{price_in['content']}")
-            price_out=div_tag.find('span',class_='value')
-            print(f"price out:{price_out['content']}")
-            if price_in['content'] == price_out['content'] : 
-                out_put["price"] = price_in
-                out_put["discount"] = False
-            else:
-
-                out_put["price_out"] = price_out
-                out_put["price_in"] = price_in
-                out_put["discount"] = True
+            if span_tag:
+                price_in=span_tag.find('span',class_='value')
+                price_out=div_tag.find('span',class_='value')
+                if price_in['content'] == price_out['content'] : 
+                    out_put["price"] = price_in
+                    out_put["discount"] = False
+                else:
+                    out_put["price_out"] = price_out
+                    out_put["price_in"] = price_in
+                    out_put["discount"] = True
         else:
-            print('Div tag not found')
+            print('price tag not found')
 
     
     except Exception as e:
@@ -170,7 +168,7 @@ def namshi(url,soup):
                 final_src = f"https://www.namshi.com{img_tag['src']}"
                 out_put["img src"] = final_src
         else:
-            print('Div tag not found')
+            print('img tag not found')
 
         #price
         span1_tag = soup.find('span', class_='ProductPrice_sellingPrice__y8kib ProductPrice_xLarge__6DRdu')
@@ -183,9 +181,13 @@ def namshi(url,soup):
             div_tag=soup.find('div',class_='ProductPrice_preReductionPrice__S72wT') #in discount
             if div_tag:
                 out_put["price_out"] = div_tag.text
+            else:
+                print('price tag not found')
             span_tag=soup.find('span',class_='ProductPrice_sellingPrice__y8kib ProductPrice_discounted__Puxu6 ProductPrice_xLarge__6DRdu')
             if span_tag:
                 out_put["price_in"] = span_tag.text
+            else:
+                print('price tag not found')
 
     except Exception as e:
         print(f"An error occurred while scraping the URL: {url}")
@@ -202,14 +204,14 @@ def sharafdg(url,soup):
             product_name=name.text
             out_put["product name"] = product_name.strip() 
         else:
-            print('Div tag not found')
+            print('name tag not found')
         
         #img
         img_tag = soup.find('img', class_='img-responsive elevateZoom')
         if img_tag:
             out_put["img src"] = img_tag['src'] #img src
         else:
-            print('Div tag not found')
+            print('img tag not found')
 
         #price 
             
@@ -229,13 +231,101 @@ def sharafdg(url,soup):
                     out_put["price"] = span_tag.text.strip()
                     
             else:
-                print('Div tag not found')
+                print('price tag not found')
     
 
     except Exception as e:
         print(f"An error occurred while scraping the URL: {url}")
         print(e)
 
+#---------------------------
+def noon(url,soup):
+
+    try:
+        #product name  
+        name=soup.find('h1',class_='sc-f5f69516-18 cmxvfi')
+        if name:
+            product_name=name.text
+            out_put["product name"] = product_name.strip() 
+        else:
+            print('name tag not found')
+
+        #img 
+        div_tag = soup.find('div', class_='sc-d8caf424-2 fJBKzl')
+        if div_tag:
+            img_tag = div_tag.find('img')
+            if img_tag:
+                out_put["img src"] = img_tag['src']
+        else:
+            print('img tag not found')
+
+        #price
+        div_tag = soup.find('div', class_='sc-4de52a49-0 deGxov')
+        if div_tag:
+            price_out = div_tag.find('div', class_='priceWas')
+            price_in= div_tag.find('div',class_='priceNow')
+            if price_out: #discount
+                out_put["discount"] = True
+                out_put["price_out"] = price_out.text
+                out_put["price_in"] = price_in.text
+            else:
+                out_put["price"] = price_in.text
+                out_put["discount"] = False
+        else:
+            print("price tag not found")
+
+    except Exception as e:
+        print(f"An error occurred while scraping the URL: {url}")
+        print(e)
+
+#---------------------------
+
+def carre(url,soup):
+    try:
+        #product name
+        name=soup.find('h1',class_='css-106scfp')
+        if name:
+            product_name=name.text
+            out_put["product name"] = product_name.strip() 
+        else:
+            print('name tag not found')
+
+        #img  
+        div_tag = soup.find('div', class_='css-1d0skzn')
+        if div_tag:
+            img_tag = div_tag.find('img')
+            if img_tag:
+                out_put["img src"] = img_tag['src']
+        else:
+            print('img tag not found')
+
+        #price    
+        div_tag = soup.find('div', class_='css-1oh8fze')
+        if div_tag:
+            price_out = div_tag.find('span', class_='css-rmycza')
+            if price_out:
+                out_put["price_out"] = price_out.text
+                out_put["discount"] = True
+                price_in= div_tag.find('h2',class_='css-1i90gmp')
+                input_string = price_in.text
+                start_index = input_string.find("AED ")  
+                end_index = input_string.find("AED ", start_index + 1)  
+                if start_index != -1 and end_index != -1:
+                    modified_string = input_string[start_index:end_index]
+                    out_put["price_in"] = modified_string  
+                else:
+                    print("AED not found in the input string")   
+            else:
+                price = div_tag.find('h2', class_='css-17ctnp')
+                if price:
+                    out_put["price"] = price.text
+                    out_put["discount"] = False
+        else:
+            print('price tag not found')
+
+    except Exception as e:
+        print(f"An error occurred while scraping the URL: {url}")
+        print(e)
 #---------------------------
 def scrape(url):
 
@@ -249,32 +339,39 @@ def scrape(url):
         encoding = chardet.detect(page.content)["encoding"]
         html = page.content.decode(encoding)
         soup = BeautifulSoup(html, 'html.parser') 
+    
+#---------------------------
+
+        site_name = url[12:]
+        if site_name.startswith('amazon'):
+            status='amazon'
+            amazon(url,soup)
+            
+        elif site_name.startswith('nike'):
+            status='nike'
+            nike(url,soup)
+        elif site_name.startswith('adidas'):
+            status='adidas'
+            adidas(url,soup)
+        elif site_name.startswith('namshi'):
+            status='namshi'
+            namshi(url,soup)
+        elif "sharafdg" in site_name:
+            status='sharafdg'
+            sharafdg(url,soup)
+        elif site_name.startswith('noon'):
+            status='noon'
+            noon(url,soup)
+        elif site_name.startswith('carrefouruae'):
+            status='carrefouruae'
+            carre(url,soup)
+            
+
+        out_put["site kind"] = status      
+        # print(f"site kind:{status}")
+            
+        return out_put
+
     else:
-            print(f"page.status_code:{page.status_code}")
+        print(f"page.status_code:{page.status_code}")
 
-
-    site_name = url[12:]
-    if site_name.startswith('amazon'):
-        status='amazon'
-        amazon(url,soup)
-        
-    elif site_name.startswith('nike'):
-        status='nike'
-        nike(url,soup)
-    elif site_name.startswith('adidas'):
-        status='adidas'
-        adidas(url,soup)
-    elif site_name.startswith('namshi'):
-        status='namshi'
-        namshi(url,soup)
-    elif "sharafdg" in site_name:
-        status='sharafdg'
-        sharafdg(url,soup)
-        
-
-
-
-    out_put["site kind"] = status      
-    # print(f"site kind:{status}")
-        
-    return out_put
