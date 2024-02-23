@@ -36,6 +36,7 @@ class Order(models.Model):
     packing = models.BooleanField(default=False) 
     shipped = models.BooleanField(default=False)
     deliveried = models.BooleanField(default=False) 
+    returned = models.BooleanField(default=False)
 
 
 
@@ -103,3 +104,5 @@ class OrderItem(models.Model):
     def get_cost_from_product(self):
         return format(self.product.discounted_price_int * self.quantity)
 #---------------------------
+
+

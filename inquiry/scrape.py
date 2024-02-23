@@ -29,19 +29,28 @@ def amazon(url,soup):
             else:
                 print('img tag not found')
 
-            #price
-            span1_tag = soup.find('span', class_='a-price a-text-price')
-            if span1_tag:
-                span2_tag=span1_tag.find('span' , class_='a-offscreen')
-                if span2_tag: 
-                    out_put["price"] = span2_tag.text.strip() #in discount
+            #price  
+            span_tag = soup.find('span', class_='a-price a-text-price')
+            if span_tag:
+                price_out=span_tag.find('span' , class_='a-offscreen')
+                if price_out: #in discount
+                    out_put["discount"] = True
+                    out_put["price_out"] = price_out.text.strip()
+            
+                    price_in = soup.find('span', class_='a-price aok-align-center reinventPricePriceToPayMargin priceToPay')
+                    if price_in:
+                        out_put["price_in"] = price_in.text.strip()
+                    else:
+                        print('tag not found')  
             else:
-                # span 
-                span_tag = soup.find('span', class_='a-price aok-align-center reinventPricePriceToPayMargin priceToPay')
-                if span_tag:
-                    out_put["price"]=span_tag.text.strip()
+                price = soup.find('span', class_='a-price aok-align-center reinventPricePriceToPayMargin priceToPay')
+                if price:
+                    out_put["price"] = price.text.strip()
+                    out_put["discount"] = False
                 else:
-                    print('span tag not found') 
+                    print('tag not found')
+
+
 
     except Exception as e:
         print(f"An error occurred while scraping the URL: {url}")
@@ -69,9 +78,20 @@ def nike(url,soup):
             print('img tag not found')
 
         #price
-        span_tag = soup.find('span', class_='value')
+
+        span=soup.find('span', class_="strike-through list")  
+        if span: #discount
+            out_put["discount"] = True
+            sp=span.find('span',class_='value')
+            out_put["price_out"] = sp['content'].strip()
+        span_tag = soup.find('span', class_='sales')
         if span_tag:
-            out_put["price"] = span_tag['content'].strip() #in both
+            sp=span_tag.find('span',class_='value')
+            if "discount" in out_put and out_put["discount"]:
+                out_put["price_in"] = sp.text.strip()
+            else:
+                out_put["price"] = sp.text.strip()
+
         else:
             print('Div tag not found')
                     
@@ -107,10 +127,21 @@ def adidas(url,soup):
         #price
         div_tag = soup.find('div', class_='price')
         if div_tag:
-            span_tag=div_tag.find('span',class_='value')
-            out_put["price"] = span_tag['content'].strip()
+            span_tag=div_tag.find('span',class_='sales')
+            price_in=span_tag.find('span',class_='value')
+            print(f"price in:{price_in['content']}")
+            price_out=div_tag.find('span',class_='value')
+            print(f"price out:{price_out['content']}")
+            if price_in['content'] == price_out['content'] : 
+                out_put["price"] = price_in
+                out_put["discount"] = False
+            else:
+
+                out_put["price_out"] = price_out
+                out_put["price_in"] = price_in
+                out_put["discount"] = True
         else:
-            print('price tag not found')
+            print('Div tag not found')
 
     
     except Exception as e:
@@ -145,11 +176,16 @@ def namshi(url,soup):
         span1_tag = soup.find('span', class_='ProductPrice_sellingPrice__y8kib ProductPrice_xLarge__6DRdu')
         if span1_tag:
             span2_tag = span1_tag.find('span', class_='ProductPrice_value__hnFSS')
+            out_put["discount"] = False
             out_put["price"] = span2_tag.text
         else:
+            out_put["discount"] = True
             div_tag=soup.find('div',class_='ProductPrice_preReductionPrice__S72wT') #in discount
             if div_tag:
-                out_put["price"] = div_tag.text
+                out_put["price_out"] = div_tag.text
+            span_tag=soup.find('span',class_='ProductPrice_sellingPrice__y8kib ProductPrice_discounted__Puxu6 ProductPrice_xLarge__6DRdu')
+            if span_tag:
+                out_put["price_in"] = span_tag.text
 
     except Exception as e:
         print(f"An error occurred while scraping the URL: {url}")
@@ -177,17 +213,25 @@ def sharafdg(url,soup):
 
         #price 
             
-        div_tag = soup.find('span', class_='strike') #in Discount
+        out_put["discount"] = False
+        div_tag = soup.find('span', class_='strike')
         if div_tag:
-            out_put["price"] = div_tag.text.strip()
-        else:
-            div_tag = soup.find('div', class_='price no-marign')
-            if div_tag:
-                span_tag = div_tag.find('span', class_='total--sale-price')
-                if span_tag :
+            out_put["discount"] = True
+            out_put["price_out"] = div_tag.text.strip()
+        
+        div_tag = soup.find('div', class_='price')
+        if div_tag:
+            span_tag = div_tag.find('span', class_='total--sale-price')
+            if span_tag :
+                if "discount" in out_put and out_put["discount"]:
+                    out_put["price_in"] = span_tag.text.strip()
+                else:
                     out_put["price"] = span_tag.text.strip()
-            else:print('Div tag not found')
+                    
+            else:
+                print('Div tag not found')
     
+
     except Exception as e:
         print(f"An error occurred while scraping the URL: {url}")
         print(e)
