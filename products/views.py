@@ -222,7 +222,7 @@ class CategoryProductsListAPIView(APIView):
             return Response({'message':messages_for_front['category_not_found']}, status=status.HTTP_404_NOT_FOUND)
 
         articles = category.products.all()
-        serializer = CategorySerializer(articles, many=True)
+        serializer = ProductSerializer(articles, many=True)
 
         return Response({'data': serializer.data})
 #---------------------------
