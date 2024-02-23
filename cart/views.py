@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import CartItem,Cart
 from .serializers import *
+from rest_framework.generics import ListAPIView,DestroyAPIView,RetrieveAPIView,UpdateAPIView
 #---------------------------
 """
     The codes related to the site's cart are in this app.
@@ -21,6 +22,7 @@ messages_for_front = {
     'banner_created' : 'بنر جدید ایجاد شد',
     'item_not_found' : 'محصول یافت نشد.',
     'add_product' : 'محصول با موفقیت به سبد خرید اضافه شد.',
+    'update_product' : 'محصول آپدیت شد.',
     
 }
 #---------------------------
@@ -50,7 +52,6 @@ class AddProductToCartAPIView(APIView):
 class DeleteProductToCartAPIView(APIView):
     """Remove a product from the cart"""
     def delete(self, request,pk):
-        
         try:
             item = CartItem.objects.get(id=pk)
         except CartItem.DoesNotExist:
@@ -58,4 +59,19 @@ class DeleteProductToCartAPIView(APIView):
 
         item.delete()
         return Response({}, status=status.HTTP_204_NO_CONTENT) 
+#---------------------------
+class CartItemUpdateView(APIView):
+    """Update Cart item information with ID"""
+    def put(self, request,pk):
+        try:
+            item = CartItem.objects.get(id=pk)
+        except CartItem.DoesNotExist:
+            return Response({'message':messages_for_front['item_not_found']}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CartItemSerializer(data=request.data,instance=item)
+        
+        if serializer.is_valid():
+            return Response({'message':messages_for_front['update_product'],'item':serializer.data}, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
 #---------------------------

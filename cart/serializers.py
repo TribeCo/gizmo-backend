@@ -1,3 +1,4 @@
+from importlib.metadata import requires
 from rest_framework import serializers
 from .models import *
 from accounts.models import User
@@ -24,16 +25,18 @@ class CartItemSerializerForCart(serializers.ModelSerializer):
     color = ColorSerializerForCart()
     class Meta:
         model = CartItem
-        fields = ['quantity','color','product'] # 
+        fields = ['quantity','color','product'] 
 #--------------------------- 
 class CartSerializer(serializers.ModelSerializer):
-    user = UserSerializerForCart()
+    user = UserSerializerForCart(required=False)
     items = CartItemSerializerForCart(many=True)
     class Meta:
         model = Cart
         fields = ['user','items']
 #---------------------------
 class CartItemSerializer(serializers.ModelSerializer):
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), required=False)
+    
     class Meta:
         model = CartItem
         fields = ['quantity','color','product']  

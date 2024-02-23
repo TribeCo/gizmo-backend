@@ -5,4 +5,5 @@ urlpatterns = [
     path('cart/', CartDetailAPIView.as_view(),name="cart"),
     path('cart/add/', AddProductToCartAPIView.as_view(),name="cart-add"),
     path('cart/delete/<int:pk>/', DeleteProductToCartAPIView.as_view(),name="cart-delete"),
+    path('cart/item/update/<int:pk>/', CartItemUpdateView.as_view(),name="item-update"),
 ]
