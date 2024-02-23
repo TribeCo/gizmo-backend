@@ -1,3 +1,4 @@
+from email import message
 from itertools import product
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -11,14 +12,14 @@ from .serializers import *
 
     1- CartDetailAPIView --> Getting the user's shopping cart information
     2- AddProductToCartAPIView --> Add a product to the cart
-    3- DeleteBannerAPIView --> delete banner with id
+    3- DeleteProductToCartAPIView --> Remove a product from the cart
     4- UpdateBannerAPIView --> update banner with id
 
 """
 #---------------------------
 messages_for_front = {
     'banner_created' : 'بنر جدید ایجاد شد',
-    'product_not_found' : 'محصول یافت نشد.',
+    'item_not_found' : 'محصول یافت نشد.',
     'add_product' : 'محصول با موفقیت به سبد خرید اضافه شد.',
     
 }
@@ -45,4 +46,16 @@ class AddProductToCartAPIView(APIView):
             return Response({'message':messages_for_front['add_product']}, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)      
+#---------------------------
+class DeleteProductToCartAPIView(APIView):
+    """Remove a product from the cart"""
+    def delete(self, request,pk):
+        
+        try:
+            item = CartItem.objects.get(id=pk)
+        except CartItem.DoesNotExist:
+            return Response({'message':messages_for_front['item_not_found']}, status=status.HTTP_404_NOT_FOUND)    
+
+        item.delete()
+        return Response({}, status=status.HTTP_204_NO_CONTENT) 
 #---------------------------
