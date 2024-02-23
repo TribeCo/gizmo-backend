@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import Cart, CartItem
+from .models import Cart, CartItem, Coupon
 #---------------------------
-# admin.site.register(Cart)
+admin.site.register(Coupon)
 #---------------------------
 class CartItemImageItemInline(admin.TabularInline):
     model = CartItem

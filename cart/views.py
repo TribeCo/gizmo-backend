@@ -14,12 +14,14 @@ from rest_framework.generics import ListAPIView,DestroyAPIView,RetrieveAPIView,U
     1- CartDetailAPIView --> Getting the user's shopping cart information
     2- AddProductToCartAPIView --> Add a product to the cart
     3- DeleteProductToCartAPIView --> Remove a product from the cart
-    4- UpdateBannerAPIView --> update banner with id
+    4- CartItemUpdateView --> Update Cart item information with ID
 
 """
 #---------------------------
 messages_for_front = {
-    'banner_created' : 'بنر جدید ایجاد شد',
+    'coupon_created' : 'کد تخفیف جدید ایجاد شد.',
+    'coupon_updated' : 'کد تخفیف آپدیت شد.',
+    'coupon_deleted' : 'کد تخفیف حذف شد.',
     'item_not_found' : 'محصول یافت نشد.',
     'add_product' : 'محصول با موفقیت به سبد خرید اضافه شد.',
     'update_product' : 'محصول آپدیت شد.',
@@ -74,4 +76,46 @@ class CartItemUpdateView(APIView):
             return Response({'message':messages_for_front['update_product'],'item':serializer.data}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
+#---------------------------
+class CouponCreateAPIView(APIView):
+    """
+        create a Coupon
+        {
+            "code": "Asus",
+            "valid_from": ,
+            "valid_to": ,
+            "discount": 20
+        }
+    """
+    def post(self, request):
+        serializer = CouponSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': messages_for_front['coupon_created'],'data' : serializer.data}, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#---------------------------
+class CouponAllListAPIView(ListAPIView):
+    """List of all Coupon"""
+    queryset = Coupon.objects.all()
+    serializer_class = CouponSerializer
+#---------------------------
+class CouponDetailView(RetrieveAPIView):
+    """Getting the information of a Coupon with ID(domain.com/..../pk/)"""
+    queryset = Coupon.objects.all()
+    serializer_class = CouponSerializer
+    lookup_field = 'pk'
+#---------------------------
+class CouponDeleteView(DestroyAPIView):
+    """Remove a Coupon with an ID(domain.com/..../pk/)"""
+    queryset = Coupon.objects.all()
+    serializer_class = CouponSerializer
+    lookup_field = 'pk'
+#---------------------------
+class CouponUpdateView(UpdateAPIView):
+    """Update Coupon information with ID(domain.com/..../pk/)"""
+    queryset = Coupon.objects.all()
+    serializer_class = CouponSerializer
+    lookup_field = 'pk'
 #---------------------------

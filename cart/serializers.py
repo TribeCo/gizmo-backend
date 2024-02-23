@@ -36,8 +36,15 @@ class CartSerializer(serializers.ModelSerializer):
 #---------------------------
 class CartItemSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), required=False)
-    
+
     class Meta:
         model = CartItem
         fields = ['quantity','color','product']  
+#---------------------------
+class CouponSerializer(serializers.ModelSerializer):
+    valid = serializers.CharField(source='is_valid', required=False)
+    
+    class Meta:
+        model = Coupon
+        fields = ['code','valid_from','valid_to','discount','valid']  
 #---------------------------
