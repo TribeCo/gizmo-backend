@@ -9,13 +9,13 @@ def format(show):
     formatted_price = "{:,.0f}".format(show)
     return formatted_price
 #---------------------------
-# class BankAccount(models.Model):
-#     number = models.CharField(max_length=20)
-#     bank_name = models.CharField(max_length=20)
-#     owner = models.CharField(max_length=20)
+class BankAccount(models.Model):
+    number = models.CharField(max_length=20)
+    bank_name = models.CharField(max_length=20)
+    owner = models.CharField(max_length=20)
 
-#     def __str__(self):
-#         return str(self.number) + str(self.bank_name)
+    def __str__(self):
+        return str(self.number) + str(self.bank_name)
 #---------------------------
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='orders')
@@ -88,18 +88,21 @@ class Order(models.Model):
         order_num_str = str(order_num).zfill(5)
         return order_num_str
 #---------------------------
-# class OrderItem(models.Model):
-#     order = models.ForeignKey(Order,on_delete=models.CASCADE,related_name='items')
-#     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='order_items')
-#     price = models.IntegerField()
-#     quantity = models.PositiveSmallIntegerField(default=1)
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order,on_delete=models.CASCADE,related_name='items')
+    product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='order_items')
+    price = models.IntegerField()
+    quantity = models.PositiveSmallIntegerField(default=1)
 
-#     def __str__(self):
-#         return str(self.id)
+    def __str__(self):
+        return f"{self.id}-{self.product}"
 
 
-#     def get_cost(self):
-#         return self.product.discounted_price_int * self.quantity
+    def get_cost(self):
+        return self.product.discounted_price_int * self.quantity
 
-#     def get_cost_from_product(self):
-#         return format(self.product.discounted_price_int * self.quantity)
+    def get_cost_from_product(self):
+        return format(self.product.discounted_price_int * self.quantity)
+#---------------------------
+
+
