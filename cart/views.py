@@ -28,6 +28,7 @@ messages_for_front = {
     'coupon_not_found' : 'کد تخفیف یافت نشد.',
     'coupon_is_not_valid' : 'کد تخفیف معتبر نیست.',
     'coupon_applied' : 'کد تخفیف با موفقیت اعمال شد.',
+    'cart_cleared' : 'سبد خرید خالی شد.'
     
 }
 #---------------------------
@@ -141,4 +142,14 @@ class ApplyCouponToCartAPIView(APIView):
             return Response({'message':messages_for_front['coupon_applied']}, status=status.HTTP_201_CREATED)
         
         return Response({'message':messages_for_front['coupon_is_not_valid']}, status=status.HTTP_400_BAD_REQUEST)  
+#---------------------------
+class ClearCartAPIView(APIView):
+    """Clear the entire shopping cart"""
+    def post(self, request):
+        cart = request.user.cart
+
+        for item in cart.items.all():
+            item.delete()
+
+        return Response({'message':messages_for_front['cart_cleared']}, status=status.HTTP_204_NO_CONTENT) 
 #---------------------------
