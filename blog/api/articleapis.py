@@ -19,6 +19,10 @@ from ..models import Article
         LastThreeGizmologs --> Lists the last three published Articles in Gizmo blog
 """
 
+message_for_front = {
+    'article_created':  'مقاله ساخته شد',
+    'article_not_found' :'مقاله ای وجود ندارد'
+}
 
 class ArticleCreateAPIView(APIView, ArticlePostPermission):    
     """
@@ -50,7 +54,7 @@ class ArticleCreateAPIView(APIView, ArticlePostPermission):
 
         if serializer.is_valid():
             serializer.save()
-            return Response({'message': 'مقاله ساخته شد', 'data': serializer.data})
+            return Response({'message': message_for_front['article_created'], 'data': serializer.data})
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------
@@ -82,7 +86,7 @@ class LastThreeGizmologs(APIView):
         try:
             articles = Article.objects.order_by('-publish').filter(is_for_landing=True)[ :3]
         except:
-            return Response({'message': 'مقاله ای وجود ندارد'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'message': message_for_front['article_not_found']}, status=status.HTTP_404_NOT_FOUND)
         
         serializer = ArticleSerializer(articles, many=True)
         return Response({'data': serializer.data})
