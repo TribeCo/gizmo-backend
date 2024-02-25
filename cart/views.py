@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import CartItem,Cart
 from .serializers import *
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView,DestroyAPIView,RetrieveAPIView,UpdateAPIView
 #---------------------------
 """
@@ -15,6 +16,15 @@ from rest_framework.generics import ListAPIView,DestroyAPIView,RetrieveAPIView,U
     2- AddProductToCartAPIView --> Add a product to the cart
     3- DeleteProductToCartAPIView --> Remove a product from the cart
     4- CartItemUpdateView --> Update Cart item information with ID
+
+    5- CouponCreateAPIView --> create a Coupon
+    6- CouponAllListAPIView --> List of all Coupon
+    7- CouponDetailView --> Getting the information of a Coupon with ID
+    8- CouponDeleteView --> Remove a Coupon with an ID
+
+    9- CouponUpdateView --> Update Coupon information with ID
+    10- ApplyCouponToCartAPIView --> Apply coupon to cart
+    11- ClearCartAPIView --> Clear the entire shopping cart
 
 """
 #---------------------------
