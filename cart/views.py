@@ -25,7 +25,6 @@ from rest_framework.generics import ListAPIView,DestroyAPIView,RetrieveAPIView,U
     9- CouponUpdateView --> Update Coupon information with ID
     10- ApplyCouponToCartAPIView --> Apply coupon to cart
     11- ClearCartAPIView --> Clear the entire shopping cart
-
 """
 #---------------------------
 messages_for_front = {
@@ -33,6 +32,7 @@ messages_for_front = {
     'coupon_updated' : 'کد تخفیف آپدیت شد.',
     'coupon_deleted' : 'کد تخفیف حذف شد.',
     'item_not_found' : 'محصول یافت نشد.',
+    'delete_product' : 'محصول از سبد خخرید حذف شد',
     'add_product' : 'محصول با موفقیت به سبد خرید اضافه شد.',
     'update_product' : 'محصول آپدیت شد.',
     'coupon_not_found' : 'کد تخفیف یافت نشد.',
@@ -44,14 +44,22 @@ messages_for_front = {
 #---------------------------
 class CartDetailAPIView(APIView):
     """Getting the user's shopping cart information"""
+    serializer_class = CartSerializer
     def get(self, request):
         serializer = CartSerializer(request.user.cart)
         return Response({'cart':serializer.data}, status=status.HTTP_200_OK)
 #---------------------------
 class AddProductToCartAPIView(APIView):
-    """Add a product to the cart"""
+    """
+        Add a product to the cart
+        {
+            "quantity": 1,
+            "color": 3, --> color id
+            "product": 6 --> product id
+        }  
+    """
+    serializer_class = CartItemSerializer
     def post(self, request,):
-        
         serializer = CartItemSerializer(data=request.data)
 
         cart = request.user.cart
@@ -67,6 +75,7 @@ class AddProductToCartAPIView(APIView):
 #---------------------------
 class DeleteProductToCartAPIView(APIView):
     """Remove a product from the cart"""
+    serializer_class = CartSerializer
     def delete(self, request,pk):
         try:
             item = CartItem.objects.get(id=pk)
@@ -74,10 +83,11 @@ class DeleteProductToCartAPIView(APIView):
             return Response({'message':messages_for_front['item_not_found']}, status=status.HTTP_404_NOT_FOUND)    
 
         item.delete()
-        return Response({}, status=status.HTTP_204_NO_CONTENT) 
+        return Response({'message':messages_for_front['delete_product']}, status=status.HTTP_204_NO_CONTENT) 
 #---------------------------
 class CartItemUpdateView(APIView):
     """Update Cart item information with ID"""
+    serializer_class = CartItemSerializer
     def put(self, request,pk):
         try:
             item = CartItem.objects.get(id=pk)
@@ -101,6 +111,7 @@ class CouponCreateAPIView(APIView):
             "discount": 20
         }
     """
+    serializer_class = CouponSerializer
     def post(self, request):
         serializer = CouponSerializer(data=request.data)
 
