@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Banner,FAQGroup,FAQ
 from .serializers import BannerSerializer,FAQGroupSerializer,FAQSerializer
+from rest_framework.permissions import IsAuthenticated
 #---------------------------
 """
     The codes related to the site's products are in this app.
@@ -13,6 +14,15 @@ from .serializers import BannerSerializer,FAQGroupSerializer,FAQSerializer
     2- ReadBannerBySlugAPIView --> read banner api with for what input
     3- DeleteBannerAPIView --> delete banner with id
     4- UpdateBannerAPIView --> update banner with id
+    6- CreateFAQGroupAPIView --> create a new FAQ group
+    7- ReadFAQGroupAPIView --> read all FAQ groups
+    8- UpdateFAQGroupAPIView --> update an existing FAQ group
+    9- DeleteFAQGroupAPIView --> delete an existing FAQ group
+    10- CreateFAQAPIView --> creae a new FAQ
+    11- ReadFAQAPIView --> read all FAQs
+    12- UpdateFAQAPIView --> update an existing FAQ
+    13- DeleteFAQAPIView --> delete an existing FAQ
+    
 
 """
 #---------------------------
@@ -24,7 +34,18 @@ messages_for_front = {
 }
 #---------------------------
 class CreateBannerAPIView(APIView):
-    """Create a new banner"""
+    """
+    Create a new banner
+    
+    "bigTitle": 
+    "smallTitle": 
+    "image": 
+    "for_what": 
+    "main_link": 
+    "out_link": 
+    
+    """
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         serializer = BannerSerializer(data=request.data)
         if serializer.is_valid():
@@ -44,6 +65,7 @@ class ReadBannerBySlugAPIView(APIView):
 #---------------------------
 class DeleteBannerAPIView(APIView):
     """Delete a banner with a given ID"""
+    permission_classes = [IsAuthenticated]
     def delete(self, request, banner_id):
         try:
             banner = Banner.objects.get(id=banner_id)
@@ -54,6 +76,7 @@ class DeleteBannerAPIView(APIView):
 #---------------------------
 class UpdateBannerAPIView(APIView):
     """Update a banner with a given ID"""
+    permission_classes = [IsAuthenticated]
     def put(self, request, banner_id):
         try:
             banner = Banner.objects.get(id=banner_id)
@@ -67,6 +90,13 @@ class UpdateBannerAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------    
 class CreateFAQGroupAPIView(APIView):
+    """
+     creating a new FAQ group
+     
+     "title":
+     
+    """
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         serializer = FAQGroupSerializer(data=request.data)
         if serializer.is_valid():
@@ -75,12 +105,19 @@ class CreateFAQGroupAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #--------------------------- 
 class ReadFAQGroupAPIView(APIView):
+    """
+     read all FAQ groups
+    """
     def get(self, request):
         faq_groups = FAQGroup.objects.all()
         serializer = FAQGroupSerializer(faq_groups, many=True)
         return Response(serializer.data)
 #--------------------------- 
 class UpdateFAQGroupAPIView(APIView):
+    """
+     update an existing FAQ group
+    """
+    permission_classes = [IsAuthenticated]
     def put(self, request, pk):
         try:
             faq_group = FAQGroup.objects.get(pk=pk)
@@ -93,6 +130,10 @@ class UpdateFAQGroupAPIView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 #--------------------------- 
 class DeleteFAQGroupAPIView(APIView):
+    """
+     delete an existing FAQ group
+    """
+    permission_classes = [IsAuthenticated]
     def delete(self, request, pk):
         try:
             faq_group = FAQGroup.objects.get(pk=pk)
@@ -102,6 +143,15 @@ class DeleteFAQGroupAPIView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 #--------------------------- 
 class CreateFAQAPIView(APIView):
+    """
+     creae a new FAQ
+     
+     "group": 
+    "question": 
+    "answer":
+    
+    """
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         serializer = FAQSerializer(data=request.data)
         if serializer.is_valid():
@@ -110,12 +160,19 @@ class CreateFAQAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #--------------------------- 
 class ReadFAQAPIView(APIView):
+    """
+     read all FAQs
+    """
     def get(self, request):
         faqs = FAQ.objects.all()
         serializer = FAQSerializer(faqs, many=True)
         return Response(serializer.data)
 #--------------------------- 
 class UpdateFAQAPIView(APIView):
+    """
+      update an existing FAQ
+    """
+    permission_classes = [IsAuthenticated]
     def put(self, request, pk):
         try:
             faq = FAQ.objects.get(pk=pk)
@@ -128,6 +185,10 @@ class UpdateFAQAPIView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 #--------------------------- 
 class DeleteFAQAPIView(APIView):
+    """
+     delete an existing FAQ
+    """
+    permission_classes = [IsAuthenticated]
     def delete(self, request, pk):
         try:
             faq = FAQ.objects.get(pk=pk)
