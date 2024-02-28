@@ -2,8 +2,9 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Banner,FAQGroup,FAQ
-from .serializers import BannerSerializer,FAQGroupSerializer,FAQSerializer
+from .models import Banner,FAQGroup,FAQ,Picture
+from .serializers import BannerSerializer,FAQGroupSerializer,FAQSerializer,PictureSerializer
+from rest_framework.generics import ListAPIView,DestroyAPIView,RetrieveAPIView,UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 #---------------------------
 """
@@ -29,6 +30,7 @@ from rest_framework.permissions import IsAuthenticated
 messages_for_front = {
     'banner_created' : 'بنر جدید ایجاد شد',
     'banner_not_found' : 'بنر یافت نشد',
+    'picture_created' : 'تصویر با موفقیت ذخیره شد.',
     'banner_deleted' : 'بنر حذف شد',
     
 }
@@ -88,7 +90,47 @@ class UpdateBannerAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#---------------------------    
+#---------------------------
+class PictureCreateAPIView(APIView):
+    """
+        create a Picture objects with post method.
+        {
+            "name": "login page background",
+            "image" 
+        }
+    """
+    def post(self, request):
+        serializer = PictureSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': messages_for_front['picture_created'],'data' : serializer.data}, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#---------------------------
+class PictureAllListAPIView(ListAPIView):
+    """List of all Pictures"""
+    queryset = Picture.objects.all()
+    serializer_class = PictureSerializer
+#---------------------------
+class PictureDetailView(RetrieveAPIView):
+    """Getting the information of a Picture with ID(domain.com/..../pk/)"""
+    queryset = Picture.objects.all()
+    serializer_class = PictureSerializer
+    lookup_field = 'pk'
+#---------------------------
+class PictureDeleteView(DestroyAPIView):
+    """Remove a Picture with an ID(domain.com/..../pk/)"""
+    queryset = Picture.objects.all()
+    serializer_class = PictureSerializer
+    lookup_field = 'pk'
+#---------------------------
+class PictureUpdateView(UpdateAPIView):
+    """Update Picture information with ID(domain.com/..../pk/)"""
+    queryset = Picture.objects.all()
+    serializer_class = PictureSerializer
+    lookup_field = 'pk'  
+#---------------------------   
 class CreateFAQGroupAPIView(APIView):
     """
      creating a new FAQ group
