@@ -199,6 +199,8 @@ class CreateUserWithPhoneNumberAPIView(APIView):
                 email = f"{serializer.validated_data['phoneNumber']}@gmail.com",
             )
 
+            user.save()
+
             user.is_active = False
             code = random.randint(10000, 99999)
             user.code = code
