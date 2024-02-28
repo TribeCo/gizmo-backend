@@ -20,6 +20,7 @@ if(deploy):
     JWT_SECRET_KEY = os.getenv('JWT_SECERT_KEY', 'LIARA_URL is not set.')
     SMS_PASSWORD = os.getenv('SMS_PASSWORD', 'LIARA_URL is not set.')
     SMS_USERNAME = os.getenv('SMS_USERNAME', 'LIARA_URL is not set.')
+    
 else:
     # local
     SECRET_KEY = config('SECRET_KEY')
