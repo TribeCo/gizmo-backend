@@ -199,6 +199,8 @@ class CreateUserWithPhoneNumberAPIView(APIView):
                 email = f"{serializer.validated_data['phoneNumber']}@gmail.com",
             )
 
+            user.save()
+
             user.is_active = False
             code = random.randint(10000, 99999)
             user.code = code
@@ -355,9 +357,9 @@ class ChangePassword(APIView):
             urls : domain.com/..../users/change/password/
             Sample json :
             {
-            "phoneNumber" : "09345454678,
+            "phoneNumber" : "09345454678",
             "password" : "338dsfs3fsaengh7",
-            "code" : 7676
+            "code" : 76766
             }
 
     """
