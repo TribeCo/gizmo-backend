@@ -1,4 +1,5 @@
 
+from distutils.command.upload import upload
 from django.db import models
 from django.urls import reverse
 #---------------------------
@@ -68,6 +69,13 @@ class FAQ(models.Model):
 
      def __str__(self):
          return self.question
+#---------------------------
+class Picture(models.Model):
+    name = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='media/pictures/')
+
+    def __str__(self):
+        return self.name
 #---------------------------
 # class Rule(models.Model):
 #     title = models.CharField(max_length=100)

@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 
-deploy = False
+deploy = True
 if(deploy):
     # deploy
     SECRET_KEY = os.getenv('SECRET_KEY', 'LIARA_URL is not set.')
@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'drf_yasg',
+    'drf_spectacular',
 ]
 
 
@@ -95,7 +95,7 @@ ROOT_URLCONF = 'config.urls'
 
 
 MEDIA_URL = '/images/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'data')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 TEMPLATES = [
@@ -201,7 +201,15 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         # 'accounts.permissions.CustomPermission',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Your Project API',
+    'DESCRIPTION': 'Your project description',
+    'VERSION': '1.0.0',
+    # OTHER SETTINGS
 }
 
 # JWT project config

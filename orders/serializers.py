@@ -23,7 +23,7 @@ class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemsSerializerForOrder(many=True)
     class Meta:
         model = Order
-        fields = ('created','updated','paid', 'discount', 'receipt', 'receipt_bool', 'ref_id', 'authority', 'address', 'processed', 'packing', 'shipped', 'deliveried' )
+        fields = ('created','updated','paid', 'discount', 'receipt', 'receipt_bool', 'ref_id', 'authority', 'address', 'processed', 'packing', 'shipped', 'deliveried','user' ,'items')
 #---------------------------
 class OrderItemsSerializer(serializers.ModelSerializer):
     product = ProductSerializerForCart()

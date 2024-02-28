@@ -25,6 +25,9 @@ urlpatterns = [
     path('favorites/add/<int:pk>', AddFavoriteProductAPIView.as_view(), name='favorite_product_addtion'),
     path('favorites/delete/<int:pk>', DeleteFvaoriteProductAPIView.as_view(), name='favorite_product_deletion'),
 
+    path('users/password/change/', PasswordChangeRequest.as_view(), name='users_password_change'),
+    path('users/password/confirm/', ChangePassword.as_view(), name='users_password_confirm'),
+
     path('users/sign_up/', UpdateSignUpAPIView.as_view(), name='sign_up'),
     path('users/create/phone/', CreateUserWithPhoneNumberAPIView.as_view(), name='create_phone'),
     path('users/auth/code/', CheckCodeAPIView.as_view(), name='check_code'),
