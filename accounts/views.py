@@ -357,9 +357,9 @@ class ChangePassword(APIView):
             urls : domain.com/..../users/change/password/
             Sample json :
             {
-            "phoneNumber" : "09345454678,
+            "phoneNumber" : "09345454678",
             "password" : "338dsfs3fsaengh7",
-            "code" : 7676
+            "code" : 76766
             }
 
     """
