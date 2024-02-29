@@ -32,9 +32,6 @@ class TestCartItemModel(TestCase):
         cart = Cart.objects.create(user=user, )
 
         cart_item = CartItem(cart=cart)
-        
-
-
 
         self.assertEqual(str(cart),f'{user} - {cart.id}')
 

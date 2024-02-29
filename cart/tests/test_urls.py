@@ -31,11 +31,11 @@ class TestCouponUrls(SimpleTestCase):
 
     def test_coupon_read(self):
         url = reverse('cart:coupon_read',args=[1,])
-        self.assertEqual(resolve(url).func.view_class,CouponAllListAPIView)
+        self.assertEqual(resolve(url).func.view_class,CouponDetailView)
 
     def test_coupon_read_all(self):
         url = reverse('cart:coupon_read_all')
-        self.assertEqual(resolve(url).func.view_class,CouponDetailView)
+        self.assertEqual(resolve(url).func.view_class,CouponAllListAPIView)
 
     def test_coupon_delete(self):
         url = reverse('cart:coupon_delete',args=[1,])
