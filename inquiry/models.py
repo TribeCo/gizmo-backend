@@ -20,7 +20,5 @@ class ForeignOrder(models.Model):
 
     def total_price(self):
         return self.price + self.profit
-
-
 #---------------------------
 
