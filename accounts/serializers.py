@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User,Address
+from .models import User,Address,Message
 from .models import Comment,ProductComment
 from blog.models import ArticleComment
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -66,3 +66,15 @@ class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
         fields = ['id', 'user', 'text', 'postal_code', 'city', 'phone_number', 'current']
+#---------------------------
+class MessageCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ['title', 'text', 'created', 'seen', 'user']
+#---------------------------
+class MessageSerializer(serializers.ModelSerializer):
+    user = UserReadSerializer()
+    class Meta:
+        model = Message
+        fields = ['title', 'text', 'created', 'seen', 'user']
+#---------------------------
