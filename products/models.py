@@ -73,6 +73,9 @@ class Product(models.Model):
 
     ordered = models.IntegerField(default=0)
 
+    send_free = models.BooleanField(default=False)
+    net_sale = models.BooleanField(default=False)
+
 
     # product_barcode = models.IntegerField(blank=True,null=True)
     # dirham_price = models.IntegerField(blank=True,null=True) 
