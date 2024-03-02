@@ -124,3 +124,24 @@ class WatchedProduct(models.Model):
     def __str__(self):
         return f"{self.user.full_name} - {self.product.name} - {self.timestamp}"
 #---------------------------
+class Message(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="messages")
+    title = models.CharField(max_length=100)
+    text = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    seen = models.BooleanField(default=False)
+
+
+    def __str__(self):
+        return f"{self.title}-{self.user.full_name}"
+
+    def shamsi_date(self):
+        return jalali_converter_with_hour(self.created) 
+    
+    def days_since_creation(self):
+        now = timezone.now()
+        created_naive = timezone.make_naive(self.created, timezone.get_default_timezone())
+        created_aware = timezone.make_aware(created_naive, timezone.get_default_timezone())
+        days = (now - created_aware).days
+        return f"{days} روز پیش"
+#---------------------------
