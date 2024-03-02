@@ -4,6 +4,7 @@ from rest_framework import status
 from ..serializers import *
 from ..models import Comment,ProductComment
 from blog.models import ArticleComment
+from rest_framework.permissions import IsAuthenticated
 #---------------------------
 """
     The codes related to the site's comments are in this app.
@@ -29,6 +30,7 @@ messages_for_front = {
 #---------------------------
 class CreateCommentForArticleAPIView(APIView):
     """create comment for article"""
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         serializer = ArticleCommentSerializer(data=request.data)
         if serializer.is_valid():
@@ -38,6 +40,7 @@ class CreateCommentForArticleAPIView(APIView):
 #---------------------------
 class CreateCommentForProductAPIView(APIView):
     """create comment for product"""
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         serializer = ProductCommentSerializer(data=request.data)
         if serializer.is_valid():
@@ -69,6 +72,7 @@ class ReadCommentForArticleAPIView(APIView):
 #---------------------------
 class DeleteCommentAPIView(APIView):
     """delete comment with id"""
+    permission_classes = [IsAuthenticated]
     def delete(self, request, comment_id):
         try:
             comment = Comment.objects.get(id=comment_id)
@@ -80,6 +84,7 @@ class DeleteCommentAPIView(APIView):
 #---------------------------
 class UpdateCommentAPIView(APIView):
     """update comment with id"""
+    permission_classes = [IsAuthenticated]
     def put(self, request, comment_id):
         try:
             comment = Comment.objects.get(id=comment_id)

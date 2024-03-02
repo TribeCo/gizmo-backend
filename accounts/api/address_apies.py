@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from ..serializers import *
 from rest_framework.generics import ListAPIView,DestroyAPIView,RetrieveAPIView,UpdateAPIView
+from rest_framework.permissions import IsAuthenticated
 #---------------------------
 """
     The codes related to the site's user Address are in this app.
@@ -23,6 +24,7 @@ messages_for_front = {
 #---------------------------
 class CreateAddressAPIView(APIView):
     """create an address"""
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         serializer = AddressSerializer(data=request.data)
         if serializer.is_valid():
@@ -32,24 +34,28 @@ class CreateAddressAPIView(APIView):
 #---------------------------
 class ReadAddressAPIView(RetrieveAPIView):
     """Getting the information of a Brand with ID"""
+    permission_classes = [IsAuthenticated]
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
     lookup_field = 'pk'
 #---------------------------
 class UpdateAddressAPIView(UpdateAPIView):
     """update address with id"""
+    permission_classes = [IsAuthenticated]
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
     lookup_field = 'pk'
 #---------------------------
 class DeleteAddressAPIView(DestroyAPIView):
     """delete address with id"""
+    permission_classes = [IsAuthenticated]
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
     lookup_field = 'pk'
 #---------------------------
 class UserAddressAPIView(APIView):
     """get an user addresses"""
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         serializer = AddressSerializer(data=request.data)
         if serializer.is_valid():

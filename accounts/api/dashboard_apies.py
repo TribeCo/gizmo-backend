@@ -6,6 +6,7 @@ from ..models import Product
 from inquiry.models import ForeignOrder
 from orders.models import Order
 from products.serializers import ProductSerializer
+from rest_framework.permissions import IsAuthenticated
 #---------------------------
 """
     The codes related to the site's products are in this app.
@@ -48,6 +49,7 @@ messages_for_front = {
 }
 #---------------------------
 class FavoriteProductsAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):        
         user = request.user        
         try:
@@ -60,6 +62,7 @@ class FavoriteProductsAPIView(APIView):
         return Response({'data': favorite_products.data})
 #---------------------------
 class AddFavoriteProductAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, pk):
         user = request.user
         try:
@@ -73,6 +76,7 @@ class AddFavoriteProductAPIView(APIView):
         return Response({'message': messages_for_front['product_added_to_wishlist']},status=status.HTTP_200_OK)
 #---------------------------
 class DeleteFvaoriteProductAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     def delete(self, request, pk):
         user = request.user
         try:
@@ -87,6 +91,7 @@ class DeleteFvaoriteProductAPIView(APIView):
 #---------------------------
 class UserOrdersCountAPIView(APIView):
     """Retrieve the count of orders and returns for the logged-in user"""
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         if request.user.is_authenticated:
             orders_count = Order.objects.filter(user=request.user).count()

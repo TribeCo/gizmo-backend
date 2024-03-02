@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from ..serializers import *
 from ..models import User
+from rest_framework.permissions import IsAuthenticated
 #---------------------------
 """
     The codes related to the site's user cruds are in this app.
@@ -33,6 +34,7 @@ class UserCreateAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------
 class UserRetrieveAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     """ read one user with id """
     
     def get(self, request, user_id):
@@ -44,6 +46,7 @@ class UserRetrieveAPIView(APIView):
             return Response({'message': messages_for_front['user_not_found']}, status=status.HTTP_404_NOT_FOUND)
 #---------------------------
 class UserListAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     """read all user"""
 
     def get(self, request):
@@ -52,6 +55,7 @@ class UserListAPIView(APIView):
         return Response(serializer.data)
 #---------------------------
 class UserDeleteAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     """delete one user with id"""
     
     def delete(self, request, user_id):
@@ -63,6 +67,7 @@ class UserDeleteAPIView(APIView):
             return Response({'message': messages_for_front['user_not_found']}, status=status.HTTP_404_NOT_FOUND)
 #---------------------------
 class UserUpdateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     """update one user with id"""
     
     def put(self, request, user_id):

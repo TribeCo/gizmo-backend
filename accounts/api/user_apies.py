@@ -6,6 +6,7 @@ from ..serializers import *
 from ..models import User
 from config.settings import SMS_PASSWORD,SMS_USERNAME
 import random
+from rest_framework.permissions import IsAuthenticated
 #---------------------------
 """
     The codes related to the site's user model are in this app.
