@@ -1,38 +1,23 @@
-import random
-from urllib import response
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from cart.models import Cart
-from .serializers import *
-from .models import User,Product,Comment,ProductComment
-from blog.models import Article,ArticleComment
-from inquiry.models import ForeignOrder
-from orders.models import Order
+from ..serializers import *
+from ..models import User
 from config.settings import SMS_PASSWORD,SMS_USERNAME
-import requests
-from products.serializers import ProductSerializer
+import random
 #---------------------------
 """
-    The codes related to the site's products are in this app.
-    api's in api_views.py :
+    The codes related to the site's user model are in this app.
+    api's in user_apies.py:
 
-    1- UserCreateAPIView --> create a user
-    2- UserRetrieveAPIView --> read one user with id
-    3- UserListAPIView --> read all user
-    4- UserDeleteAPIView --> delete one user with id
-    5- UserUpdateAPIView --> update one user with id
-    6- CreateCommentForArticleAPIView --> create comment for article
-    7- CreateCommentForProductAPIView --> create comment for product
-    8- ReadCommentForProductAPIView --> read comment for a product
-    9- ReadCommentForarticleAPIView --> read comment for a article
-    10- DeleteCommentAPIView --> delete comment with id
-    11- UpdateCommentAPIView --> update comment with id
-    12- CreateAddressAPIView --> create an address
-    13- ReadAddressAPIView --> read all addresses
-    14- UpdateAddressAPIView --> update address with id
-    15- DeleteAddressAPIView --> delete address with id
+    1- CheckPhoneNumberAPIView --> This API checks whether the phone number is in the database or not
+    2- CreateUserWithPhoneNumberAPIView --> Create user with phone number
+    3- CheckCodeAPIView --> Check the code user entered and code is in database
+    4- UpdateSignUpAPIView --> Sign up for frontend
+    5- PasswordChangeRequest --> Password change request
+    6- ChangePassword --> It change user password if can_change_password is active.
+    
 
 """
 #---------------------------
@@ -53,127 +38,6 @@ messages_for_front = {
     'product_removed_from_wishlist': 'محصول از لیست مورد علاقه‌ها حذف شد',
     
 }
-#---------------------------
-class UserCreateAPIView(APIView):
-    """create a user"""
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'message': messages_for_front['user_created'], 'data': serializer.data}, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#---------------------------
-class UserRetrieveAPIView(APIView):
-    """ read one user with id """
-    
-    def get(self, request, user_id):
-        try:
-            user = User.objects.get(id=user_id)
-            serializer = UserReadSerializer(user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except User.DoesNotExist:
-            return Response({'message': messages_for_front['user_not_found']}, status=status.HTTP_404_NOT_FOUND)
-#---------------------------
-class UserListAPIView(APIView):
-    """read all user"""
-
-    def get(self, request):
-        users = User.objects.all()
-        serializer = UserReadSerializer(users, many=True)
-        return Response(serializer.data)
-#---------------------------
-class UserDeleteAPIView(APIView):
-    """delete one user with id"""
-    
-    def delete(self, request, user_id):
-        try:
-            user = User.objects.get(id=user_id)
-            user.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except User.DoesNotExist:
-            return Response({'message': messages_for_front['user_not_found']}, status=status.HTTP_404_NOT_FOUND)
-#---------------------------
-class UserUpdateAPIView(APIView):
-    """update one user with id"""
-    
-    def put(self, request, user_id):
-        try:
-            user = User.objects.get(id=user_id)
-            serializer = UserReadSerializer(user, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except User.DoesNotExist:
-            return Response({'message': messages_for_front['user_not_found']}, status=status.HTTP_404_NOT_FOUND)
-#---------------------------
-class CreateCommentForArticleAPIView(APIView):
-    """create comment for article"""
-    def post(self, request):
-        serializer = ArticleCommentSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#---------------------------
-class CreateCommentForProductAPIView(APIView):
-    """create comment for product"""
-    def post(self, request):
-        serializer = ProductCommentSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#---------------------------
-class ReadCommentForProductAPIView(APIView):
-    """read comment for a product"""
-    def get(self, request, comment_id):
-        try:
-            comment = ProductComment.objects.get(id=comment_id)
-        except ProductComment.DoesNotExist:
-            return Response({'message': messages_for_front['comment_not_found']}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = CommentSerializer(comment)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-#---------------------------
-class ReadCommentForArticleAPIView(APIView):
-    """read comment for a article"""
-    def get(self, request, comment_id):
-        try:
-            comment = ArticleComment.objects.get(id=comment_id)
-        except ArticleComment.DoesNotExist:
-            return Response({'message': messages_for_front['comment_not_found']}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = CommentSerializer(comment)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-#---------------------------
-class DeleteCommentAPIView(APIView):
-    """delete comment with id"""
-    def delete(self, request, comment_id):
-        try:
-            comment = Comment.objects.get(id=comment_id)
-        except Comment.DoesNotExist:
-            return Response({'message': messages_for_front['comment_not_found']}, status=status.HTTP_404_NOT_FOUND)
-
-        comment.delete()
-        return Response({'message': messages_for_front['comment_deleted']}, status=status.HTTP_204_NO_CONTENT)
-#---------------------------
-class UpdateCommentAPIView(APIView):
-    """update comment with id"""
-    def put(self, request, comment_id):
-        try:
-            comment = Comment.objects.get(id=comment_id)
-        except Comment.DoesNotExist:
-            return Response({'message': messages_for_front['comment_not_found']}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = CommentSerializer(comment, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------
 class CheckPhoneNumberAPIView(APIView):
     """This API checks whether the phone number is in the database or not"""
@@ -238,7 +102,7 @@ class CreateUserWithPhoneNumberAPIView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------
 class CheckCodeAPIView(APIView):
-    """Sign up for frontend"""
+    """Check the code user entered and code is in database"""
     def post(self, request):
 
         code = request.data['code']
@@ -386,91 +250,4 @@ class ChangePassword(APIView):
         else:
             return Response(info.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------
-class CreateAddressAPIView(APIView):
-    """create an address"""
-    def post(self, request):
-        serializer = AddressSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#---------------------------
-class ReadAddressAPIView(APIView):
-    """read all addresses"""
-    def get(self, request):
-        addresses = Address.objects.all()
-        serializer = AddressSerializer(addresses, many=True)
-        return Response(serializer.data)
-#---------------------------
-class UpdateAddressAPIView(APIView):
-    """update address with id"""
-    def put(self, request, pk):
-        try:
-            address = Address.objects.get(pk=pk)
-            serializer = AddressSerializer(address, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Address.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-#---------------------------
-class DeleteAddressAPIView(APIView):
-    """delete address with id"""
-    def delete(self, request, pk):
-        try:
-            address = Address.objects.get(pk=pk)
-            address.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Address.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-#---------------------------
-class FavoriteProductsAPIView(APIView):
-    def get(self, request):        
-        user = request.user        
-        try:
-            products = user.wishlist.all()
-        except:
-            return Response({'message': messages_for_front['favorite_products_not_found']}, status=status.HTTP_404_NOT_FOUND)
-        
-
-        favorite_products = ProductSerializer(products, many=True)
-        return Response({'data': favorite_products.data})
-#---------------------------
-class AddFavoriteProductAPIView(APIView):
-    def get(self, request, pk):
-        user = request.user
-        try:
-            product = Product.objects.get(pk = pk)
-        except:
-            return Response({'message': 'محصول مورد نظر وجود ندارد'}, status=status.HTTP_404_NOT_FOUND)
-        
-        user.wishlist.add(product)
-        user.save()
-
-        return Response({'message': messages_for_front['product_added_to_wishlist']},status=status.HTTP_200_OK)
-#---------------------------
-class DeleteFvaoriteProductAPIView(APIView):
-    def delete(self, request, pk):
-        user = request.user
-        try:
-            product = Product.objects.get(pk = pk)
-        except:
-            return Response({'message': messages_for_front['favorite_products_not_found']}, status=status.HTTP_404_NOT_FOUND)
-    
-        user.wishlist.remove(product)
-        user.save()
-
-        return Response({'message': messages_for_front['product_removed_from_wishlist']}, status=status.HTTP_200_OK)
-#---------------------------
-class UserOrdersCountAPIView(APIView):
-    """Retrieve the count of orders and returns for the logged-in user"""
-    def get(self, request):
-        if request.user.is_authenticated:
-            orders_count = Order.objects.filter(user=request.user).count()
-            returns_count = Order.objects.filter(user=request.user, returned=True).count()
-            foreign_returns_count = ForeignOrder.objects.filter(user=request.user).count()
-            return Response({'orders_count': orders_count, 'returns_count': returns_count, 'foreign_returns_count': foreign_returns_count}, status=status.HTTP_200_OK)
-        else:
-            return Response({'error': 'User is not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
