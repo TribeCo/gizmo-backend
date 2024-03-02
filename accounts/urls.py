@@ -17,10 +17,12 @@ urlpatterns = [
     path('articles/comments/<int:comment_id>/', ReadCommentForArticleAPIView.as_view(), name='read_comment_for_article'),
     path('comments/delete/<int:comment_id>/', DeleteCommentAPIView.as_view(), name='delete_comment'),
     path('comments/update/<int:comment_id>/', UpdateCommentAPIView.as_view(), name='update_comment'),
+
     path('addresses/create/', CreateAddressAPIView.as_view(), name='create_address'),
-    path('addresses/read/', ReadAddressAPIView.as_view(), name='read_addresses'),
+    path('addresses/read/<int:pk>/', ReadAddressAPIView.as_view(), name='read_addresses'),
     path('addresses/update/<int:pk>/', UpdateAddressAPIView.as_view(), name='update_address'),
     path('addresses/delete/<int:pk>/', DeleteAddressAPIView.as_view(), name='delete_address'),
+
     path('favorites/', FavoriteProductsAPIView.as_view(), name='favorite_products'),
     path('favorites/add/<int:pk>', AddFavoriteProductAPIView.as_view(), name='favorite_product_addtion'),
     path('favorites/delete/<int:pk>', DeleteFvaoriteProductAPIView.as_view(), name='favorite_product_deletion'),
