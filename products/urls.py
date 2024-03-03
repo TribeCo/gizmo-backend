@@ -1,5 +1,8 @@
 from django.urls import path
 from .views import * 
+#---------------------------
+
+app_name = 'products'
 
 urlpatterns = [
     path('brand/', BrandCreateAPIView.as_view(),name="brand_create"),
@@ -17,8 +20,6 @@ urlpatterns = [
     path('product/update/<int:pk>/', ProductUpdateAPIView.as_view(),name="product_update"),
     path('product/delete/<int:pk>/', ProductDeleteAPIView.as_view(),name="product_delete"),
     path('product/discounted/', ProductDiscountedListAPIView.as_view(),name="all_discounted_products"),
-    path('product/<int:pk>/', ProductDetailAPIView.as_view(),name="product_read"),
-    path('product/<str:slug>/', ProductDetailAPIViewBySlug.as_view(),name="product_read_slug"),
     path('category/', CategoryCreateAPIView.as_view(),name="category_create"),
     path('category/landing/', CategotyLandingListAPIView.as_view(),name="category_landing"),
     path('category/<int:pk>/', CategoryDetailAPIView.as_view(),name="category_read"),
