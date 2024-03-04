@@ -19,21 +19,25 @@ class TestPictureModel(TestCase):
         picture = Picture.objects.create(name='Test Picture')
         self.assertEqual(str(picture), 'Test Picture')
 #--------------------------
-# class TestBannerModel(TestCase):
-#     def test_string_representation(self):
-#         banner = Banner.objects.create(bigTitle='Test Banner', smallTitle='Test Small Title', for_what='T', main_link='test', out_link='test')
-#         self.assertEqual(str(banner), 'Test Banner')
+class TestBannerModel(TestCase):
+    def setUp(self):
+        banner = Banner.objects.create(bigTitle="Test Banner",  for_what="T",color_title="FFF", abs_link="url")
+        banner.save()
+        self.banner = banner
 
-#     def test_get_absolute_url(self):
-#         banner = Banner.objects.create(bigTitle='Test Banner', smallTitle='Test Small Title', for_what='T', main_link='test', out_link='test')
-#         self.assertEqual(banner.get_absolute_url(), '/test/test/')
+    def test_string_representation(self):
+        self.assertEqual(str(self.banner), 'Test Banner')
+
+    def test_get_absolute_url(self):
+        self.assertEqual(self.banner.get_absolute_url(), 'url')
 
 
-#     def test_filter_method(self):
-#         Banner.objects.create(bigTitle='Banner 1', smallTitle='Small Title 1', for_what='T', main_link='test', out_link='test')
-#         Banner.objects.create(bigTitle='Banner 2', smallTitle='Small Title 2', for_what='S', main_link='test', out_link='test')
-#         Banner.objects.create(bigTitle='Banner 3', smallTitle='Small Title 3', for_what='T', main_link='test', out_link='test')
+    def test_filter_method(self):
+        Banner.objects.create(bigTitle='Banner 1', for_what='A',color_title="FFF", abs_link="test_main_link")
+        Banner.objects.create(bigTitle='Banner 2', for_what='S',color_title="FFF", abs_link="test_main_link")
+        Banner.objects.create(bigTitle='Banner 3', for_what='T',color_title="FFF", abs_link="test_main_link")
 
-#         banners = Banner.filter()
+        banners = Banner.objects.filter(for_what='T').count()
 
-#         self.assertEqual(len(banners['T']), 2)
+        self.assertEqual(banners, 2)
+#--------------------------

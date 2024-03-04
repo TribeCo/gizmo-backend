@@ -18,8 +18,9 @@ from ..views import *
 #         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 #---------------------------
 class TestReadBannerBySlugAPIView(APITestCase):
+
     def test_read_banner_by_slug_api_200(self):
-        banner = Banner.objects.create(bigTitle="Test Banner", smallTitle="Small Test Banner", for_what="T", main_link="test_main_link", out_link="test_out_link")
+        banner = Banner.objects.create(bigTitle="Test Banner",  for_what="T",color_title="FFF", abs_link="test_main_link")
         response = self.client.get(f'/api/banners/read/{banner.for_what}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -29,7 +30,7 @@ class TestReadBannerBySlugAPIView(APITestCase):
 #---------------------------
 class TestDeleteBannerAPIView(APITestCase):
     def test_delete_banner_api_204(self):
-        banner = Banner.objects.create(bigTitle="Test Banner", smallTitle="Small Test Banner", for_what="T", main_link="test_main_link", out_link="test_out_link")
+        banner = Banner.objects.create(bigTitle="Test Banner", for_what="T",color_title="FFF", abs_link="test_main_link")
         response = self.client.delete(f'/api/banners/delete/{banner.id}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 

@@ -97,19 +97,14 @@ class Picture(models.Model):
 #---------------------------
 class Banner(models.Model):
     bigTitle = models.CharField(max_length=200)
-    smallTitle = models.CharField(max_length=200)
+    color_title = models.CharField(max_length=10) 
     image = models.ImageField(upload_to='media/banners/%Y/%m/')
     for_what = models.CharField(max_length=2,choices=for_what_choices)
-    main_link = models.CharField(max_length=200)
-    out_link = models.CharField(max_length=200)
+    abs_link = models.CharField(max_length=200,null=True,blank=True)
     button = models.CharField(max_length=200,null=True,blank=True)
-    arg = models.CharField(max_length=200,null=True,blank=True)
 
     def get_absolute_url(self):
-        args = []
-        if(self.arg):
-            args = self.arg.split(',')
-        return reverse(f"{self.main_link}:{self.out_link}",args=args)
+        return self.abs_link
 
     def __str__(self):
         return self.bigTitle
