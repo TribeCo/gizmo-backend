@@ -35,6 +35,7 @@ urlpatterns = [
 
     path('users/password/change/', PasswordChangeRequest.as_view(), name='users_password_change'),
     path('users/password/confirm/', ChangePassword.as_view(), name='users_password_confirm'),
+    path('users/password/old/change/', OldChangePassword.as_view(), name='users_old_password_change'),
 
     path('users/sign_up/', UpdateSignUpAPIView.as_view(), name='sign_up'),
     path('users/create/phone/', CreateUserWithPhoneNumberAPIView.as_view(), name='create_phone'),

@@ -28,6 +28,14 @@ class PasswordChangeSerializer(serializers.ModelSerializer):
         model = User
         fields = [ 'phoneNumber', 'code','password']
 #---------------------------
+class OldPasswordChangeSerializer(serializers.ModelSerializer):
+    phoneNumber = serializers.CharField()
+    new_password = serializers.CharField()
+    new_password_confirm = serializers.CharField()
+    class Meta:
+        model = User
+        fields = [ 'phoneNumber', 'new_password','password','new_password_confirm']
+#---------------------------
 class UserReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

@@ -30,8 +30,10 @@ messages_for_front = {
     'comment_not_found' : 'نظر یافت نشد',
     'comment_deleted' : 'نظر حذف شد',
     'user_found' : 'کاربر یافت شد.',
-    'password_changed' : 'پسورد با موفقیت تغییر کرد.',
+    'password_changed' : 'رمز عبور با موفقیت تغییر کرد.',
     'wrong_coode' : 'کد اعتبارسنجی نامعتبر است.',
+    'not_access' : 'شما دسترسی لازمه را ندارید.',
+    'not_match': 'رمز های عبور یکسان نیستند.',
     'right_code' : 'کد اعتبارسنجی صحیح است.',
     'code_sent' : 'کد ارسال شد.',
     'favorite_products_not_found': 'محصول مورد علاقه ای وجود ندارد',
@@ -251,4 +253,40 @@ class ChangePassword(APIView):
         else:
             return Response(info.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------
+class OldChangePassword(APIView):
+    """
+            It change user old password.
+            urls : domain.com/..../users/change/password/old/
+            Sample json :
+            {
+                "phoneNumber": "09345454678",
+                "new_password": "sdfmkwefjoiwejf",
+                "new_password_confirm": "sdfmkwefjoiwejf",
+                "password": "338dsfs3fsaengh7"
+            }
 
+    """
+    def post(self, request):
+        info = OldPasswordChangeSerializer(data=request.data)    
+
+        if info.is_valid():
+            try :
+                user = User.objects.get(phoneNumber = info.validated_data['phoneNumber'])
+            except User.DoesNotExist:
+                return Response({'message': messages_for_front['user_not_found']}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if (user.check_password(str(info.validated_data['password']))):
+                if((user == request.user) and (info.validated_data['new_password_confirm'] == info.validated_data['new_password'])):
+
+                    user.set_password(info.validated_data.get('new_password'))
+                    user.can_change_password = False
+                    user.code = random.randint(10000, 99999)
+                    user.save()
+
+                    return Response({'message': messages_for_front['password_changed']}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'message': messages_for_front['not_match']}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'message': messages_for_front['not_access']}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(info.errors, status=status.HTTP_400_BAD_REQUEST)
+#---------------------------
