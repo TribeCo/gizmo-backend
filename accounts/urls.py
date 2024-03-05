@@ -17,13 +17,25 @@ urlpatterns = [
     path('articles/comments/<int:comment_id>/', ReadCommentForArticleAPIView.as_view(), name='read_comment_for_article'),
     path('comments/delete/<int:comment_id>/', DeleteCommentAPIView.as_view(), name='delete_comment'),
     path('comments/update/<int:comment_id>/', UpdateCommentAPIView.as_view(), name='update_comment'),
+
     path('addresses/create/', CreateAddressAPIView.as_view(), name='create_address'),
-    path('addresses/read/', ReadAddressAPIView.as_view(), name='read_addresses'),
+    path('addresses/read/<int:pk>/', ReadAddressAPIView.as_view(), name='read_addresses'),
     path('addresses/update/<int:pk>/', UpdateAddressAPIView.as_view(), name='update_address'),
     path('addresses/delete/<int:pk>/', DeleteAddressAPIView.as_view(), name='delete_address'),
+
+    path('messages/create/', CreateMessageAPIView.as_view(), name='create_messages'),
+    path('messages/read/<int:pk>/', ReadMessageAPIView.as_view(), name='read_messages'),
+    path('messages/update/<int:pk>/', UpdateMessageAPIView.as_view(), name='update_messages'),
+    path('messages/delete/<int:pk>/', DeleteMessageAPIView.as_view(), name='delete_messages'),
+    path('messages/user/', UserMessageAPIView.as_view(), name='user_messages'),
+
     path('favorites/', FavoriteProductsAPIView.as_view(), name='favorite_products'),
     path('favorites/add/<int:pk>', AddFavoriteProductAPIView.as_view(), name='favorite_product_addtion'),
     path('favorites/delete/<int:pk>', DeleteFvaoriteProductAPIView.as_view(), name='favorite_product_deletion'),
+
+    path('users/password/change/', PasswordChangeRequest.as_view(), name='users_password_change'),
+    path('users/password/confirm/', ChangePassword.as_view(), name='users_password_confirm'),
+    path('users/password/old/change/', OldChangePassword.as_view(), name='users_old_password_change'),
 
     path('users/sign_up/', UpdateSignUpAPIView.as_view(), name='sign_up'),
     path('users/create/phone/', CreateUserWithPhoneNumberAPIView.as_view(), name='create_phone'),

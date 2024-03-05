@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 
-deploy = False
+deploy = True
 if(deploy):
     # deploy
     SECRET_KEY = os.getenv('SECRET_KEY', 'LIARA_URL is not set.')
@@ -20,6 +20,7 @@ if(deploy):
     JWT_SECRET_KEY = os.getenv('JWT_SECERT_KEY', 'LIARA_URL is not set.')
     SMS_PASSWORD = os.getenv('SMS_PASSWORD', 'LIARA_URL is not set.')
     SMS_USERNAME = os.getenv('SMS_USERNAME', 'LIARA_URL is not set.')
+    
 else:
     # local
     SECRET_KEY = config('SECRET_KEY')
@@ -95,7 +96,7 @@ ROOT_URLCONF = 'config.urls'
 
 
 MEDIA_URL = '/images/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'data')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 TEMPLATES = [

@@ -6,12 +6,18 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from products.models import Product
 from .managers import MyUserManager
 from layout.utils import jalali_converter_with_hour
+import uuid
 #---------------------------
 send_ways = (
         ('c' , "درون شهری"),
         ('b' , "اتوبوس"),
         ('p', "پست معمولی"),
         ('t',"تیپاکس (پس کرایه)"),
+    )
+gender_options = (
+        ('m' , "آقا"),
+        ('f' , "خانم"),
+        ('u', "ترجیح میدم نگویم."),
     )
 #---------------------------
 class ProfileUser(models.Model):
@@ -22,6 +28,7 @@ class ProfileUser(models.Model):
         return str(self.bio)
 #---------------------------
 class User(AbstractBaseUser):
+    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     phoneNumber = models.CharField(unique=True, max_length=11)
     full_name = models.CharField(max_length=100, null=True, blank=True)
     is_admin = models.BooleanField(default=False)
@@ -41,13 +48,15 @@ class User(AbstractBaseUser):
 
     last_send_way = models.CharField(max_length=1,choices = send_ways,default='t')
 
+    gender = models.CharField(max_length=1,choices = gender_options,default='u')
+
 
 
     USERNAME_FIELD = 'phoneNumber'
     objects = MyUserManager()
 
     def __str__(self):
-        return str(self.phoneNumber) + " - " + str(self.full_name)
+        return str(self.phoneNumber) + " - " + str(self.full_name)+ " - " + str(self.id)
 
     def blog_articles(self):
         return reverse("blog:author_articles",args=[1,self.id])
@@ -123,4 +132,25 @@ class WatchedProduct(models.Model):
 
     def __str__(self):
         return f"{self.user.full_name} - {self.product.name} - {self.timestamp}"
+#---------------------------
+class Message(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="messages")
+    title = models.CharField(max_length=100)
+    text = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    seen = models.BooleanField(default=False)
+
+
+    def __str__(self):
+        return f"{self.title}-{self.user.full_name}"
+
+    def shamsi_date(self):
+        return jalali_converter_with_hour(self.created) 
+    
+    def days_since_creation(self):
+        now = timezone.now()
+        created_naive = timezone.make_naive(self.created, timezone.get_default_timezone())
+        created_aware = timezone.make_aware(created_naive, timezone.get_default_timezone())
+        days = (now - created_aware).days
+        return f"{days} روز پیش"
 #---------------------------
