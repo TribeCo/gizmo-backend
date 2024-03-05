@@ -13,7 +13,7 @@ class Category(models.Model):
     )
     title = models.CharField(max_length=50,verbose_name="تیتر")
     slug = models.SlugField(max_length=40, unique = True,verbose_name="آدرس")
-    Cover = models.ImageField(upload_to='media/blog/categories/%Y/%m/',null=True,blank=True,verbose_name="تصویر")
+    cover = models.ImageField(upload_to='media/blog/categories/%Y/%m/',null=True,blank=True,verbose_name="تصویر")
     status = models.CharField(max_length=1,choices = status_ch,verbose_name="وضعیت")
 
     objects = CategoryManager()
