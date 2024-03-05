@@ -56,7 +56,7 @@ class Coupon(models.Model):
     discount = models.IntegerField(validators=[MinValueValidator(0),MaxValueValidator(100)])
 
     def __str__(self):
-        return f"{self.id}-{self.code}"
+        return f"{self.discount}-{self.code}"
 
     def is_valid(self):
         now = timezone.now().date()
