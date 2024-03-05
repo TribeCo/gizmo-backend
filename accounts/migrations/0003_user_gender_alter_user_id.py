@@ -16,9 +16,4 @@ class Migration(migrations.Migration):
             name='gender',
             field=models.CharField(choices=[('m', 'آقا'), ('f', 'خانم'), ('u', 'ترجیح میدم نگویم.')], default='u', max_length=1),
         ),
-        migrations.AlterField(
-            model_name='user',
-            name='id',
-            field=models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
-        ),
     ]
