@@ -25,6 +25,7 @@ class Category(models.Model):
     is_sub = models.BooleanField(default=False)
     is_for_landing = models.BooleanField(default=False)
     name = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='media/categories/',blank=True,null=True)
     slug = models.SlugField(max_length=200,unique=True, allow_unicode=True)
 
     class Meta:

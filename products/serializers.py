@@ -20,3 +20,14 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
 #---------------------------
+class CategoryLandingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id','name','image','slug']
+#---------------------------
+class ProductSliderSerializer(serializers.ModelSerializer):
+    discounted_price = serializers.CharField(source='discounted_price_int')
+    class Meta:
+        model = Product
+        fields = ['name','image','price','discounted','discounted_price','discount','is_new']
+#---------------------------
