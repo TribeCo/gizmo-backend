@@ -65,6 +65,27 @@ class Article(models.Model):
         return jalali_converter(self.publish)
     shamsi_date.short_description = "publish"
 
+    def days_since_publish(self):
+        converter = {
+            "0": "۰",
+            "1": "۱",
+            "2": "۲",
+            "3": "۳",
+            "4": "۴",
+            "5": "۵",
+            "6": "۶",
+            "7": "۷",
+            "8": "۸",
+            "9": "۹",
+        }
+        now = timezone.now()
+        created_naive = timezone.make_naive(self.publish, timezone.get_default_timezone())
+        created_aware = timezone.make_aware(created_naive, timezone.get_default_timezone())
+        days = (now - created_aware).days
+        farsi_day = converter[f"{days}"]
+
+        return f"{farsi_day} روز پیش"
+
     def __str__(self):
         return f"{self.title} - {self.views}"
 

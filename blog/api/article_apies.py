@@ -87,7 +87,7 @@ class LastThreeGizmologs(APIView):
         except:
             return Response({'message': message_for_front['article_not_found']}, status=status.HTTP_404_NOT_FOUND)
         
-        serializer = ArticleSerializer(articles, many=True)
+        serializer = GizmoLogSerializer(articles, many=True)
         return Response({'data': serializer.data})
 
     serializer_class = BlogCategorySerializer
