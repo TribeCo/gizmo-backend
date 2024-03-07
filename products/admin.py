@@ -4,7 +4,7 @@ from .models import *
 class AttributeItemInline(admin.TabularInline):
     model = Attribute
     raw_id_fields = ('product',)
-    fields = ('key', 'value')
+    fields = ('key', 'value','is_main')
 #---------------------------
 class ProductImageItemInline(admin.TabularInline):
     model = ProductImage

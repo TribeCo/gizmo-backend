@@ -33,7 +33,7 @@ class ProductImageSerializer(serializers.ModelSerializer):
 class AttributeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attribute
-        fields =  ['key','value']
+        fields =  ['key','value','is_main']
 #---------------------------
 class ProductSerializer(serializers.ModelSerializer):
     brand = BrandSerializer()
@@ -52,8 +52,8 @@ class ProductPageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id','attributes','brand','category','colors','images' ,'content','En','slug','price','image1','image2','alt','available','created','updated','rating','warehouse',
-        'short_description','description','more_info','ordered','send_free','net_sale','code','discount','discounted']
+        fields = ['id','attributes','brand','category','colors','images' ,'content','En','slug','price','image1','image2','alt','available',
+        'created','updated','rating','warehouse','ordered','send_free','net_sale','code','discount','discounted']
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['content'] = strip_tags(instance.content)

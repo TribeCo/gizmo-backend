@@ -76,10 +76,6 @@ class Product(models.Model):
 
 
     content = RichTextField()
-    short_description = models.TextField()
-    description = models.TextField()
-    more_info = models.TextField()
-
 
 
     code = models.CharField(max_length=10,blank=True,null=True)
@@ -172,6 +168,7 @@ class Attribute(models.Model):
     key = models.CharField(max_length=50)
     value = models.CharField(max_length=50)
     product = models.ForeignKey(Product,on_delete=models.CASCADE, related_name='attributes',null=True,blank=True)
+    is_main = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.product} - {self.id}"
