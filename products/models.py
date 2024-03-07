@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
+from ckeditor.fields import RichTextField
 #---------------------------
 class Brand(models.Model):
     name = models.CharField(max_length=200)
@@ -76,6 +77,7 @@ class Product(models.Model):
 
     send_free = models.BooleanField(default=False)
     net_sale = models.BooleanField(default=False)
+    content = RichTextField()
 
 
     # product_barcode = models.IntegerField(blank=True,null=True)

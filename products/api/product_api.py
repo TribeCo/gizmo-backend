@@ -31,6 +31,7 @@ messages_for_front = {
     'product_created': 'محصول جدید ساخته شد',
     'discounted_product_not_found': 'کالای تخفیف خورده وجود ندارد',
     'product_not_found' : 'محصول مورد نظر وجود ندارد.',
+    
     }
 #---------------------------
 class ProductCreateAPIView(APIView):
@@ -66,11 +67,11 @@ class ProductDetailAPIView(APIView):
         except Product.DoesNotExist:
             return Response({'message': messages_for_front['product_not_found']}, status=status.HTTP_404_NOT_FOUND)
         
-        if(request.user.is_authenticated):
-            wp = WatchedProduct(user=request.user,product=product)
-            wp.save()
+        # if(request.user.is_authenticated):
+        #     wp = WatchedProduct(user=request.user,product=product)
+        #     wp.save()
 
-        serializer = ProductSerializer(product)
+        serializer = ProductPageSerializer(product)
 
         return Response(serializer.data)
     
@@ -122,12 +123,17 @@ class ProductDiscountedListAPIView(APIView):
 #---------------------------
 class SimilarProductsAPIView(APIView):
     """Retrieve similar products based on a given product ID"""
-    def post(self, request):
-        ID = request.data.get('id')        
-        product = Product.objects.get(id = ID)
+    def get(self, request,pk):
+        ID = pk      
+        try:
+            product = Product.objects.get(id = ID)
+        except Product.DoesNotExist:
+            return Response({'message': messages_for_front['product_not_found']}, status=status.HTTP_404_NOT_FOUND)
+
+
         similar_products = product.get_similar_products()
 
-        products = ProductSerializer(similar_products, many=True)
+        products = ProductSliderSerializer(similar_products, many=True)
 
         return Response({'data': products.data})
 #---------------------------

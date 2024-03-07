@@ -1,3 +1,5 @@
+from importlib.metadata import requires
+from typing_extensions import Required
 from rest_framework import serializers
 from .models import User,Address,Message
 from .models import Comment,ProductComment
@@ -41,11 +43,28 @@ class UserReadSerializer(serializers.ModelSerializer):
         model = User
         fields = ('phoneNumber','full_name','is_admin','is_active','email')
 #---------------------------
+class UserCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('phoneNumber','full_name','email')
+#---------------------------
+class ProductCommentCreateSerializer(serializers.ModelSerializer):
+    user = UserCommentSerializer(required=False)
+    class Meta:
+        model = ProductComment
+        fields = ('user', 'text', 'anonymous','product')
+#---------------------------
 class CommentSerializer(serializers.ModelSerializer):
     user_full_name = serializers.ReadOnlyField(source='user.full_name')
     class Meta:
         model = Comment
-        fields = ('id', 'user', 'user_full_name', 'text', 'created', 'valid', 'rating', 'likes', 'dislikes', 'parent_comment','anonymous')
+        fields = ('id', 'user', 'user_full_name', 'text', 'created', 'valid', 'rating', 'likes', 'dislikes', 'parent_comment','anonymous','days_since_creation')
+#---------------------------
+class ReadCommentSerializer(serializers.ModelSerializer):
+    user_full_name = serializers.ReadOnlyField(source='user.full_name')
+    class Meta:
+        model = Comment
+        fields = ( 'user', 'user_full_name', 'text', 'valid','anonymous','days_since_creation')
 #---------------------------
 class ArticleCommentSerializer(serializers.ModelSerializer):
     class Meta:
