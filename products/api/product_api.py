@@ -1,3 +1,4 @@
+from math import prod
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -30,6 +31,7 @@ messages_for_front = {
     'product_created': 'محصول جدید ساخته شد',
     'discounted_product_not_found': 'کالای تخفیف خورده وجود ندارد',
     'product_not_found' : 'محصول مورد نظر وجود ندارد.',
+    
     }
 #---------------------------
 class ProductCreateAPIView(APIView):
@@ -65,11 +67,11 @@ class ProductDetailAPIView(APIView):
         except Product.DoesNotExist:
             return Response({'message': messages_for_front['product_not_found']}, status=status.HTTP_404_NOT_FOUND)
         
-        if(request.user.is_authenticated):
-            wp = WatchedProduct(user=request.user,product=product)
-            wp.save()
+        # if(request.user.is_authenticated):
+        #     wp = WatchedProduct(user=request.user,product=product)
+        #     wp.save()
 
-        serializer = ProductSerializer(product)
+        serializer = ProductPageSerializer(product)
 
         return Response(serializer.data)
     
@@ -112,32 +114,35 @@ class ProductDiscountedListAPIView(APIView):
     def get(self, request):        
         try:
             products = Product.objects.filter(discounted=True)
-        except:
-            return Response({"message": messages_for_front['discounted_product_not_found']})
+        except Product.DoesNotExist:
+            return Response({"message": messages_for_front['discounted_product_not_found']}, status=status.HTTP_404_NOT_FOUND)
         
-        print(f'thisssss isss {products}')
-        serializer = ProductSerializer(products, many=True)
+        serializer = ProductSliderSerializer(products, many=True)
 
-        return Response({"data": serializer.data})
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 #---------------------------
 class SimilarProductsAPIView(APIView):
     """Retrieve similar products based on a given product ID"""
-    def post(self, request):
-        ID = request.data.get('id')        
-        product = Product.objects.get(id = ID)
+    def get(self, request,pk):
+        ID = pk      
+        try:
+            product = Product.objects.get(id = ID)
+        except Product.DoesNotExist:
+            return Response({'message': messages_for_front['product_not_found']}, status=status.HTTP_404_NOT_FOUND)
+
+
         similar_products = product.get_similar_products()
 
-        products = ProductSerializer(similar_products, many=True)
+        products = ProductSliderSerializer(similar_products, many=True)
 
         return Response({'data': products.data})
 #---------------------------
 class NewProductAPIView(APIView):
     """get 10 New Product"""
     def get(self, request):    
-        four_days_ago = timezone.now() - timedelta(days=4)
-        new_products = Product.objects.filter(updated__gte=four_days_ago)
-        serializer = ProductSerializer(new_products,many=True)
-        return Response(serializer.data)
+        new_products = Product.objects.all().order_by('-id')[:4]
+        serializer = ProductSliderSerializer(new_products,many=True)
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 #---------------------------
 class ObservedProductAPIView(APIView):
     """This API returns the user's viewed products"""
@@ -148,8 +153,8 @@ class ObservedProductAPIView(APIView):
         for wp in watched:
             products.append(wp.product)
 
-        serializer = ProductSerializer(products,many=True)
-        return Response(serializer.data)
+        serializer = ProductSliderSerializer(products,many=True)
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 #---------------------------
 class ProductSearchAPIView(APIView):
     """ Search for products """
@@ -157,4 +162,5 @@ class ProductSearchAPIView(APIView):
         product = Product.objects.filter(slug=slug)
         products = Product.objects.filter(name__icontains=slug)
         serializer = ProductSerializer(products, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+#---------------------------

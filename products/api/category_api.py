@@ -88,6 +88,7 @@ class CategotyLandingListAPIView(APIView):
         except:
             return Response({'message': messages_for_front['categoty_for_landing_not_found']}, status=status.HTTP_404_NOT_FOUND)
         
-        serializer = CategorySerializer(catgories, many=True)
+        serializer = CategoryLandingSerializer(catgories, many=True)
 
         return Response({'data': serializer.data})
+#---------------------------

@@ -5,7 +5,7 @@ from datetime import timedelta
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+DOMAIN = "http://localhost:8000"
 
 
 deploy = True
@@ -20,6 +20,7 @@ if(deploy):
     JWT_SECRET_KEY = os.getenv('JWT_SECERT_KEY', 'LIARA_URL is not set.')
     SMS_PASSWORD = os.getenv('SMS_PASSWORD', 'LIARA_URL is not set.')
     SMS_USERNAME = os.getenv('SMS_USERNAME', 'LIARA_URL is not set.')
+    DOMAIN = "https://gizmoshop.liara.run"
     
 else:
     # local
@@ -38,6 +39,7 @@ AUTH_USER_MODEL = 'accounts.User'
 CORS_ORIGIN_ALLOW_ALL=True
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -50,6 +52,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'drf_spectacular',
+    'ckeditor',
 ]
 
 

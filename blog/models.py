@@ -1,10 +1,13 @@
+from itertools import product
 from django.db import models
 from accounts.models import User
+from products.models import Product
 from .managers import CategoryManager, ArticleManager
 from django.urls import reverse
 from django.utils import timezone
 from layout.utils import jalali_converter
 from django.utils.html import format_html
+from ckeditor.fields import RichTextField
 #---------------------------
 class Category(models.Model):
     status_ch = (
@@ -36,9 +39,9 @@ class Article(models.Model):
         ('b',"برگشت داده شده"),
     )
     title = models.CharField(max_length=50,verbose_name="تیتر")
-    text = models.TextField(verbose_name="متن")
+    
     Author = models.ForeignKey(User,on_delete=models.CASCADE,related_name="articles",verbose_name="نویسنده")
-    Cover = models.ImageField(upload_to="media/blog/articles/%Y/%m/",null=True,blank=True,verbose_name="تصویر")
+    cover = models.ImageField(upload_to="media/blog/articles/%Y/%m/",null=True,blank=True,verbose_name="تصویر")
     drafted = models.DateTimeField(auto_now_add=True,verbose_name="تاریخ پیش نویس")
     publish = models.DateTimeField(default=timezone.now,verbose_name="تاریخ انتشار")
     update = models.DateTimeField(auto_now=True,verbose_name="تاریخ آپدیت")
@@ -46,6 +49,12 @@ class Article(models.Model):
     status = models.CharField(max_length=1,choices = status_ch,verbose_name="وضعیت")
     Category = models.ManyToManyField(Category,related_name = "articles",verbose_name="دسته بندی")
     views = models.PositiveIntegerField(default=0, verbose_name="تعداد بازدید")
+
+    content = RichTextField()
+
+    read_time = models.IntegerField(default=10)
+
+    products = models.ManyToManyField(Product,related_name="articles")
 
     reference_name = models.CharField(max_length=50,null=True,blank=True)
     reference_link = models.CharField(max_length=50,null=True,blank=True)
@@ -65,6 +74,28 @@ class Article(models.Model):
         return jalali_converter(self.publish)
     shamsi_date.short_description = "publish"
 
+    @property
+    def days_since_publish(self):
+        converter = {
+            "0": "۰",
+            "1": "۱",
+            "2": "۲",
+            "3": "۳",
+            "4": "۴",
+            "5": "۵",
+            "6": "۶",
+            "7": "۷",
+            "8": "۸",
+            "9": "۹",
+        }
+        now = timezone.now()
+        created_naive = timezone.make_naive(self.publish, timezone.get_default_timezone())
+        created_aware = timezone.make_aware(created_naive, timezone.get_default_timezone())
+        days = (now - created_aware).days
+        farsi_day = converter[f"{days}"]
+
+        return f"{farsi_day} روز پیش"
+
     def __str__(self):
         return f"{self.title} - {self.views}"
 
@@ -75,7 +106,7 @@ class Article(models.Model):
         return format_html("<img width=120 style='border-radius:5px' src='{}'>".format(self.Cover.url))
 
     def get_similar_articles(self):
-        similar_articles = Article.objects.filter(Category__in=self.Category.all()).exclude(id=self.id)[:4]
+        similar_articles = Article.objects.filter(Category__in=self.Category.all()).exclude(id=self.id)[:5]
         return similar_articles
 
     def get_comments(self):

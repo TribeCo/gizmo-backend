@@ -14,6 +14,8 @@ from rest_framework.permissions import IsAuthenticated
     3- UserListAPIView --> read all user
     4- UserDeleteAPIView --> delete one user with id
     5- UserUpdateAPIView --> update one user with id
+    6- UserInfoAPIView --> Get the user's personal information
+
 
 """
 #---------------------------
@@ -78,6 +80,18 @@ class UserUpdateAPIView(APIView):
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({'message': messages_for_front['user_not_found']}, status=status.HTTP_404_NOT_FOUND)
+#---------------------------
+class UserInfoAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    """ Get the user's personal information"""
+    
+    def get(self, request):
+        try:
+            user = request.user
+            serializer = UserReadSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({'message': messages_for_front['user_not_found']}, status=status.HTTP_404_NOT_FOUND)
 #---------------------------

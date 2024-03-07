@@ -5,7 +5,7 @@ from ..serializers import *
 from ..models import Product
 from inquiry.models import ForeignOrder
 from orders.models import Order
-from products.serializers import ProductSerializer
+from products.serializers import *
 from rest_framework.permissions import IsAuthenticated
 #---------------------------
 """
@@ -45,6 +45,9 @@ messages_for_front = {
     'favorite_products_not_found': 'محصول مورد علاقه ای وجود ندارد',
     'product_added_to_wishlist': 'محصول به لیست مورد علاقه‌ها اضافه شد',
     'product_removed_from_wishlist': 'محصول از لیست مورد علاقه‌ها حذف شد',
+    'not_id' : 'آیدی مورد نیاز است.',
+    'product_removed_from_informing' : 'محصول از لیست انتظار حذف شد.',
+    'product_added_to_informing' : 'محصول به لیست انتظار اضافه شد.',
     
 }
 #---------------------------
@@ -58,17 +61,23 @@ class FavoriteProductsAPIView(APIView):
             return Response({'message': messages_for_front['favorite_products_not_found']}, status=status.HTTP_404_NOT_FOUND)
         
 
-        favorite_products = ProductSerializer(products, many=True)
+        favorite_products = ProductSliderSerializer(products, many=True)
         return Response({'data': favorite_products.data})
 #---------------------------
 class AddFavoriteProductAPIView(APIView):
     permission_classes = [IsAuthenticated]
-    def get(self, request, pk):
+    def post(self, request):
+        pk = request.data.get('id')
+
+        if(not pk):
+            return Response({'message': messages_for_front['not_id']}, status=status.HTTP_400_BAD_REQUEST)
+
         user = request.user
+
         try:
             product = Product.objects.get(pk = pk)
         except:
-            return Response({'message': 'محصول مورد نظر وجود ندارد'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'message': messages_for_front['product_not_found']}, status=status.HTTP_404_NOT_FOUND)
         
         user.wishlist.add(product)
         user.save()
@@ -77,7 +86,12 @@ class AddFavoriteProductAPIView(APIView):
 #---------------------------
 class DeleteFvaoriteProductAPIView(APIView):
     permission_classes = [IsAuthenticated]
-    def delete(self, request, pk):
+    def delete(self, request):
+        pk = request.data.get('id')
+
+        if(not pk):
+            return Response({'message': messages_for_front['not_id']}, status=status.HTTP_400_BAD_REQUEST)
+
         user = request.user
         try:
             product = Product.objects.get(pk = pk)
@@ -100,4 +114,43 @@ class UserOrdersCountAPIView(APIView):
             return Response({'orders_count': orders_count, 'returns_count': returns_count, 'foreign_returns_count': foreign_returns_count}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'User is not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+#---------------------------
+class AddInformingProductAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        pk = request.data.get('id')
+
+        if(not pk):
+            return Response({'message': messages_for_front['not_id']}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+
+        try:
+            product = Product.objects.get(pk = pk)
+        except:
+            return Response({'message': messages_for_front['product_not_found']}, status=status.HTTP_404_NOT_FOUND)
+        
+        user.informing.add(product)
+        user.save()
+
+        return Response({'message': messages_for_front['product_added_to_informing']},status=status.HTTP_200_OK)
+#---------------------------
+class DeleteInformingProductAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def delete(self, request):
+        pk = request.data.get('id')
+
+        if(not pk):
+            return Response({'message': messages_for_front['not_id']}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+        try:
+            product = Product.objects.get(pk = pk)
+        except:
+            return Response({'message': messages_for_front['product_not_found']}, status=status.HTTP_404_NOT_FOUND)
+    
+        user.informing.remove(product)
+        user.save()
+
+        return Response({'message': messages_for_front['product_removed_from_informing']}, status=status.HTTP_200_OK)
 #---------------------------

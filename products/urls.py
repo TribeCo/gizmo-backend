@@ -13,14 +13,14 @@ urlpatterns = [
 
     path('product/', ProductCreateAPIView.as_view(),name="product_create"),
     path('product/all/', ProductListAPIView.as_view(),name="product_read_all"),
-    path('product/similar/', SimilarProductsAPIView.as_view(),name="similar_products"),
+    path('product/similar/<int:pk>/', SimilarProductsAPIView.as_view(),name="similar_products"),
+    path('product/discounted/', ProductDiscountedListAPIView.as_view(),name="all_discounted_products"),
     path('product/news/', NewProductAPIView.as_view(),name="product_news"),
     path('product/observed/', ObservedProductAPIView.as_view(),name="product_observed"),
     path('product/<int:pk>/', ProductDetailAPIView.as_view(),name="product_read"),
     path('product/<str:slug>/', ProductDetailAPIViewBySlug.as_view(),name="product_read_slug"),
     path('product/update/<int:pk>/', ProductUpdateAPIView.as_view(),name="product_update"),
     path('product/delete/<int:pk>/', ProductDeleteAPIView.as_view(),name="product_delete"),
-    path('product/discounted/', ProductDiscountedListAPIView.as_view(),name="all_discounted_products"),
     path('products/search/<slug:slug>/', ProductSearchAPIView.as_view(), name='product_search'),
     
     path('category/', CategoryCreateAPIView.as_view(),name="category_create"),

@@ -1,7 +1,9 @@
+from tokenize import Special
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
+from ckeditor.fields import RichTextField
 #---------------------------
 class Brand(models.Model):
     name = models.CharField(max_length=200)
@@ -25,6 +27,7 @@ class Category(models.Model):
     is_sub = models.BooleanField(default=False)
     is_for_landing = models.BooleanField(default=False)
     name = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='media/categories/',blank=True,null=True)
     slug = models.SlugField(max_length=200,unique=True, allow_unicode=True)
 
     class Meta:
@@ -58,8 +61,7 @@ class Product(models.Model):
     slug = models.SlugField(max_length=200,unique=True, allow_unicode=True)
     
     price = models.IntegerField()
-    image = models.ImageField(upload_to='media/products/%Y/%m/')
-    alt = models.CharField(max_length=200)
+    
     available = models.BooleanField(default=True)
     created = models.DateField(auto_now_add=True)
     updated = models.DateField(auto_now=True)
@@ -67,24 +69,21 @@ class Product(models.Model):
     colors = models.ManyToManyField(Color,blank=True)
     warehouse = models.IntegerField(default=0)
 
-    short_description = models.TextField()
-    description = models.TextField()
-    more_info = models.TextField()
-
     ordered = models.IntegerField(default=0)
 
     send_free = models.BooleanField(default=False)
     net_sale = models.BooleanField(default=False)
 
 
-    # product_barcode = models.IntegerField(blank=True,null=True)
-    # dirham_price = models.IntegerField(blank=True,null=True) 
-    # dirham_rate = models.IntegerField(blank=True,null=True) 
-    # transit_price = models.IntegerField(blank=True,null=True)
+    content = RichTextField()
+
 
     code = models.CharField(max_length=10,blank=True,null=True)
 
-    
+    image1 = models.ImageField(upload_to='media/products/%Y/%m/')
+    image2 = models.ImageField(upload_to='media/products/%Y/%m/')
+    special_image = models.ImageField(upload_to='media/products/%Y/%m/')
+    alt = models.CharField(max_length=200)
 
 
     discount = models.IntegerField(default=0)
@@ -159,9 +158,17 @@ class Product(models.Model):
 #---------------------------
 class ProductImage(models.Model):
     image = models.ImageField(upload_to='media/products/%Y/%m/')
-    is_main = models.BooleanField(default=False) 
     product = models.ForeignKey(Product,on_delete=models.CASCADE, related_name='images',null=True,blank=True)
     alt = models.CharField(max_length=200)
+
+    def __str__(self):
+        return f"{self.product} - {self.id}"
+#---------------------------
+class Attribute(models.Model):
+    key = models.CharField(max_length=50)
+    value = models.CharField(max_length=50)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE, related_name='attributes',null=True,blank=True)
+    is_main = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.product} - {self.id}"
