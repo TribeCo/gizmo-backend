@@ -52,6 +52,8 @@ class Article(models.Model):
 
     content = RichTextField()
 
+    read_time = models.IntegerField(default=10)
+
     products = models.ManyToManyField(Product,related_name="articles")
 
     reference_name = models.CharField(max_length=50,null=True,blank=True)
@@ -72,6 +74,7 @@ class Article(models.Model):
         return jalali_converter(self.publish)
     shamsi_date.short_description = "publish"
 
+    @property
     def days_since_publish(self):
         converter = {
             "0": "۰",
@@ -103,7 +106,7 @@ class Article(models.Model):
         return format_html("<img width=120 style='border-radius:5px' src='{}'>".format(self.Cover.url))
 
     def get_similar_articles(self):
-        similar_articles = Article.objects.filter(Category__in=self.Category.all()).exclude(id=self.id)[:4]
+        similar_articles = Article.objects.filter(Category__in=self.Category.all()).exclude(id=self.id)[:5]
         return similar_articles
 
     def get_comments(self):
