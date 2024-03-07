@@ -54,6 +54,12 @@ class ProductCommentCreateSerializer(serializers.ModelSerializer):
         model = ProductComment
         fields = ('user', 'text', 'anonymous','product')
 #---------------------------
+class ArticleCommentCreateSerializer(serializers.ModelSerializer):
+    user = UserCommentSerializer(required=False)
+    class Meta:
+        model = ArticleComment
+        fields = ('user', 'text', 'anonymous','article')
+#---------------------------
 class CommentSerializer(serializers.ModelSerializer):
     user_full_name = serializers.ReadOnlyField(source='user.full_name')
     class Meta:

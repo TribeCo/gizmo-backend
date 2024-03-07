@@ -35,9 +35,9 @@ class CreateCommentForArticleAPIView(APIView):
     """create comment for article"""
     permission_classes = [IsAuthenticated]
     def post(self, request):
-        serializer = ArticleCommentSerializer(data=request.data)
+        serializer = ArticleCommentCreateSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=request.user)
             return Response({'messages':messages_for_front['comment_created'],'data':serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------
