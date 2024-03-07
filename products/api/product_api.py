@@ -71,7 +71,7 @@ class ProductDetailAPIView(APIView):
         #     wp = WatchedProduct(user=request.user,product=product)
         #     wp.save()
 
-        serializer = ProductSerializer(product)
+        serializer = ProductPageSerializer(product)
 
         return Response(serializer.data)
     
