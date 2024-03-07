@@ -21,3 +21,4 @@ class FAQSerializer(serializers.ModelSerializer):
     class Meta:
         model = FAQ
         fields = ['id', 'group', 'question', 'answer']
+#---------------------------

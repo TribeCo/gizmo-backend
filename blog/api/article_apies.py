@@ -3,11 +3,10 @@ from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.views import APIView
-from .custompermission import ArticlePostPermission
+from .custom_permission import ArticlePostPermission
 from ..serializers import *
 from ..models import Article
-
-
+#---------------------------
 """
     The codes related to Articles APIs are in this file.
     Existing APIs in this file:
@@ -18,12 +17,12 @@ from ..models import Article
         ArticleListView --> Lists all of the Article objects    
         LastThreeGizmologs --> Lists the last three published Articles in Gizmo blog
 """
-
+#---------------------------
 message_for_front = {
     'article_created':  'مقاله ساخته شد',
     'article_not_found' :'مقاله ای وجود ندارد'
 }
-
+#---------------------------
 class ArticleCreateAPIView(APIView, ArticlePostPermission):    
     """
     Creating an Article
@@ -88,7 +87,7 @@ class LastThreeGizmologs(APIView):
         except:
             return Response({'message': message_for_front['article_not_found']}, status=status.HTTP_404_NOT_FOUND)
         
-        serializer = ArticleSerializer(articles, many=True)
+        serializer = GizmoLogSerializer(articles, many=True)
         return Response({'data': serializer.data})
 
     serializer_class = BlogCategorySerializer

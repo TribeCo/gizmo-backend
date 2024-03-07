@@ -1,3 +1,4 @@
+from math import prod
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -112,13 +113,12 @@ class ProductDiscountedListAPIView(APIView):
     def get(self, request):        
         try:
             products = Product.objects.filter(discounted=True)
-        except:
-            return Response({"message": messages_for_front['discounted_product_not_found']})
+        except Product.DoesNotExist:
+            return Response({"message": messages_for_front['discounted_product_not_found']}, status=status.HTTP_404_NOT_FOUND)
         
-        print(f'thisssss isss {products}')
-        serializer = ProductSerializer(products, many=True)
+        serializer = ProductSliderSerializer(products, many=True)
 
-        return Response({"data": serializer.data})
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 #---------------------------
 class SimilarProductsAPIView(APIView):
     """Retrieve similar products based on a given product ID"""
@@ -134,10 +134,9 @@ class SimilarProductsAPIView(APIView):
 class NewProductAPIView(APIView):
     """get 10 New Product"""
     def get(self, request):    
-        four_days_ago = timezone.now() - timedelta(days=4)
-        new_products = Product.objects.filter(updated__gte=four_days_ago)
-        serializer = ProductSerializer(new_products,many=True)
-        return Response(serializer.data)
+        new_products = Product.objects.all().order_by('-id')[:4]
+        serializer = ProductSliderSerializer(new_products,many=True)
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 #---------------------------
 class ObservedProductAPIView(APIView):
     """This API returns the user's viewed products"""
@@ -148,8 +147,8 @@ class ObservedProductAPIView(APIView):
         for wp in watched:
             products.append(wp.product)
 
-        serializer = ProductSerializer(products,many=True)
-        return Response(serializer.data)
+        serializer = ProductSliderSerializer(products,many=True)
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 #---------------------------
 class ProductSearchAPIView(APIView):
     """ Search for products """
@@ -157,4 +156,5 @@ class ProductSearchAPIView(APIView):
         product = Product.objects.filter(slug=slug)
         products = Product.objects.filter(name__icontains=slug)
         serializer = ProductSerializer(products, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+#---------------------------
