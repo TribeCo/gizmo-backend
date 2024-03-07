@@ -112,6 +112,7 @@ class Comment(models.Model):
     def shamsi_date(self):
         return jalali_converter_with_hour(self.created) 
     
+    @property
     def days_since_creation(self):
         now = timezone.now()
         created_naive = timezone.make_naive(self.created, timezone.get_default_timezone())

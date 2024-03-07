@@ -13,7 +13,7 @@ urlpatterns = [
 
     path('product/', ProductCreateAPIView.as_view(),name="product_create"),
     path('product/all/', ProductListAPIView.as_view(),name="product_read_all"),
-    path('product/similar/', SimilarProductsAPIView.as_view(),name="similar_products"),
+    path('product/similar/<int:pk>/', SimilarProductsAPIView.as_view(),name="similar_products"),
     path('product/discounted/', ProductDiscountedListAPIView.as_view(),name="all_discounted_products"),
     path('product/news/', NewProductAPIView.as_view(),name="product_news"),
     path('product/observed/', ObservedProductAPIView.as_view(),name="product_observed"),

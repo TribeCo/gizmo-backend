@@ -11,12 +11,13 @@ urlpatterns = [
     path('users/all/', UserListAPIView.as_view(), name='user_list'),
     path('users/delete/<int:user_id>/', UserDeleteAPIView.as_view(), name='user_delete'),
     path('users/update/<int:user_id>/', UserUpdateAPIView.as_view(), name='user_update'),
+
     path('articles/comments/', CreateCommentForArticleAPIView.as_view(), name='create_comment_for_article'),
     path('products/comments/', CreateCommentForProductAPIView.as_view(), name='create_comment_for_product'),
-    path('products/comments/<int:comment_id>/', ReadCommentForProductAPIView.as_view(), name='read_comment_for_product'),
-    path('articles/comments/<int:comment_id>/', ReadCommentForArticleAPIView.as_view(), name='read_comment_for_article'),
-    path('comments/delete/<int:comment_id>/', DeleteCommentAPIView.as_view(), name='delete_comment'),
-    path('comments/update/<int:comment_id>/', UpdateCommentAPIView.as_view(), name='update_comment'),
+    path('products/comments/<int:pk>/', ReadCommentForProductAPIView.as_view(), name='read_comment_for_product'),
+    path('articles/comments/<int:pk>/', ReadCommentForArticleAPIView.as_view(), name='read_comment_for_article'),
+    path('comments/delete/<int:pk>/', DeleteCommentAPIView.as_view(), name='delete_comment'),
+    path('comments/update/<int:pk>/', UpdateCommentAPIView.as_view(), name='update_comment'),
 
     path('addresses/create/', CreateAddressAPIView.as_view(), name='create_address'),
     path('addresses/read/<int:pk>/', ReadAddressAPIView.as_view(), name='read_addresses'),
