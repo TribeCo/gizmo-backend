@@ -99,7 +99,7 @@ class PopularGizmologs(APIView):
     serializer_class = GizmoLogSerializer  
     def get(self, request):
         try:
-            articles = Article.objects.order_by('-views')[ :3]
+            articles = Article.objects.order_by('-views')[ :4]
         except:
             return Response({'message': message_for_front['article_not_found']}, status=status.HTTP_404_NOT_FOUND)
         
