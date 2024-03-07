@@ -1,6 +1,8 @@
 from unicodedata import category
 from rest_framework import serializers
+from django.utils.html import strip_tags
 from .models import *
+from config.settings import DOMAIN
 #---------------------------
 class BrandSerializer(serializers.ModelSerializer):
     logo = serializers.ImageField()
@@ -28,6 +30,11 @@ class ProductImageSerializer(serializers.ModelSerializer):
         model = ProductImage
         fields =  '__all__'
 #---------------------------
+class AttributeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attribute
+        fields =  ['key','value','is_main']
+#---------------------------
 class ProductSerializer(serializers.ModelSerializer):
     brand = BrandSerializer()
     category = CategoryProductPageSerializer(many=True)
@@ -36,18 +43,17 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
 #---------------------------
-from django.utils.html import strip_tags
-
 class ProductPageSerializer(serializers.ModelSerializer):
     brand = BrandSerializer()
     category = CategoryProductPageSerializer(many=True)
     colors = ColorSerializer(many=True)
     images = ProductImageSerializer(many=True)
+    attributes = AttributeSerializer(many=True)
 
     class Meta:
         model = Product
-        fields = ["id","brand","category","colors","images" ,"content","En","slug","price","image","alt","available","created","updated","rating","warehouse",
-        "short_description","description","more_info","ordered","send_free","net_sale","code","discount","discounted"]
+        fields = ['id','attributes','brand','category','colors','images' ,'content','En','slug','price','image1','image2','alt','available',
+        'created','updated','rating','warehouse','ordered','send_free','net_sale','code','discount','discounted']
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['content'] = strip_tags(instance.content)
@@ -60,7 +66,18 @@ class CategoryLandingSerializer(serializers.ModelSerializer):
 #---------------------------
 class ProductSliderSerializer(serializers.ModelSerializer):
     discounted_price = serializers.CharField(source='discounted_price_int')
+    image1 = serializers.SerializerMethodField()
+    image2 = serializers.SerializerMethodField()
+
+    def get_image1(self, obj):
+        image_url = '{}{}'.format(DOMAIN, obj.image1.url) if obj.image1 else None
+        return image_url
+
+    def get_image2(self, obj):
+        image_url2 = '{}{}'.format(DOMAIN, obj.image2.url) if obj.image2 else None
+        return image_url2
+
     class Meta:
         model = Product
-        fields = ['name','image','price','discounted','discounted_price','discount','is_new']
+        fields = ['name','image1','image2','price','discounted','discounted_price','discount','is_new','net_sale','available']
 #---------------------------
