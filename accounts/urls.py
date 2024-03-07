@@ -8,6 +8,7 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
     path('users/', UserCreateAPIView.as_view(), name='user_create'),
     path('users/<int:user_id>/', UserRetrieveAPIView.as_view(), name='user_retrieve'),
+    path('users/info/', UserInfoAPIView.as_view(), name='user_info'),
     path('users/all/', UserListAPIView.as_view(), name='user_list'),
     path('users/delete/<int:user_id>/', UserDeleteAPIView.as_view(), name='user_delete'),
     path('users/update/<int:user_id>/', UserUpdateAPIView.as_view(), name='user_update'),
@@ -21,8 +22,10 @@ urlpatterns = [
 
     path('addresses/create/', CreateAddressAPIView.as_view(), name='create_address'),
     path('addresses/read/<int:pk>/', ReadAddressAPIView.as_view(), name='read_addresses'),
+    path('addresses/user/', ReadUserAddressAPIView.as_view(), name='read_user_addresses'),
     path('addresses/update/<int:pk>/', UpdateAddressAPIView.as_view(), name='update_address'),
     path('addresses/delete/<int:pk>/', DeleteAddressAPIView.as_view(), name='delete_address'),
+    path('addresses/set/', SetUserAddressAPIView.as_view(), name='set_address'),
 
     path('messages/create/', CreateMessageAPIView.as_view(), name='create_messages'),
     path('messages/read/<int:pk>/', ReadMessageAPIView.as_view(), name='read_messages'),

@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.core.validators import MaxValueValidator, MinValueValidator
 from products.models import Product
 from .managers import MyUserManager
-from layout.utils import jalali_converter_with_hour
+from layout.utils import jalali_converter_with_hour,jalali_converter
 import uuid
 #---------------------------
 send_ways = (
@@ -30,7 +30,8 @@ class ProfileUser(models.Model):
 class User(AbstractBaseUser):
     # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     phoneNumber = models.CharField(unique=True, max_length=11)
-    full_name = models.CharField(max_length=100, null=True, blank=True)
+    first_name = models.CharField(max_length=100, null=True, blank=True)
+    last_name = models.CharField(max_length=100, null=True, blank=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     email = models.EmailField(unique=True)
@@ -38,6 +39,8 @@ class User(AbstractBaseUser):
     
 
     can_change_password = models.BooleanField(default=False)
+
+    birthday = models.DateField(blank=True,null=True)
 
 
     code = models.IntegerField(blank=True,null=True)
@@ -74,15 +77,32 @@ class User(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return True
 
+    def change_current_address(self,pk):
+        for ad in self.addresses.all():
+            ad.current = False
+            ad.save()
+        address = self.addresses.get(id=pk)
+        address.current = True
+        address.save()
+
     @property
     def is_staff(self):
         return self.is_admin
+
+    @property
+    def birth_day(self):
+        return jalali_converter(self.birthday) 
+
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
 #---------------------------
 class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="addresses")
-    text = models.TextField()
+    straight_address = models.TextField()
     postal_code = models.CharField(max_length=10)
     city = models.CharField(max_length=50)
+    province = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=20,blank=True,null=True)
     current = models.BooleanField(default=False)
 
@@ -140,13 +160,15 @@ class Message(models.Model):
     text = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     seen = models.BooleanField(default=False)
+    abs_link = models.CharField(max_length=200)
 
 
     def __str__(self):
         return f"{self.title}-{self.user.full_name}"
 
+    @property
     def shamsi_date(self):
-        return jalali_converter_with_hour(self.created) 
+        return jalali_converter(self.created) 
     
     def days_since_creation(self):
         now = timezone.now()

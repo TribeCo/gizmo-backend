@@ -5,7 +5,7 @@ from ..serializers import *
 from ..models import Product
 from inquiry.models import ForeignOrder
 from orders.models import Order
-from products.serializers import ProductSerializer
+from products.serializers import *
 from rest_framework.permissions import IsAuthenticated
 #---------------------------
 """
@@ -61,7 +61,7 @@ class FavoriteProductsAPIView(APIView):
             return Response({'message': messages_for_front['favorite_products_not_found']}, status=status.HTTP_404_NOT_FOUND)
         
 
-        favorite_products = ProductSerializer(products, many=True)
+        favorite_products = ProductSliderSerializer(products, many=True)
         return Response({'data': favorite_products.data})
 #---------------------------
 class AddFavoriteProductAPIView(APIView):
