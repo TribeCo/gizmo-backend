@@ -46,8 +46,8 @@ class ReadBannerBySlugAPIView(APIView):
     """Read a banner by slug"""
     def get(self, request, slug):
         try:
-            banner = Banner.objects.get(for_what=slug)
-            serializer = BannerSerializer(banner)
+            banner = Banner.objects.filter(for_what=slug)
+            serializer = BannerSerializer(banner,many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Banner.DoesNotExist:
             return Response({'message': messages_for_front['banner_not_found']}, status=status.HTTP_404_NOT_FOUND)
