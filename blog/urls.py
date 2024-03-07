@@ -7,7 +7,12 @@ urlpatterns = [
     path('article/all/', ArticleListView.as_view(),name="article_list"),          
     path('article/update/<int:pk>/', ArticleUpdateView.as_view(),name="article_update"),
     path('article/delete/<int:pk>/', ArticleDeleteAPIView.as_view(),name="article_delete"),
-    path('landing/', LastThreeGizmologs.as_view(),name="last-three-gizmo-logs"),
+    path('article/similar/<int:pk>/', SimilarArticle.as_view(),name="similar_article"),
+
+    path('landing/', LastThreeGizmologs.as_view(),name="last_three_gizmologs"),
+    path('news/', NewsGizmologs.as_view(),name="news_gizmologs"),
+    path('popular/', PopularGizmologs.as_view(),name="popular_gizmologs"),
+
     path('category/', CategoryCreateAPIView.as_view(),name="category_create"),
     path('category/<int:pk>/', CategoryDetailAPIVeiw.as_view(),name="category_read"),
     path('category/all/', CategoryListAPIView.as_view(),name="category_list"),    

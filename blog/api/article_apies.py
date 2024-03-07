@@ -15,7 +15,10 @@ from ..models import Article
         AritcleUpdataAPIView --> Updates an Article objects details
         ArticleDeleteAPIView --> Deletes an Article object
         ArticleListView --> Lists all of the Article objects    
-        LastThreeGizmologs --> Lists the last three published Articles in Gizmo blog
+        LastThreeGizmologs --> Lists the last three published Articles in GizmoLog
+        PopularGizmologs --> Lists the three popular Articles in GizmoLog 
+        NewsGizmologs --> Lists the five last Articles in GizmoLog 
+        SimilarArticle --> Lists the five similar Articles in GizmoLog 
 """
 #---------------------------
 message_for_front = {
@@ -81,6 +84,7 @@ class ArticleListView(generics.ListAPIView):
 #---------------------------
 class LastThreeGizmologs(APIView):
     """Lists the last three published articles in gizmo log"""    
+    serializer_class = GizmoLogSerializer  
     def get(self, request):
         try:
             articles = Article.objects.order_by('-publish').filter(is_for_landing=True)[ :3]
@@ -89,6 +93,40 @@ class LastThreeGizmologs(APIView):
         
         serializer = GizmoLogSerializer(articles, many=True)
         return Response({'data': serializer.data})
-
-    serializer_class = BlogCategorySerializer
+#---------------------------
+class PopularGizmologs(APIView):
+    """Lists the three popular Articles in GizmoLog """  
+    serializer_class = GizmoLogSerializer  
+    def get(self, request):
+        try:
+            articles = Article.objects.order_by('-views')[ :3]
+        except:
+            return Response({'message': message_for_front['article_not_found']}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = GizmoLogSerializer(articles, many=True)
+        return Response({'data': serializer.data})
+#---------------------------
+class NewsGizmologs(APIView):
+    """Lists the five last Articles in GizmoLog """  
+    serializer_class = GizmoLogSerializer  
+    def get(self, request):
+        try:
+            articles = Article.objects.order_by('-publish')[:5]
+        except:
+            return Response({'message': message_for_front['article_not_found']}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = GizmoLogSerializer(articles, many=True)
+        return Response({'data': serializer.data})
+#---------------------------
+class SimilarArticle(APIView):
+    """Lists the five similar Articles in GizmoLog """  
+    serializer_class = GizmoLogSerializer  
+    def get(self, request,pk):
+        try:
+            articles = Article.objects.get(id=pk).get_similar_articles()
+        except:
+            return Response({'message': message_for_front['article_not_found']}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = GizmoLogSerializer(articles, many=True)
+        return Response({'data': serializer.data})
 #---------------------------
