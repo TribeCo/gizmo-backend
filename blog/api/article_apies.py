@@ -87,7 +87,7 @@ class LastThreeGizmologs(APIView):
     serializer_class = GizmoLogSerializer  
     def get(self, request):
         try:
-            articles = Article.objects.order_by('-publish').filter(is_for_landing=True)[ :3]
+            articles = Article.objects.order_by('-publish').filter(is_for_landing=True)[ :4]
         except:
             return Response({'message': message_for_front['article_not_found']}, status=status.HTTP_404_NOT_FOUND)
         
