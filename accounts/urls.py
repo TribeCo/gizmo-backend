@@ -30,8 +30,12 @@ urlpatterns = [
     path('messages/user/', UserMessageAPIView.as_view(), name='user_messages'),
 
     path('favorites/', FavoriteProductsAPIView.as_view(), name='favorite_products'),
-    path('favorites/add/<int:pk>', AddFavoriteProductAPIView.as_view(), name='favorite_product_addtion'),
-    path('favorites/delete/<int:pk>', DeleteFvaoriteProductAPIView.as_view(), name='favorite_product_deletion'),
+    path('favorites/add/', AddFavoriteProductAPIView.as_view(), name='favorite_product_addtion'),
+    path('favorites/delete/', DeleteFvaoriteProductAPIView.as_view(), name='favorite_product_deletion'),
+
+    path('informing/add/', AddInformingProductAPIView.as_view(), name='favorite_product_addtion'),
+    path('informing/delete/', DeleteInformingProductAPIView.as_view(), name='favorite_product_deletion'),
+
 
     path('users/password/change/', PasswordChangeRequest.as_view(), name='users_password_change'),
     path('users/password/confirm/', ChangePassword.as_view(), name='users_password_confirm'),
