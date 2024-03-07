@@ -8,7 +8,7 @@ class BrandSerializer(serializers.ModelSerializer):
     logo = serializers.ImageField()
     class Meta:
         model = Brand
-        fields = ('name', 'slug', 'logo', 'description','id')
+        fields = ('name', 'slug', 'logo', 'description','id','website')
 #---------------------------
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -60,9 +60,14 @@ class ProductPageSerializer(serializers.ModelSerializer):
         return data
 #---------------------------
 class CategoryLandingSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+    def get_image(self, obj):
+        image_url = '{}{}'.format(DOMAIN, obj.image.url) if obj.image else None
+        return image_url
+
     class Meta:
         model = Category
-        fields = ['id','name','image','slug']
+        fields = ['id','name','image','slug','color']
 #---------------------------
 class ProductSliderSerializer(serializers.ModelSerializer):
     discounted_price = serializers.CharField(source='discounted_price_int')

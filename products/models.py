@@ -11,6 +11,7 @@ class Brand(models.Model):
     logo = models.ImageField(upload_to='media/logos/')
     description = models.TextField()
     created = models.DateField(auto_now_add=True)
+    website = models.CharField(max_length=200)
 
     def __str__(self):
         return self.name
@@ -29,6 +30,8 @@ class Category(models.Model):
     name = models.CharField(max_length=200)
     image = models.ImageField(upload_to='media/categories/',blank=True,null=True)
     slug = models.SlugField(max_length=200,unique=True, allow_unicode=True)
+
+    color = models.CharField(max_length=10,blank=True,null=True)
 
     class Meta:
         ordering = ('name',)

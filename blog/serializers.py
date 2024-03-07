@@ -38,7 +38,7 @@ class CategorySerializer(serializers.ModelSerializer):
 #---------------------------
 class GizmoLogSerializer(serializers.ModelSerializer):
     Author = UserSerializerForGizmoLog()
-    date = serializers.CharField(source='days_since_publish')
+    date = serializers.CharField(source='shamsi_date')
     cover = serializers.SerializerMethodField()
 
     def get_cover(self, obj):
