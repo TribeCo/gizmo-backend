@@ -23,8 +23,8 @@ class Order(models.Model):
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)
     discount = models.IntegerField(blank=True,null=True,default=None)
-    receipt = models.ImageField(upload_to='media/receipt/%Y/%m/',blank=True,null=True)
-    receipt_bool = models.BooleanField(default=False)
+    recipient = models.CharField(max_length=100)
+    
 
     ref_id = models.CharField(max_length=100,blank=True,null=True,default=None)
     authority = models.CharField(max_length=100,blank=True,null=True,default=None)
@@ -48,10 +48,21 @@ class Order(models.Model):
             return f"پرداخت شده."
         return f"پرداخت نشده."
     
+    @property
     def discount_string(self):
         if self.discount == None:
             return f" تخفیفی اعمال نشده است."
         return f"{self.discount} درصد تخفیف اعمال شده است"
+
+    @property
+    def discount_amount(self):
+        if self.discount == None:
+            return f" تخفیفی اعمال نشده است."
+        return self.discount * self.total_price / 100
+
+    @property
+    def pay_amount(self):
+        return self.total_price - self.discount_amount
 
     def __str__(self):
         return f'{self.user} - {self.id}'
@@ -59,9 +70,7 @@ class Order(models.Model):
     def formatPay(self,pay):
         return "{:,.0f}".format(pay)
 
-    def get_total_price(self):
-        return self.formatPay(self.total_price())
-
+    @property
     def total_price(self):
         total = sum(item.get_cost() for item in self.items.all())
         if self.discount:
@@ -76,9 +85,9 @@ class Order(models.Model):
         return "{:,.0f}".format(9 * self.total_price() / 100)
 
     def taxAndTotal(self):
-        
         return "{:,.0f}".format(self.total_price() + self.tax())
-    
+
+    @property
     def shamsi_date(self):
         return jalali_converter(self.created)
 

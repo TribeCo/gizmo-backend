@@ -44,7 +44,7 @@ class ListUserOrdersAPIView(APIView):
     def get(self,request):
         orders = request.user.orders
         
-        serializer = OrderItemsSerializer(orders, many=True)
+        serializer = OrderDashBoardSerializer(orders, many=True)
 
         return Response({'data': serializer.data},status=status.HTTP_200_OK)
 #---------------------------
