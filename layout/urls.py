@@ -13,11 +13,13 @@ urlpatterns = [
     path('banners/delete/<int:banner_id>/', DeleteBannerAPIView.as_view(), name='delete_banner'),
     path('banners/update/<int:banner_id>/', UpdateBannerAPIView.as_view(), name='update_banner'),
     path('banners/read/<slug:slug>/', ReadBannerBySlugAPIView.as_view(), name='read_banner'),
+
     path('picture/', PictureCreateAPIView.as_view(),name="picture_create"),
     path('picture/<int:pk>/', PictureDetailView.as_view(),name="picture_read"),
     path('picture/all/', PictureAllListAPIView.as_view(),name="picture_read_all"),
     path('picture/update/<int:pk>/', PictureUpdateView.as_view(),name="picture_update"),
     path('picture/delete/<int:pk>/', PictureDeleteView.as_view(),name="picture_delete"),
+    
     path('faq_groups/create/', CreateFAQGroupAPIView.as_view(), name='create_faq_group'),
     path('faq_groups/read/', ReadFAQGroupAPIView.as_view(), name='read_faq_groups'),
     path('faq_groups/update/<int:pk>/', UpdateFAQGroupAPIView.as_view(), name='update_faq_group'),

@@ -6,23 +6,7 @@ from django.urls import reverse
 for_what_choices = (
         ('c2' , "2col"),
         ('c3' , "3col"),
-        ('f1' , "fisrt1"),
-        ('f2' , "fisrt2"),
         ('b1' , "big1"),
-        ('e1' , "end1"),
-        ('t1',"category1"),
-        ('t2',"category2"),
-        ('t3',"category3"),
-        ('ct',"category page"),
-        ('ds',"dashboard"),
-        ('ne',"news"),
-        ('au',"aboutUs"),
-        ('ay',"aboutUsBanner"),
-        ('co',"contact"),
-        ('fq',"FAQ"),
-        ('ff',"full width FAQ"),
-        ('to',"Track Order"),
-        ('ru',"Rules"),
 )
 
 #---------------------------
@@ -98,6 +82,7 @@ class Picture(models.Model):
 class Banner(models.Model):
     bigTitle = models.CharField(max_length=200)
     color_title = models.CharField(max_length=10) 
+    text = models.CharField(max_length=600,null=True,blank=True) 
     image = models.ImageField(upload_to='media/banners/%Y/%m/')
     for_what = models.CharField(max_length=2,choices=for_what_choices)
     abs_link = models.CharField(max_length=200,null=True,blank=True)
