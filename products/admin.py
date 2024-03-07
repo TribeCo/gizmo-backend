@@ -1,10 +1,15 @@
 from django.contrib import admin
 from .models import *
 #---------------------------
+class AttributeItemInline(admin.TabularInline):
+    model = Attribute
+    raw_id_fields = ('product',)
+    fields = ('key', 'value')
+#---------------------------
 class ProductImageItemInline(admin.TabularInline):
     model = ProductImage
     raw_id_fields = ('product',)
-    fields = ('alt', 'is_main','image')
+    fields = ('alt', 'image')
 #---------------------------
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -15,7 +20,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_editable = ('price',)
     raw_id_fields = ('category',)
     actions = ('make_available','make_unavailable','add_specific_color')
-    inlines = (ProductImageItemInline,)
+    inlines = (ProductImageItemInline,AttributeItemInline)
 
     def make_available(self,request,queryset):
         rows = queryset.update(available=True)
