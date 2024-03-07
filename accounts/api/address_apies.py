@@ -20,6 +20,9 @@ from rest_framework.permissions import IsAuthenticated
 #---------------------------
 messages_for_front = {
     'address_created' : 'آدرس جدید ذخیره شد.',
+    'address_not_found' : 'آدرس یافت نشد.',
+    'address_changed' : 'آدرس با موفقیت تغییر کرد.',
+    'not_id' : 'آیدی مورد نیاز است.',
 }
 #---------------------------
 class CreateAddressAPIView(APIView):
@@ -28,16 +31,24 @@ class CreateAddressAPIView(APIView):
     def post(self, request):
         serializer = AddressSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=request.user,phone_number=request.user.phoneNumber)
             return Response({'messages':messages_for_front['address_created'],'data':serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------
 class ReadAddressAPIView(RetrieveAPIView):
-    """Getting the information of a Brand with ID"""
+    """Getting the information of a Address with ID"""
     permission_classes = [IsAuthenticated]
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
     lookup_field = 'pk'
+#---------------------------
+class ReadUserAddressAPIView(ListAPIView):
+    """Getting the information of a Address with ID"""
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        addresses = request.user.addresses.all()
+        serializer = AddressSerializer(addresses,many=True)
+        return Response({'data':serializer.data}, status=status.HTTP_200_OK)
 #---------------------------
 class UpdateAddressAPIView(UpdateAPIView):
     """update address with id"""
@@ -62,4 +73,24 @@ class UserAddressAPIView(APIView):
             serializer.save()
             return Response({'messages':messages_for_front['address_created'],'data':serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#---------------------------
+class SetUserAddressAPIView(APIView):
+    """ser an user addresses"""
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        pk = request.data.get('id')
+
+        if(not pk):
+            return Response({'message': messages_for_front['not_id']}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+        try:
+            address = user.addresses.get(pk = pk)
+        except Address.DoesNotExist:
+            return Response({'message': messages_for_front['address_not_found']}, status=status.HTTP_404_NOT_FOUND)
+        
+        user.change_current_address(address.id)
+
+        return Response({'messages':messages_for_front['address_changed']}, status=status.HTTP_200_OK)
+#---------------------------
 

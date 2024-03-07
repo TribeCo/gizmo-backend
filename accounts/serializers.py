@@ -41,7 +41,7 @@ class OldPasswordChangeSerializer(serializers.ModelSerializer):
 class UserReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('phoneNumber','full_name','is_admin','is_active','email')
+        fields = ('phoneNumber','first_name','last_name','birth_day','gender','email')
 #---------------------------
 class UserCommentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -96,9 +96,10 @@ class EnhancedTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 #---------------------------
 class AddressSerializer(serializers.ModelSerializer):
+    user = UserReadSerializer(required=False)
     class Meta:
         model = Address
-        fields = ['id', 'user', 'text', 'postal_code', 'city', 'phone_number', 'current']
+        fields = ['id', 'user', 'straight_address','province', 'postal_code', 'city', 'phone_number', 'current']
 #---------------------------
 class MessageCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -106,8 +107,7 @@ class MessageCreateSerializer(serializers.ModelSerializer):
         fields = ['title', 'text', 'created', 'seen', 'user']
 #---------------------------
 class MessageSerializer(serializers.ModelSerializer):
-    user = UserReadSerializer()
     class Meta:
         model = Message
-        fields = ['title', 'text', 'created', 'seen', 'user']
+        fields = ['title', 'text', 'abs_link', 'seen', 'shamsi_date']
 #---------------------------
