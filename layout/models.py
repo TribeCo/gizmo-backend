@@ -85,6 +85,7 @@ class Banner(models.Model):
     image = models.ImageField(upload_to='media/banners/%Y/%m/')
     for_what = models.CharField(max_length=2,choices=for_what_choices)
     abs_link = models.CharField(max_length=200,null=True,blank=True)
+    description = models.CharField(max_length=500)
 
     def get_absolute_url(self):
         return self.abs_link
