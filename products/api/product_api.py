@@ -134,10 +134,9 @@ class SimilarProductsAPIView(APIView):
 class NewProductAPIView(APIView):
     """get 10 New Product"""
     def get(self, request):    
-        four_days_ago = timezone.now() - timedelta(days=4)
-        new_products = Product.objects.filter(updated__gte=four_days_ago)
+        new_products = Product.objects.all().order_by('-id')[:4]
         serializer = ProductSliderSerializer(new_products,many=True)
-        return Response(serializer.data)
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 #---------------------------
 class ObservedProductAPIView(APIView):
     """This API returns the user's viewed products"""
@@ -149,7 +148,7 @@ class ObservedProductAPIView(APIView):
             products.append(wp.product)
 
         serializer = ProductSliderSerializer(products,many=True)
-        return Response(serializer.data)
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 #---------------------------
 class ProductSearchAPIView(APIView):
     """ Search for products """
@@ -157,5 +156,5 @@ class ProductSearchAPIView(APIView):
         product = Product.objects.filter(slug=slug)
         products = Product.objects.filter(name__icontains=slug)
         serializer = ProductSerializer(products, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 #---------------------------
