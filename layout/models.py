@@ -80,20 +80,17 @@ class Picture(models.Model):
 #     def __str__(self):
 #         return self.name
 #---------------------------
-class Banner(models.Model):
-    bigTitle = models.CharField(max_length=200)
-    color_title = models.CharField(max_length=10) 
-    text = models.CharField(max_length=600,null=True,blank=True) 
+class Banner(models.Model): 
+    alt = models.CharField(max_length=600,null=True,blank=True) 
     image = models.ImageField(upload_to='media/banners/%Y/%m/')
     for_what = models.CharField(max_length=2,choices=for_what_choices)
     abs_link = models.CharField(max_length=200,null=True,blank=True)
-    button = models.CharField(max_length=200,null=True,blank=True)
 
     def get_absolute_url(self):
         return self.abs_link
 
     def __str__(self):
-        return self.bigTitle
+        return self.alt
 
     @staticmethod
     def filter():
