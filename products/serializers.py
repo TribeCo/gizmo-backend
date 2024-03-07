@@ -8,7 +8,7 @@ class BrandSerializer(serializers.ModelSerializer):
     logo = serializers.ImageField()
     class Meta:
         model = Brand
-        fields = ('name', 'slug', 'logo', 'description','id')
+        fields = ('name', 'slug', 'logo', 'description','id','website')
 #---------------------------
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -62,7 +62,7 @@ class ProductPageSerializer(serializers.ModelSerializer):
 class CategoryLandingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['id','name','image','slug']
+        fields = ['id','name','image','slug','color']
 #---------------------------
 class ProductSliderSerializer(serializers.ModelSerializer):
     discounted_price = serializers.CharField(source='discounted_price_int')

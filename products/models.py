@@ -31,6 +31,8 @@ class Category(models.Model):
     image = models.ImageField(upload_to='media/categories/',blank=True,null=True)
     slug = models.SlugField(max_length=200,unique=True, allow_unicode=True)
 
+    color = models.CharField(max_length=10,blank=True,null=True)
+
     class Meta:
         ordering = ('name',)
         verbose_name = 'category'
