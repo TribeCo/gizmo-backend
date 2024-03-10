@@ -29,5 +29,8 @@ urlpatterns = [
     path('ticket/', TicketCreateAPIView.as_view(),name="ticket_create"),
     path('ticket/<int:pk>/', TicketDetailView.as_view(),name="ticket_read"),
     path('ticket/all/', TicketAllListAPIView.as_view(),name="ticket_read_all"),
+
+    path('config/aboutus/', ConfigForAboutUsAPIView.as_view(),name="config_aboutus"),
+    path('config/enamad/', ConfigForEnamadAPIView.as_view(),name="config_enamad"),
 ]
 

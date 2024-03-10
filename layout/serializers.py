@@ -44,3 +44,19 @@ class TicketSerializer(serializers.ModelSerializer):
         model = Ticket
         fields = ['name', 'email', 'phoneNumber', 'title', 'text']
 #---------------------------
+class ConfigForAboutUsSerializer(serializers.ModelSerializer):
+    gif = serializers.SerializerMethodField()
+
+    def get_gif(self, obj):
+        gif = '{}{}'.format(DOMAIN, obj.gif.url) if obj.gif else None
+        return gif
+
+    class Meta:
+        model = Config
+        fields = ['description', 'gif', 'address', 'phone', 'insta', 'telegram', 'email']
+#---------------------------
+class ConfigForEnamadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Config
+        fields = ['e_namad', 'phone', 'insta', 'telegram', 'email']
+#---------------------------

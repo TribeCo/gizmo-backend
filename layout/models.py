@@ -11,25 +11,28 @@ for_what_choices = (
 )
 
 #---------------------------
-# class ConfigShop(models.Model):
-#     fname = models.CharField(max_length=200)
-#     ename = models.CharField(max_length=200)
-#     logo = models.ImageField(upload_to='media/config/logo/')
-#     black_logo = models.ImageField(upload_to='media/config/logo/')
-#     phone = models.CharField(max_length=12)
-#     phone_number = models.CharField(max_length=12)
-#     email = models.EmailField()
-#     description = models.CharField(max_length=200)
-#     insta = models.URLField()
-#     whatsapp = models.URLField()
-#     telegram = models.URLField()
-#     aboutUs = models.TextField()
-#     address = models.CharField(max_length=100)
-#     color = models.CharField(max_length=6,default="82981a")
-#     e_namad = models.TextField()
+class Config(models.Model):
+    fname = models.CharField(max_length=200)
+    ename = models.CharField(max_length=200)
+    logo = models.ImageField(upload_to='media/config/logo/')
+    black_logo = models.ImageField(upload_to='media/config/logo/')
+    phone = models.CharField(max_length=12)
+    phone_number = models.CharField(max_length=12)
+    email = models.EmailField()
+    description = models.CharField(max_length=200)
+    insta = models.URLField()
+    whatsapp = models.URLField()
+    telegram = models.URLField()
+    aboutUs = models.TextField()
+    address = models.CharField(max_length=100)
+    color = models.CharField(max_length=6,default="82981a")
+    e_namad = models.TextField()
+    gif = models.FileField(upload_to='media/config/logo/')
 
-#     def __str__(self):
-#         return f"{self.fname} - {self.ename}"
+    current = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.fname} - {self.ename}"
 #---------------------------
 class Ticket(models.Model):
     name = models.CharField(max_length=200)
