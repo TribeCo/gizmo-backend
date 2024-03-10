@@ -31,15 +31,15 @@ for_what_choices = (
 #     def __str__(self):
 #         return f"{self.fname} - {self.ename}"
 #---------------------------
-# class Survey(models.Model):
-#     name = models.CharField(max_length=200)
-#     email = models.EmailField()
-#     phoneNumber = models.CharField(max_length=200,default="None")
-#     title = models.CharField(max_length=200)
-#     text = models.TextField(default="None")
+class Ticket(models.Model):
+    name = models.CharField(max_length=200)
+    email = models.EmailField()
+    phoneNumber = models.CharField(max_length=200,default="None")
+    title = models.CharField(max_length=200)
+    text = models.TextField(default="None")
 
-#     def __str__(self):
-#         return f"{self.email} - {self.name}"
+    def __str__(self):
+        return f"{self.email} - {self.name}"
 #--------------------------
 class FAQGroup(models.Model):
     title = models.CharField(max_length=100)

@@ -25,5 +25,9 @@ urlpatterns = [
     path('faqs/read/', ReadFAQAPIView.as_view(), name='read_faqs'),
     path('faqs/update/<int:pk>/', UpdateFAQAPIView.as_view(), name='update_faq'),
     path('faqs/delete/<int:pk>/', DeleteFAQAPIView.as_view(), name='delete_faq'),
+
+    path('ticket/', TicketCreateAPIView.as_view(),name="ticket_create"),
+    path('ticket/<int:pk>/', TicketDetailView.as_view(),name="ticket_read"),
+    path('ticket/all/', TicketAllListAPIView.as_view(),name="ticket_read_all"),
 ]
 

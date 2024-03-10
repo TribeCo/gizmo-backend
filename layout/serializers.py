@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Banner,FAQGroup,FAQ,Picture
+from .models import *
 from config.settings import DOMAIN
 #---------------------------
 class BannerSerializer(serializers.ModelSerializer):
@@ -38,4 +38,9 @@ class FAQGroupPageSerializer(serializers.ModelSerializer):
     class Meta:
         model = FAQGroup
         fields = ['id', 'title', 'faqs']
+#---------------------------
+class TicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = ['name', 'email', 'phoneNumber', 'title', 'text']
 #---------------------------
