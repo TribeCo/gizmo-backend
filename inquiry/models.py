@@ -21,4 +21,13 @@ class ForeignOrder(models.Model):
     def total_price(self):
         return self.price + self.profit
 #---------------------------
+class DubaiSites(models.Model):
+    name = models.CharField(max_length=100)
+    website = models.CharField(max_length=200)
+    logo = models.ImageField(upload_to='media/logos/')
+
+
+    def __str__(self):
+        return self.name
+#---------------------------
 
