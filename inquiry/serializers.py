@@ -6,3 +6,7 @@ class ForeignOrderSerializer(serializers.ModelSerializer):
         model = ForeignOrder
         fields = ['name','link','price','discounted','discounted_price','image','admin_checked','profit']
 #---------------------------
+class DubaiSitesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DubaiSites
+        fields = ['name','website','logo']
