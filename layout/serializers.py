@@ -28,3 +28,14 @@ class FAQSerializer(serializers.ModelSerializer):
         model = FAQ
         fields = ['id', 'group', 'question', 'answer']
 #---------------------------
+class FAQSerializerForFAQG(serializers.ModelSerializer):
+    class Meta:
+        model = FAQ
+        fields = ['question', 'answer']
+#---------------------------
+class FAQGroupPageSerializer(serializers.ModelSerializer):
+    faqs = FAQSerializerForFAQG(many=True)
+    class Meta:
+        model = FAQGroup
+        fields = ['id', 'title', 'faqs']
+#---------------------------

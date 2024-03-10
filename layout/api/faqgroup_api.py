@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from layout.models import FAQGroup
-from layout.serializers import FAQGroupSerializer
+from layout.serializers import *
 from rest_framework.permissions import IsAuthenticated
 #---------------------------
 """
@@ -11,11 +11,16 @@ from rest_framework.permissions import IsAuthenticated
     api's in api_views.py :
 
     1- CreateFAQGroupAPIView --> create a new FAQ group
-    2- ReadFAQGroupAPIView --> read all FAQ groups
+    2- ReadAllFAQGroupAPIView --> read all FAQ groups
     3- UpdateFAQGroupAPIView --> update an existing FAQ group
     4- DeleteFAQGroupAPIView --> delete an existing FAQ group
 
 """
+#---------------------------
+messages_for_front = {
+    'faq_not_found' : 'گروه مورد نظر یافت نشد.',
+    
+}
 #---------------------------    
 class CreateFAQGroupAPIView(APIView):
     """
@@ -32,15 +37,13 @@ class CreateFAQGroupAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #--------------------------- 
-class ReadFAQGroupAPIView(APIView):
-    """
-     read all FAQ groups
-    """
+class ReadAllFAQGroupAPIView(APIView):
+    """read all FAQ groups"""
     def get(self, request):
         faq_groups = FAQGroup.objects.all()
         serializer = FAQGroupSerializer(faq_groups, many=True)
-        return Response(serializer.data)
-#--------------------------- 
+        return Response({'data':serializer.data,},status=status.HTTP_200_OK)
+#---------------------------
 class UpdateFAQGroupAPIView(APIView):
     """
      update an existing FAQ group
@@ -68,3 +71,15 @@ class DeleteFAQGroupAPIView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except FAQGroup.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+#---------------------------        
+class ReadFAQGroupAPIView(APIView):
+    """read FAQ group with faqs"""
+    def get(self, request,pk):
+        try:
+            faq_groups = FAQGroup.objects.get(id=pk)
+        except FAQGroup.DoesNotExist:
+            return Response({'message': messages_for_front['faq_not_found']},status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = FAQGroupPageSerializer(faq_groups)
+        return Response({'data':serializer.data,},status=status.HTTP_200_OK)
+#--------------------------- 
