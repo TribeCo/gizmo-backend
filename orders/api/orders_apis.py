@@ -159,3 +159,26 @@ class ConvertCartToOrderAPIView(APIView):
         
         return Response({'message': message_for_front['cart_converted_to_order']})
 #---------------------------
+from django.template.loader import get_template
+from django.http import HttpResponse
+import pdfkit
+
+def generate_pdf(request):
+    # Render your HTML page using Django template
+    template = get_template('orders/factor.html')
+    info = {}
+    rendered_html = template.render({'data': info})
+
+    # Generate PDF from rendered HTML
+    # pdf = pdfkit.from_string(rendered_html, False)
+
+    # Return PDF as response
+    # response = HttpResponse(pdf, content_type='application/pdf')
+    # response['Content-Disposition'] = 'filename="output.pdf"'
+    order = Order.objects.get(id=7)
+    info['order'] = order
+
+    return render(request,'orders/factor.html',info)
+
+#---------------------------
+

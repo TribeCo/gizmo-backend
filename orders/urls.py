@@ -11,4 +11,6 @@ urlpatterns = [
     path('orders/item/delete/<int:pk>/', DeleteProductToOrderAPIView.as_view(), name="order_items_delete"),
     path('orders/user/', ListUserOrdersAPIView.as_view(),name="user_orders"),
     path('order/create/cart/', ConvertCartToOrderAPIView.as_view(),name="convert_cart_to_order"),
+    path('order/create/factor/', generate_pdf,name="generate_pdf"),
+    
 ]
