@@ -24,12 +24,14 @@ messages_for_front = {
     'add_product' : 'محصول با موفقیت به سبد خرید اضافه شد.',
     'update_product' : 'محصول آپدیت شد.',
     'cart_cleared' : 'سبد خرید خالی شد.',
+    'not_availble_product' : 'محصول مورد نظر موجود نمی باشد',
     
 }
 #---------------------------
 class CartDetailAPIView(APIView):
     """Getting the user's shopping cart information"""
     serializer_class = CartSerializer
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         serializer = CartSerializer(request.user.cart)
         return Response({'cart':serializer.data}, status=status.HTTP_200_OK)
@@ -43,17 +45,29 @@ class AddProductToCartAPIView(APIView):
             "product": 6 --> product id
         }  
     """
+    permission_classes = [IsAuthenticated]
     serializer_class = CartItemSerializer
     def post(self, request,):
         serializer = CartItemSerializer(data=request.data)
 
-        cart = request.user.cart
+        try:
+            cart = request.user.cart
+        except :
+            user = request.user
+            cart = Cart(user = user)
+            cart.save()
+            user.cart = cart
+            user.save()
 
         if serializer.is_valid():
             
             item = serializer.save(cart=cart,price=0)
             item.price = item.product.discounted_price_int
-            item.save()
+            product = item.product
+            if(product.available):
+                item.save()
+            else:
+                return Response({'message':messages_for_front['not_availble_product']}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'message':messages_for_front['add_product']}, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)      
@@ -61,6 +75,7 @@ class AddProductToCartAPIView(APIView):
 class DeleteProductToCartAPIView(APIView):
     """Remove a product from the cart"""
     serializer_class = CartSerializer
+    permission_classes = [IsAuthenticated]
     def delete(self, request,pk):
         try:
             item = CartItem.objects.get(id=pk)
@@ -73,21 +88,24 @@ class DeleteProductToCartAPIView(APIView):
 class CartItemUpdateView(APIView):
     """Update Cart item information with ID"""
     serializer_class = CartItemSerializer
+    permission_classes = [IsAuthenticated]
     def put(self, request,pk):
         try:
             item = CartItem.objects.get(id=pk)
         except CartItem.DoesNotExist:
             return Response({'message':messages_for_front['item_not_found']}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = CartItemSerializer(data=request.data,instance=item)
+        serializer = CartItemUpdateSerializer(data=request.data,instance=item)
         
         if serializer.is_valid():
+            serializer.save(product=item.product)
             return Response({'message':messages_for_front['update_product'],'item':serializer.data}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
 #---------------------------
 class ClearCartAPIView(APIView):
     """Clear the entire shopping cart"""
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         cart = request.user.cart
 

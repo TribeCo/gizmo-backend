@@ -1,4 +1,6 @@
 from importlib.metadata import requires
+from typing_extensions import Required
+from urllib.request import Request
 from rest_framework import serializers
 from .models import *
 from accounts.models import User
@@ -8,12 +10,12 @@ class ProductSerializerForCart(serializers.ModelSerializer):
     discount_price = serializers.CharField(source='discounted_price')
     class Meta:
         model = Product
-        fields = ('name', 'image', 'code', 'price', 'id', 'price', 'discount', 'discounted','discount_price')
+        fields = ('id','name', 'image1', 'code', 'price', 'price', 'discount', 'discounted','discount_price')
 #---------------------------
 class ColorSerializerForCart(serializers.ModelSerializer):
     class Meta:
         model = Color
-        fields = ('name', 'en', 'code')
+        fields = ('id','name', 'en', 'code')
 #---------------------------
 class UserSerializerForCart(serializers.ModelSerializer):
     class Meta:
@@ -25,17 +27,24 @@ class CartItemSerializerForCart(serializers.ModelSerializer):
     color = ColorSerializerForCart()
     class Meta:
         model = CartItem
-        fields = ['quantity','color','product'] 
+        fields = ['id','quantity','color','product'] 
 #--------------------------- 
 class CartSerializer(serializers.ModelSerializer):
     user = UserSerializerForCart(required=False)
     items = CartItemSerializerForCart(many=True)
     class Meta:
         model = Cart
-        fields = ['user','items','id']
+        fields = ['id','user','items']
 #---------------------------
 class CartItemSerializer(serializers.ModelSerializer):
-    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), required=False)
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+
+    class Meta:
+        model = CartItem
+        fields = ['quantity','color','product']  
+#---------------------------
+class CartItemUpdateSerializer(serializers.ModelSerializer):
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(),required=False)
 
     class Meta:
         model = CartItem

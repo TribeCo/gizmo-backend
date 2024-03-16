@@ -130,24 +130,46 @@ class ConvertCartToOrderAPIView(APIView):
     def post(self, request):
         user = request.user
         cart = user.cart
+        data = request.data
+
+        if(user.orders.filter(paid=False).count()):
+            print("hello")
+
+
         try:
             cart_items = cart.items.all()
         except:
             return Response({'message': message_for_front['no_cart_items_in_user_cart']}, status=status.HTTP_404_NOT_FOUND)
         
-        order = Order(user = user)        
+        order = Order(user = user,address=user.addresses.get(current=True),recipient = data.get("info"))    
+        order.save()    
 
         for item in cart_items:
-            order_item = OrderItem()
-            order_item.product = item.product
-            order_item.price = item.price
-            order_item.quantity = item.quantity
+            order_item = OrderItem(product= item.product,
+            price= item.price,quantity= item.quantity,color= item.color,
+            order= order)
             order_item.save()
-            order.orders.add(order_item)
+
+            order.items.add(order_item)
+
         order.save()
         
-        for item in cart_items:
-            item.delete()
+        # for item in cart_items:
+        #     item.delete()
         
         return Response({'message': message_for_front['cart_converted_to_order']})
 #---------------------------
+from django.template.loader import get_template
+from django.http import HttpResponse
+
+def generate_pdf(request):
+    template = get_template('orders/factor.html')
+    info = {}
+    order = Order.objects.get(id=7)
+    info['order'] = order
+    rendered_html = template.render({'data': info})
+
+    # return HttpResponse(rendered_html)
+    return render(request,'orders/factor.html',info)
+#---------------------------
+
