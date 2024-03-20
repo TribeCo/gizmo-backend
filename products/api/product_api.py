@@ -159,7 +159,7 @@ class ObservedProductAPIView(APIView):
 class ProductSearchAPIView(APIView):
     """ Search for products """
     def get(self, request, slug):
-        product = Product.objects.filter(slug=slug)
+        # product = Product.objects.filter(slug=slug)
         products = Product.objects.filter(name__icontains=slug)
         serializer = ProductSerializer(products, many=True)
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
