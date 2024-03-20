@@ -23,6 +23,7 @@ messages_for_front = {
     'address_not_found' : 'آدرس یافت نشد.',
     'address_changed' : 'آدرس با موفقیت تغییر کرد.',
     'not_id' : 'آیدی مورد نیاز است.',
+    'tomany_address' : 'تعداد آدرس های ذخیره شده زیاد است.',
 }
 #---------------------------
 class CreateAddressAPIView(APIView):
@@ -30,6 +31,8 @@ class CreateAddressAPIView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
         serializer = AddressSerializer(data=request.data)
+        if(request.user.addresses.count() > 2):
+            return Response({'messages':messages_for_front['tomany_address']}, status=status.HTTP_400_BAD_REQUEST)
         if serializer.is_valid():
             serializer.save(user=request.user,phone_number=request.user.phoneNumber)
             return Response({'messages':messages_for_front['address_created'],'data':serializer.data}, status=status.HTTP_201_CREATED)
