@@ -267,6 +267,8 @@ class VerifyAPIView(APIView):
                     user.delivery_info = None
                     user.save()
 
+                    order.discount = cart.coupon.discount
+
                     order.authority = t_authority
                     order.ref_id = RefID
                     order.save()

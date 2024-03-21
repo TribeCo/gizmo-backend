@@ -76,10 +76,10 @@ class ApplyCouponToCartAPIView(APIView):
     """Apply coupon to cart"""
     permission_classes = [IsAuthenticated]
     def post(self, request):
-        pk = request.data.get('pk')
+        code = request.data.get('code')
         user = request.user
         try:
-            coupon = Coupon.objects.get(id=pk)
+            coupon = Coupon.objects.get(code=code)
         except Coupon.DoesNotExist:
             return Response({'message':messages_for_front['coupon_not_found']}, status=status.HTTP_404_NOT_FOUND)
 
