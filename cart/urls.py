@@ -15,5 +15,6 @@ urlpatterns = [
     path('coupon/all/', CouponAllListAPIView.as_view(),name="coupon_read_all"),
     path('coupon/delete/<int:pk>/', CouponDeleteView.as_view(),name="coupon_delete"),
     path('coupon/update/<int:pk>/', CouponUpdateView.as_view(),name="coupon_update"),
-    path('coupon/apply/<int:pk>/', ApplyCouponToCartAPIView.as_view(),name="coupon_apply"),
+    path('coupon/apply/', ApplyCouponToCartAPIView.as_view(),name="coupon_apply"),
+    path('coupon/revoke/', RevokeCouponToCartAPIView.as_view(),name="coupon_revoke"),
 ]

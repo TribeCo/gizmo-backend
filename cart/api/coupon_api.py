@@ -25,6 +25,8 @@ messages_for_front = {
     'coupon_not_found' : 'کد تخفیف یافت نشد.',
     'coupon_is_not_valid' : 'کد تخفیف معتبر نیست.',
     'coupon_applied' : 'کد تخفیف با موفقیت اعمال شد.',
+    'coupon_is_used' : 'کد تخفیف استفاده شده است.',
+    'coupon_revoked' : 'کد تخفیف لغو شد.',
 }
 #---------------------------
 class CouponCreateAPIView(APIView):
@@ -72,21 +74,43 @@ class CouponUpdateView(UpdateAPIView):
 #---------------------------
 class ApplyCouponToCartAPIView(APIView):
     """Apply coupon to cart"""
-    def post(self, request,pk):
-
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        pk = request.data.get('pk')
+        user = request.user
         try:
             coupon = Coupon.objects.get(id=pk)
         except Coupon.DoesNotExist:
             return Response({'message':messages_for_front['coupon_not_found']}, status=status.HTTP_404_NOT_FOUND)
 
-        cart = request.user.cart
+        cart = user.cart
 
 
         if coupon.is_valid():
-            
+            if(user in coupon.users.all()):
+                return Response({'message':messages_for_front['coupon_is_used']}, status=status.HTTP_400_BAD_REQUEST) 
+            coupon.users.add(user)
+            coupon.save()
+
             cart.discount = coupon.discount
+            cart.coupon = coupon
             cart.save()
             return Response({'message':messages_for_front['coupon_applied']}, status=status.HTTP_201_CREATED)
         
         return Response({'message':messages_for_front['coupon_is_not_valid']}, status=status.HTTP_400_BAD_REQUEST)  
+#---------------------------
+class RevokeCouponToCartAPIView(APIView):
+    """Revoke coupon to cart"""
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        user = request.user
+        cart = user.cart
+        coupon = cart.coupon
+
+
+        coupon.users.remove(user)
+        cart.discount = 0
+        cart.coupon = None
+        cart.save()
+        return Response({'message':messages_for_front['coupon_revoked']}, status=status.HTTP_201_CREATED)
 #---------------------------
