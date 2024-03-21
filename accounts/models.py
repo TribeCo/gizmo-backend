@@ -86,6 +86,9 @@ class User(AbstractBaseUser):
         address.current = True
         address.save()
 
+    def total_price(self):
+        return self.cart.total_price()
+
     @property
     def is_staff(self):
         return self.is_admin
@@ -177,4 +180,14 @@ class Message(models.Model):
         created_aware = timezone.make_aware(created_naive, timezone.get_default_timezone())
         days = (now - created_aware).days
         return f"{days} روز پیش"
+#---------------------------
+class Payments(models.Model):
+    ref_id = models.CharField(max_length=100,null=True,blank=True)
+    authority = models.CharField(max_length=100)
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="payments")
+    amount = models.IntegerField()
+
+
+    def __str__(self):
+        return str(self.user) + " - " + str(self.amount)
 #---------------------------
