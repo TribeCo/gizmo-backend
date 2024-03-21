@@ -1,10 +1,18 @@
+from asyncio.windows_events import NULL
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
-from ..serializers import OrderSerializer, OrderItemsSerializer
+from ..serializers import *
 from ..models import Order, OrderItem
+from accounts.models import DeliveryInfo,Payments
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from config.settings import merchant
+import requests
+import json
 #---------------------------
 """
     The codes related to the site's orders are in this app.
@@ -28,7 +36,29 @@ message_for_front = {
     'order_updated': 'سفارش با موفقیت آپدیت شد.',
     'no_cart_items_in_user_cart': 'سبد کاربر خالی می باشد',
     'cart_converted_to_order': 'سفارشات ثبت شدند',
+    "not_order" : 'جنین سفارشی در دیتابیس وجود ندارد.',
+    "not_connected" : ' اتصال به درگاه ناموفق بود.',
+    "too_long" : 'زمان بیش حد سپری شده برای اتصال به درگاه.',
+    "not_success_connect" : 'اتصال ناموفق.',
+    "success" : 'پرداخت با موفقیت انجام شد.',
+    "payed" : 'پرداخت انجام شده بوده است.',
+    "not_upload" : 'آپلود با مشکل مواجه شد.',
+    "success_upload" : "آپلود با موفقیت انجام شد. برای پیگیری سفارش به داشبورد مراجعه کنید.",
 }
+#---------------------------
+if True:
+    sandbox = 'sandbox'
+else:
+    sandbox = 'www'
+
+MERCHANT = merchant
+ZP_API_REQUEST = f"https://{sandbox}.zarinpal.com/pg/rest/WebGate/PaymentRequest.json"
+ZP_API_VERIFY = f"https://{sandbox}.zarinpal.com/pg/rest/WebGate/PaymentVerification.json"
+ZP_API_STARTPAY = f"https://{sandbox}.zarinpal.com/pg/StartPay/"
+# amount = 11000  # Rial / Required
+description = "گیزموشاپ"  # Required
+# Important: need to edit for realy server.
+CallbackURL = 'http://localhost:8000/api/verify/'
 #---------------------------
 class CreateOrderAPIView(APIView):
     """
@@ -121,43 +151,140 @@ class DeleteProductToOrderAPIView(APIView):
         item.delete()
         return Response({}, status=status.HTTP_204_NO_CONTENT) 
 #---------------------------
-class ConvertCartToOrderAPIView(APIView):
+class PayMoneyAPIView(APIView):
     """
-        converts a cart to order.
-        login required.        
+        Create a link for redirecting user to portal bank.
     """
     permission_classes = [IsAuthenticated]
-    def post(self, request):
+    def get(self, request):
         user = request.user
-        cart = user.cart
-        data = request.data
+        amount = user.total_price() 
 
-        if(user.orders.filter(paid=False).count()):
-            print("hello")
+        data = {
+            "MerchantID": "007b7418-afdb-47ff-85fc-3719884056ef",
+            "Amount": amount,
+            "Description": description,
+            "Phone": user.phoneNumber,
+            # change this url
+            "CallbackURL": CallbackURL,
+        }
+        data = json.dumps(data)
+
+        # set content length by data
+        headers = {'content-type': 'application/json', 'content-length': str(len(data)) }
+        try:
+            response = requests.post(ZP_API_REQUEST, data=data,headers=headers, timeout=10)
+
+            response_dict = json.loads(response.text)
+            status = response_dict['Status']
+            authority = response_dict['Authority']
+
+            print(response_dict)
+
+
+            if(status == 100):
+                redirect_url = f"{ZP_API_STARTPAY}{authority}"
+                pay_obj = Payments(authority = authority,
+                    user = user,
+                    amount = amount
+                    )
+
+                pay_obj.save()
+                return Response({'redirect_url':redirect_url,})
+                
+            
+            return Response({'message':message_for_front['not_connected'],})
+
+
+        
+        except requests.exceptions.Timeout:
+            return Response({'message':message_for_front['too_long'],})
+        except requests.exceptions.ConnectionError:
+            return Response({'message':message_for_front['not_success_connect'],})
+#---------------------------
+class VerifyAPIView(APIView):
+    """
+        This api checks whether the payment has been made correctly or not.
+        converts a cart to order.
+        login required. 
+    """
+    def get(self, request):
+        t_status = request.GET.get('Status')
+        t_authority = request.GET['Authority']
 
 
         try:
-            cart_items = cart.items.all()
-        except:
-            return Response({'message': message_for_front['no_cart_items_in_user_cart']}, status=status.HTTP_404_NOT_FOUND)
-        
-        order = Order(user = user,address=user.addresses.get(current=True),recipient = data.get("info"))    
-        order.save()    
+            pay_obj = Payments.objects.get(authority=t_authority)
+        except Payments.DoesNotExist:
+            return Response({'message':message_for_front['not_order'],})
 
-        for item in cart_items:
-            order_item = OrderItem(product= item.product,
-            price= item.price,quantity= item.quantity,color= item.color,
-            order= order)
-            order_item.save()
+        user = pay_obj.user
+        amount = user.total_price()
 
-            order.items.add(order_item)
+        
+        if(t_status == "NOK"):
+            return Response({'message':message_for_front['not_success_connect'],})
+        
+        elif(t_status == "OK"):
+            data = {
+                "MerchantID": MERCHANT,
+                "Amount": amount,
+                "Authority": t_authority,
+            }
+        
+            data = json.dumps(data)
+            # set content length by data
+            headers = {'content-type': 'application/json', 'content-length': str(len(data)) }
+            response = requests.post(ZP_API_VERIFY, data=data,headers=headers)
 
-        order.save()
-        
-        # for item in cart_items:
-        #     item.delete()
-        
-        return Response({'message': message_for_front['cart_converted_to_order']})
+            response_dict = json.loads(response.text)
+            status = response_dict['Status']
+            RefID = response_dict['RefID']
+
+            if status == 100:
+                    pay_obj.ref_id = RefID
+                    pay_obj.save()
+
+                    cart = user.cart
+
+                    try:
+                        cart_items = cart.items.all()
+                    except:
+                        return Response({'message': message_for_front['no_cart_items_in_user_cart']}, status=status.HTTP_404_NOT_FOUND)
+                    
+                    order = Order(user = user,address=user.addresses.get(current=True),paid=True)    
+                    order.save()    
+
+                    for item in cart_items:
+                        order_item = OrderItem(product= item.product,
+                        price= item.price,quantity= item.quantity,color= item.color,
+                        order= order)
+                        order_item.save()
+
+                        order.items.add(order_item)
+
+                    order.delivery_info = user.delivery_info
+                    user.delivery_info = None
+                    user.save()
+
+                    order.authority = t_authority
+                    order.ref_id = RefID
+                    order.save()
+
+                    for item in cart_items:
+                        item.delete()
+
+                    info = OrderSerializerForCart(order)
+                                
+                    return Response({'message':message_for_front['success'],'data':info.data})
+
+            elif status == 101:
+                return Response({'message':message_for_front['payed'],})
+
+            else:
+                return Response({'message':message_for_front['not_success_connect'],})
+        else:
+            return Response({'message':message_for_front['not_success_connect'],})
 #---------------------------
 from django.template.loader import get_template
 from django.http import HttpResponse
