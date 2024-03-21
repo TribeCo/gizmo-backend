@@ -1,7 +1,7 @@
 from importlib.metadata import requires
 from typing_extensions import Required
 from rest_framework import serializers
-from .models import User,Address,Message
+from .models import *
 from .models import Comment,ProductComment
 from blog.models import ArticleComment
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -110,4 +110,9 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ['title', 'text', 'abs_link', 'seen', 'shamsi_date']
+#---------------------------
+class DeliveryInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeliveryInfo
+        fields = ['name_delivery', 'phone_delivery', 'description']
 #---------------------------
