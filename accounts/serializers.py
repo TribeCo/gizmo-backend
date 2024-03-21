@@ -114,5 +114,5 @@ class MessageSerializer(serializers.ModelSerializer):
 class DeliveryInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = DeliveryInfo
-        fields = ['name_delivery', 'phone_delivery', 'description']
+        fields = ['name_delivery', 'phone_delivery', 'description','delivery_method']
 #---------------------------

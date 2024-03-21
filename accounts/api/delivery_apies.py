@@ -28,6 +28,7 @@ class UpdateInfoDelivery(APIView):
             {
                 "name_delivery": "taha mousavi",
                 "description": "tozihat",
+                "delivery_method": "tozihat",
                 "phone_delivery": "021557438345"
             }
 
