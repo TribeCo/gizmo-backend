@@ -40,6 +40,8 @@ urlpatterns = [
     path('informing/add/', AddInformingProductAPIView.as_view(), name='favorite_product_addtion'),
     path('informing/delete/', DeleteInformingProductAPIView.as_view(), name='favorite_product_deletion'),
 
+    path('user/update/delivery/', UpdateInfoDelivery.as_view(), name='user_delivery_update'),
+
 
     path('users/password/change/', PasswordChangeRequest.as_view(), name='users_password_change'),
     path('users/password/confirm/', ChangePassword.as_view(), name='users_password_confirm'),
