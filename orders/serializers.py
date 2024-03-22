@@ -49,3 +49,8 @@ class OrderItemsSerializer(serializers.ModelSerializer):
         model = OrderItem
         fields = ('product', 'price', 'quantity',)
 #---------------------------
+class FactorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ('total_price' ,'factor',)
+#---------------------------

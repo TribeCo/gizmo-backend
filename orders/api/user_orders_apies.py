@@ -43,7 +43,6 @@ class ListUserOrdersAPIView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self,request):
         orders = request.user.orders
-        
         serializer = OrderDashBoardSerializer(orders, many=True)
 
         return Response({'data': serializer.data},status=status.HTTP_200_OK)

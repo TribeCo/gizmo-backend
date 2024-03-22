@@ -1,9 +1,12 @@
+from email.policy import default
 from django.db import models
 from django.conf import settings
 from accounts.models import Address
 from django.core.validators import MinValueValidator,MaxValueValidator
 from products.models import Product,Color
 from layout.utils import jalali_converter
+from ckeditor.fields import RichTextField
+from django.template.loader import get_template
 #---------------------------
 def format(show):
     formatted_price = "{:,.0f}".format(show)
@@ -30,6 +33,8 @@ class Order(models.Model):
     authority = models.CharField(max_length=100,blank=True,null=True,default=None)
 
     address = models.ForeignKey(Address,on_delete=models.CASCADE,blank=True,null=True,default=None)
+
+    factor = RichTextField(default=None,blank=True,null=True)
     
 
     processed = models.BooleanField(default=False)
@@ -69,6 +74,14 @@ class Order(models.Model):
 
     def formatPay(self,pay):
         return "{:,.0f}".format(pay)
+
+    def create_factor(self):
+        template = get_template('orders/factor.html')
+        info = {}
+        info['order'] = self
+        rendered_html = template.render({'data': info})
+        self.factor = rendered_html
+        self.save()
 
     @property
     def total_price(self):
