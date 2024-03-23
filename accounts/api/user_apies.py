@@ -182,7 +182,7 @@ class UpdateSignUpAPIView(APIView):
 
         response_data = {
             'phoneNumber' : user.phoneNumber,
-            'full_name' : user.full_name,
+            'full_name' : user.first_name,
             'id' : user.id
         }       
 
