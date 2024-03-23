@@ -1,4 +1,5 @@
 from rest_framework import serializers
+import requests
 from .models import *
 #---------------------------
 class ForeignOrderSerializer(serializers.ModelSerializer):
@@ -15,4 +16,13 @@ class ForeignProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = ForeignProduct
         fields = '__all__'
+#---------------------------
+class LinkSerializer(serializers.Serializer):
+    url = serializers.URLField()
+
+    def validate_url(self, value):
+        response = requests.get(value)
+        if response.status_code != 200:
+            raise serializers.ValidationError("Cannot access the provided URL")
+        return value
 #---------------------------
