@@ -10,3 +10,9 @@ class DubaiSitesSerializer(serializers.ModelSerializer):
     class Meta:
         model = DubaiSites
         fields = ['name','website','logo']
+#---------------------------
+class ForeignProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ForeignProduct
+        fields = '__all__'
+#---------------------------

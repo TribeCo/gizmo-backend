@@ -30,4 +30,13 @@ class DubaiSites(models.Model):
     def __str__(self):
         return self.name
 #---------------------------
+from products.models import Product
+
+class ForeignProduct(Product):
+    class Meta:
+        proxy = True
+        exclude = ['price',]
+    
+    website = models.ForeignKey(DubaiSites,on_delete=models.CASCADE,related_name='products')
+#---------------------------
 

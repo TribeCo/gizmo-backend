@@ -15,4 +15,8 @@ urlpatterns = [
     path('other/sites/all/', DubaiSitesAllListAPIView.as_view(),name="other_sites_read_all"),
     path('other/sites/update/<int:pk>/', DubaiSitesUpdateView.as_view(),name="other_sites_update"),
     path('other/sites/delete/<int:pk>/', DubaiSitesDeleteView.as_view(),name="other_sites_delete"),
+
+    path('foreign/product/create/', ForeignProductCreateAPIView.as_view(),name="foreign_product_create"),
+
+    
 ]
