@@ -52,7 +52,7 @@ class ProductPageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id','attributes','brand','category','colors','images' ,'content','En','slug','price','image1','image2','alt','available',
+        fields = ['id','attributes','brand','category','colors','images' ,'content','En','slug','price','image1','image2','special_image','alt','available',
         'created','updated','rating','warehouse','ordered','send_free','net_sale','code','discount','discounted']
     def to_representation(self, instance):
         data = super().to_representation(instance)
