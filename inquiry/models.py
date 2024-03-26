@@ -33,5 +33,7 @@ class DubaiSites(models.Model):
 from products.models import Product
 class ForeignProduct(Product):
     website = models.ForeignKey(DubaiSites,on_delete=models.CASCADE,related_name='products')
+    image_link = models.CharField(max_length=500)
+    product_url = models.CharField(max_length=500)
 #---------------------------
 

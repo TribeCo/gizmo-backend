@@ -20,9 +20,9 @@ class ForeignProductSerializer(serializers.ModelSerializer):
 class LinkSerializer(serializers.Serializer):
     url = serializers.URLField()
 
-    def validate_url(self, value):
-        response = requests.get(value)
-        if response.status_code != 200:
-            raise serializers.ValidationError("Cannot access the provided URL")
-        return value
+    # def validate_url(self, value):
+    #     response = requests.get(value)
+    #     if response.status_code != 200:
+    #         raise serializers.ValidationError("Cannot access the provided URL")
+    #     return value
 #---------------------------
