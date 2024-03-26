@@ -264,21 +264,18 @@ class OldChangePassword(APIView):
             urls : domain.com/..../users/change/password/old/
             Sample json :
             {
-                "phoneNumber": "09345454678",
                 "new_password": "sdfmkwefjoiwejf",
                 "new_password_confirm": "sdfmkwefjoiwejf",
                 "password": "338dsfs3fsaengh7"
             }
 
     """
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         info = OldPasswordChangeSerializer(data=request.data)    
 
         if info.is_valid():
-            try :
-                user = User.objects.get(phoneNumber = info.validated_data['phoneNumber'])
-            except User.DoesNotExist:
-                return Response({'message': messages_for_front['user_not_found']}, status=status.HTTP_400_BAD_REQUEST)
+            user = request.user
             
             if (user.check_password(str(info.validated_data['password']))):
                 if((user == request.user) and (info.validated_data['new_password_confirm'] == info.validated_data['new_password'])):
