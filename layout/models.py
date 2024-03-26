@@ -46,6 +46,7 @@ class Ticket(models.Model):
 #--------------------------
 class FAQGroup(models.Model):
     title = models.CharField(max_length=100)
+    icon = models.ImageField(upload_to='media/faqs/pictures/')
 
     def __str__(self):
         return self.title
