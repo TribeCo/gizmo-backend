@@ -14,6 +14,10 @@ class BannerSerializer(serializers.ModelSerializer):
         fields = '__all__'
 #---------------------------
 class FAQGroupSerializer(serializers.ModelSerializer):
+    icon = serializers.SerializerMethodField()
+    def get_icon(self, obj):
+        icon_url = '{}{}'.format(DOMAIN, obj.icon.url) if obj.icon else None
+        return icon_url
     class Meta:
         model = FAQGroup
         fields = ['id', 'title','icon']
