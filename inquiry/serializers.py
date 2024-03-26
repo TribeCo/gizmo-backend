@@ -2,6 +2,9 @@ from rest_framework import serializers
 import requests
 from .models import *
 #---------------------------
+class CreateForeignOrderSerializer(serializers.ModelSerializer):
+    product = serializers.CharField()
+#---------------------------
 class ForeignOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = ForeignOrder
@@ -25,4 +28,11 @@ class LinkSerializer(serializers.Serializer):
     #     if response.status_code != 200:
     #         raise serializers.ValidationError("Cannot access the provided URL")
     #     return value
+#---------------------------
+class DubaiProductSerializer(serializers.ModelSerializer):
+    discounted_price = serializers.CharField(source='discounted_price_int')
+
+    class Meta:
+        model = ForeignProduct
+        fields = ['id','name','image_link','price','discounted','discounted_price','discount','product_url']
 #---------------------------

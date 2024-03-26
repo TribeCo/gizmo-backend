@@ -7,6 +7,7 @@ from inquiry.serializers import *
 import requests
 import random 
 import string
+import os
 #---------------------------
 """
     The codes related to the site's products are in this app.
@@ -23,9 +24,9 @@ import string
 messages_for_front = {
     'other_sites_created' : 'برند جدید ساخته شد.',
     'dubai_site_not_found' : 'سایت پیدا نشد.',
+    'dubai_response' : 'محصول با موفقیت پیدا شد.',
     }
 #---------------------------
-import os
 class ForeignProductCreateAPIView(APIView):
     """Create a Product"""
     def post(self, request):    
@@ -110,8 +111,10 @@ class ForeignProductCreateAPIView(APIView):
 
             product.save()
 
+            info = DubaiProductSerializer(product)
 
-            return Response({'message': 'ok'})
+
+            return Response({'message': messages_for_front['dubai_response'],'data':info.data},status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------

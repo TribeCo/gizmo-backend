@@ -29,10 +29,12 @@ class CreateForeignOrder(APIView):
     serializer_class = ForeignOrderSerializer
     permission_classes = [IsAuthenticated]
     def post(self,request):
-        serializer = ForeignOrderSerializer(data=request.data)
+        serializer = CreateForeignOrderSerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            
+
+            ForeignOrder(user=request.user,)
 
             return Response({'message' : messages_for_front['foreign_order_created']},status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
