@@ -41,7 +41,7 @@ class OldPasswordChangeSerializer(serializers.ModelSerializer):
 class UserReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('phoneNumber','first_name','last_name','birth_day','gender','email')
+        fields = ('phoneNumber','first_name','last_name','birth_day','gender','email','birth_day')
 #---------------------------
 class UserCommentSerializer(serializers.ModelSerializer):
     class Meta:
