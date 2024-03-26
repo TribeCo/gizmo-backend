@@ -16,7 +16,7 @@ class BannerSerializer(serializers.ModelSerializer):
 class FAQGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = FAQGroup
-        fields = ['id', 'title']
+        fields = ['id', 'title','icon']
 #---------------------------
 class PictureSerializer(serializers.ModelSerializer):
     class Meta:
