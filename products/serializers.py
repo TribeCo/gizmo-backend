@@ -50,9 +50,26 @@ class ProductPageSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True)
     attributes = AttributeSerializer(many=True)
 
+    image1 = serializers.SerializerMethodField()
+    image2 = serializers.SerializerMethodField()
+    special_image = serializers.SerializerMethodField()
+
+    def get_image1(self, obj):
+        image_url = '{}{}'.format(DOMAIN, obj.image1.url) if obj.image1 else None
+        return image_url
+
+    def get_image2(self, obj):
+        image_url2 = '{}{}'.format(DOMAIN, obj.image2.url) if obj.image2 else None
+        return image_url2
+
+    def get_special_image(self, obj):
+        special_image2 = '{}{}'.format(DOMAIN, obj.special_image.url) if obj.special_image else None
+        return special_image2
+
+
     class Meta:
         model = Product
-        fields = ['id','attributes','brand','category','colors','images' ,'content','En','slug','price','image1','image2','special_image','alt','available',
+        fields = ['id','attributes','brand','category','colors','images' ,'content','name','En','slug','price','image1','image2','special_image','alt','available',
         'created','updated','rating','warehouse','ordered','send_free','net_sale','code','discount','discounted']
     def to_representation(self, instance):
         data = super().to_representation(instance)
