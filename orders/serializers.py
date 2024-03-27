@@ -34,6 +34,11 @@ class OrderSerializer(serializers.ModelSerializer):
         'deliveried', 'total_price', 'discount_string',
         'discount_amount' ,'pay_amount')
 #---------------------------
+class OrderSerializerForCart(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ['id','discount_amount' ,'pay_amount']
+#---------------------------
 class OrderDashBoardSerializer(serializers.ModelSerializer):
     user = UserSerializerForOrder(required=False)
     address = AddressSerializerForOrder()
@@ -41,7 +46,7 @@ class OrderDashBoardSerializer(serializers.ModelSerializer):
         model = Order
         fields = ('user' ,'address','shamsi_date', 'discount', 'ref_id', 'address', 'processed', 'packing', 'shipped', 
         'deliveried', 'total_price', 'discount_string',
-        'discount_amount' ,'pay_amount','recipient')
+        'discount_amount' ,'pay_amount')
 #---------------------------
 class OrderItemsSerializer(serializers.ModelSerializer):
     product = ProductSerializerForCart()

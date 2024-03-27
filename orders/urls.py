@@ -10,4 +10,9 @@ urlpatterns = [
     path('orders/items/list/<int:pk>/', ListOrderItemsAPIview.as_view(), name="order_items_list"),
     path('orders/item/delete/<int:pk>/', DeleteProductToOrderAPIView.as_view(), name="order_items_delete"),
     path('orders/user/', ListUserOrdersAPIView.as_view(),name="user_orders"),
+    path('order/create/factor/', generate_pdf,name="generate_pdf"),
+
+
+    path('payment/', PayMoneyAPIView.as_view(), name='pay'),
+    path('verify/', VerifyAPIView.as_view(), name='verify'), 
 ]

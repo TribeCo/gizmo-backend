@@ -133,7 +133,8 @@ class UpdateSignUpAPIView(APIView):
 
         phoneNumber = request.data['phoneNumber']
         email = request.data['email']
-        full_name = request.data['full_name']
+        first_name = request.data['first_name']
+        last_name = request.data['last_name']
         password = request.data['password']
 
 
@@ -143,8 +144,11 @@ class UpdateSignUpAPIView(APIView):
         if(not email):
             return Response({'message': "users must have email"}, status=status.HTTP_400_BAD_REQUEST)
         
-        if(not full_name):
-            return Response({'message': "users must have full name"}, status=status.HTTP_400_BAD_REQUEST)
+        if(not first_name):
+            return Response({'message': "users must have first name"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if(not last_name):
+            return Response({'message': "users must have last name"}, status=status.HTTP_400_BAD_REQUEST)
 
         if(not password):
             return Response({'message': "users must have password"}, status=status.HTTP_400_BAD_REQUEST)
@@ -165,7 +169,8 @@ class UpdateSignUpAPIView(APIView):
             return Response({'message': "can not update"}, status=status.HTTP_400_BAD_REQUEST)
 
         
-        user.full_name = full_name
+        user.first_name = first_name
+        user.last_name = last_name
         user.email = email
         user.set_password(password)
         user.is_active = True
@@ -177,7 +182,7 @@ class UpdateSignUpAPIView(APIView):
 
         response_data = {
             'phoneNumber' : user.phoneNumber,
-            'full_name' : user.full_name,
+            'full_name' : user.first_name,
             'id' : user.id
         }       
 
@@ -259,21 +264,18 @@ class OldChangePassword(APIView):
             urls : domain.com/..../users/change/password/old/
             Sample json :
             {
-                "phoneNumber": "09345454678",
                 "new_password": "sdfmkwefjoiwejf",
                 "new_password_confirm": "sdfmkwefjoiwejf",
                 "password": "338dsfs3fsaengh7"
             }
 
     """
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         info = OldPasswordChangeSerializer(data=request.data)    
 
         if info.is_valid():
-            try :
-                user = User.objects.get(phoneNumber = info.validated_data['phoneNumber'])
-            except User.DoesNotExist:
-                return Response({'message': messages_for_front['user_not_found']}, status=status.HTTP_400_BAD_REQUEST)
+            user = request.user
             
             if (user.check_password(str(info.validated_data['password']))):
                 if((user == request.user) and (info.validated_data['new_password_confirm'] == info.validated_data['new_password'])):

@@ -2,8 +2,9 @@ from django.db import models
 from django.conf import settings
 from accounts.models import Address
 from django.core.validators import MinValueValidator,MaxValueValidator
-from products.models import Product
+from products.models import Product,Color
 from layout.utils import jalali_converter
+from accounts.models import DeliveryInfo
 #---------------------------
 def format(show):
     formatted_price = "{:,.0f}".format(show)
@@ -23,7 +24,8 @@ class Order(models.Model):
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)
     discount = models.IntegerField(blank=True,null=True,default=None)
-    recipient = models.CharField(max_length=100)
+    delivery_info = models.OneToOneField(DeliveryInfo,on_delete=models.SET_NULL,blank=True,null=True,related_name="order") 
+
     
 
     ref_id = models.CharField(max_length=100,blank=True,null=True,default=None)
@@ -57,7 +59,7 @@ class Order(models.Model):
     @property
     def discount_amount(self):
         if self.discount == None:
-            return f" تخفیفی اعمال نشده است."
+            return 0
         return self.discount * self.total_price / 100
 
     @property
@@ -102,6 +104,7 @@ class OrderItem(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='order_items')
     price = models.IntegerField()
     quantity = models.PositiveSmallIntegerField(default=1)
+    color = models.ForeignKey(Color,on_delete=models.CASCADE) 
 
     def __str__(self):
         return f"{self.id}-{self.product}"

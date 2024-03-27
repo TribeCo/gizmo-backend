@@ -1,7 +1,7 @@
 from importlib.metadata import requires
 from typing_extensions import Required
 from rest_framework import serializers
-from .models import User,Address,Message
+from .models import *
 from .models import Comment,ProductComment
 from blog.models import ArticleComment
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -31,17 +31,16 @@ class PasswordChangeSerializer(serializers.ModelSerializer):
         fields = [ 'phoneNumber', 'code','password']
 #---------------------------
 class OldPasswordChangeSerializer(serializers.ModelSerializer):
-    phoneNumber = serializers.CharField()
     new_password = serializers.CharField()
     new_password_confirm = serializers.CharField()
     class Meta:
         model = User
-        fields = [ 'phoneNumber', 'new_password','password','new_password_confirm']
+        fields = ['new_password','password','new_password_confirm']
 #---------------------------
 class UserReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('phoneNumber','first_name','last_name','birth_day','gender','email')
+        fields = ('phoneNumber','first_name','last_name','birth_day','gender','email','birth_day')
 #---------------------------
 class UserCommentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -110,4 +109,9 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ['title', 'text', 'abs_link', 'seen', 'shamsi_date']
+#---------------------------
+class DeliveryInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeliveryInfo
+        fields = ['name_delivery', 'phone_delivery', 'description','delivery_method']
 #---------------------------

@@ -8,7 +8,7 @@ from .managers import MyUserManager
 from layout.utils import jalali_converter_with_hour,jalali_converter
 import uuid
 #---------------------------
-send_ways = (
+delivery_methods = (
         ('c' , "درون شهری"),
         ('b' , "اتوبوس"),
         ('p', "پست معمولی"),
@@ -27,6 +27,15 @@ class ProfileUser(models.Model):
     def __str__(self):
         return str(self.bio)
 #---------------------------
+class DeliveryInfo(models.Model):
+    name_delivery = models.CharField(max_length=50)
+    phone_delivery = models.CharField(max_length=20)
+    description = models.CharField(max_length=500)
+    delivery_method = models.CharField(max_length=1,choices = delivery_methods,default='p')
+
+    def __str__(self):
+        return str(self.name_delivery)
+#---------------------------
 class User(AbstractBaseUser):
     # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     phoneNumber = models.CharField(unique=True, max_length=11)
@@ -36,6 +45,7 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     email = models.EmailField(unique=True)
     profile = models.OneToOneField(ProfileUser,on_delete=models.SET_NULL,blank=True,null=True,related_name="user") 
+    delivery_info = models.OneToOneField(DeliveryInfo,on_delete=models.SET_NULL,blank=True,null=True,related_name="user") 
     
 
     can_change_password = models.BooleanField(default=False)
@@ -48,8 +58,6 @@ class User(AbstractBaseUser):
 
     wishlist = models.ManyToManyField(Product,blank=True,related_name ="wishlist")
     informing = models.ManyToManyField(Product,blank=True,related_name ="informing")
-
-    last_send_way = models.CharField(max_length=1,choices = send_ways,default='t')
 
     gender = models.CharField(max_length=1,choices = gender_options,default='u')
 
@@ -64,13 +72,6 @@ class User(AbstractBaseUser):
     def blog_articles(self):
         return reverse("blog:author_articles",args=[1,self.id])
 
-    def send_way(self):
-        for ch in send_ways:
-            
-            if(ch[0] == self.last_send_way):
-                return ch[1]
-        return "هیچی"
-
     def has_perm(self, perm, obj=None):
         return True
 
@@ -84,6 +85,9 @@ class User(AbstractBaseUser):
         address = self.addresses.get(id=pk)
         address.current = True
         address.save()
+
+    def total_price(self):
+        return self.cart.total_price()
 
     @property
     def is_staff(self):
@@ -176,4 +180,14 @@ class Message(models.Model):
         created_aware = timezone.make_aware(created_naive, timezone.get_default_timezone())
         days = (now - created_aware).days
         return f"{days} روز پیش"
+#---------------------------
+class Payments(models.Model):
+    ref_id = models.CharField(max_length=100,null=True,blank=True)
+    authority = models.CharField(max_length=100)
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="payments")
+    amount = models.IntegerField()
+
+
+    def __str__(self):
+        return str(self.user) + " - " + str(self.amount)
 #---------------------------

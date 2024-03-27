@@ -67,9 +67,10 @@ class ProductDetailAPIView(APIView):
         except Product.DoesNotExist:
             return Response({'message': messages_for_front['product_not_found']}, status=status.HTTP_404_NOT_FOUND)
         
-        # if(request.user.is_authenticated):
-        #     wp = WatchedProduct(user=request.user,product=product)
-        #     wp.save()
+        if(request.user.is_authenticated):
+            wp = WatchedProduct(user=request.user,product=product)
+            wp.save()
+            # this comment
 
         serializer = ProductPageSerializer(product)
 
@@ -88,7 +89,7 @@ class ProductDetailAPIViewBySlug(APIView):
             wp = WatchedProduct(user=request.user,product=product)
             wp.save()
 
-        serializer = ProductSerializer(product)
+        serializer = ProductPageSerializer(product)
         
         return Response(serializer.data)
 #---------------------------
@@ -159,7 +160,7 @@ class ObservedProductAPIView(APIView):
 class ProductSearchAPIView(APIView):
     """ Search for products """
     def get(self, request, slug):
-        product = Product.objects.filter(slug=slug)
+        # product = Product.objects.filter(slug=slug)
         products = Product.objects.filter(name__icontains=slug)
         serializer = ProductSerializer(products, many=True)
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)

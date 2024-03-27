@@ -27,7 +27,7 @@ else:
     SECRET_KEY = config('SECRET_KEY')
     # hotel_email = config('EMAIL_HOST')
     # password_email = config('EMAIL_HOST_PASSWORD')
-    # merchant = config('MERCHANT')
+    merchant = config('MERCHANT')
     JWT_SECRET_KEY = config('JWT_SECERT_KEY')
     admin_url = config('ADMIN')
     SMS_PASSWORD = config('SMS_PASSWORD')

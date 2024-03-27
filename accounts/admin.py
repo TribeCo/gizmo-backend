@@ -10,4 +10,6 @@ admin.site.register(ArticleComment)
 admin.site.register(WatchedProduct)
 admin.site.register(Message)
 admin.site.register(Address)
+admin.site.register(DeliveryInfo)
+admin.site.register(Payments)
 #---------------------------
