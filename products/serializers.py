@@ -5,7 +5,12 @@ from .models import *
 from config.settings import DOMAIN
 #---------------------------
 class BrandSerializer(serializers.ModelSerializer):
-    logo = serializers.ImageField()
+    logo = serializers.SerializerMethodField()
+    
+    def get_logo(self, obj):
+        image_url = '{}{}'.format(DOMAIN, obj.logo.url) if obj.logo else None
+        return image_url
+    
     class Meta:
         model = Brand
         fields = ('name', 'slug', 'logo', 'description','id','website')
@@ -70,7 +75,7 @@ class ProductPageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id','attributes','brand','category','colors','images' ,'content','name','En','slug','price','image1','image2','special_image','alt','available',
-        'created','updated','rating','warehouse','ordered','send_free','net_sale','code','discount','discounted']
+        'created','updated','rating','warehouse','ordered','send_free','net_sale','code','discount','discounted','comment_count']
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['content'] = strip_tags(instance.content)

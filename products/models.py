@@ -108,6 +108,10 @@ class Product(models.Model):
     def discounted_price_int(self):
         show = int(((self.price)*(100-self.discount))/100)
         return show
+
+    @property
+    def comment_count(self):
+        return self.comments.all().count()
     
     def get_comments(self):
         comments = self.comments.all().filter(valid=True)

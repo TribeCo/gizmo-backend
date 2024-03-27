@@ -70,6 +70,7 @@ class ProductDetailAPIView(APIView):
         if(request.user.is_authenticated):
             wp = WatchedProduct(user=request.user,product=product)
             wp.save()
+            # this comment
 
         serializer = ProductPageSerializer(product)
 
@@ -88,7 +89,7 @@ class ProductDetailAPIViewBySlug(APIView):
             wp = WatchedProduct(user=request.user,product=product)
             wp.save()
 
-        serializer = ProductSerializer(product)
+        serializer = ProductPageSerializer(product)
         
         return Response(serializer.data)
 #---------------------------
