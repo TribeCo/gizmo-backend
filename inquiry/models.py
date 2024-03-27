@@ -17,13 +17,13 @@ class ForeignProduct(Product):
     product_url = models.CharField(max_length=500)
 #---------------------------
 class ForeignOrder(models.Model):
-    user = models.ForeignKey(User,on_delete=models.Model)
+    user = models.ForeignKey(User,on_delete=models.Model,related_name='foreign_orders')
     name = models.CharField(max_length=300)
     link = models.URLField()
     price = models.IntegerField()
     discounted = models.BooleanField(default=False)
     discounted_price = models.IntegerField(null=True,blank=True)
-    image = models.ImageField(null=True,blank=True)
+    image = models.CharField(max_length=500)
     admin_checked = models.BooleanField(default=False)
     profit = models.IntegerField(default=0)
     product = models.ForeignKey(ForeignProduct,on_delete=models.Model,related_name='orders')

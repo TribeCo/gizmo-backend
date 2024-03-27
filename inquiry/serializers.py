@@ -2,9 +2,6 @@ from rest_framework import serializers
 import requests
 from .models import *
 #---------------------------
-class CreateForeignOrderSerializer(serializers.ModelSerializer):
-    product = serializers.CharField()
-#---------------------------
 class ForeignOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = ForeignOrder
