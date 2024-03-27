@@ -22,6 +22,7 @@ messages_for_front = {
     'foreign_order_created' : 'سفارش جدید ساخته شد.',
     'foreign_order_deleted' : 'سفارش حذف شد',
     'foreign_order_updated' : 'سفارش آپدیت شد.',
+    'product_not_found' : 'محصول یافت نشد.',
     }
 #---------------------------
 class CreateForeignOrder(APIView):
@@ -29,19 +30,44 @@ class CreateForeignOrder(APIView):
     serializer_class = ForeignOrderSerializer
     permission_classes = [IsAuthenticated]
     def post(self,request):
-        serializer = ForeignOrderSerializer(data=request.data)
+        pk = request.data.get('id')
 
-        if serializer.is_valid():
-            serializer.save(user=request.user)
+        try:
+            product = ForeignProduct.objects.get(id=pk)
+        except ForeignProduct.DoesNotExist:
+            return Response({'message': messages_for_front['product_not_found']}, status=status.HTTP_404_NOT_FOUND)
 
-            return Response({'message' : messages_for_front['foreign_order_created']},status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        order_product = ForeignOrder(user=request.user,
+        link=product.product_url,price=product.price,
+        discounted=product.discounted,discounted_price=product.discounted_price_int,
+        product=product,name=product.name,
+        image=product.image_link)
+
+        order_product.save()
+
+        info = ForeignOrderSerializer(order_product)
+
+        return Response({'message' : messages_for_front['foreign_order_created'],'data':info.data},status=status.HTTP_201_CREATED)     
 #---------------------------
 class ForeignOrderAllListAPIView(ListAPIView):
     """List of all Foreign Orders"""
     permission_classes = [IsAuthenticated]
     queryset = ForeignOrder.objects.all()
     serializer_class = ForeignOrderSerializer
+#---------------------------
+class ForeignOrderUserListAPIView(APIView):
+    """get user Foreign Orders"""
+    serializer_class = ForeignOrderSerializer
+    permission_classes = [IsAuthenticated]
+    def get(self,request):
+        user = request.user
+
+        orders = user.foreign_orders.all()
+        
+
+        info = ForeignOrderSerializer(orders,many=True)
+
+        return Response({'data':info.data,},status=status.HTTP_201_CREATED)     
 #---------------------------
 class ForeignOrderDetailView(RetrieveAPIView):
     """Getting the information of a Foreign Order with ID(domain.com/..../pk/)"""

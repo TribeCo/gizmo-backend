@@ -3,4 +3,5 @@ from .models import *
 #---------------------------
 admin.site.register(ForeignOrder)
 admin.site.register(DubaiSites)
+admin.site.register(ForeignProduct)
 #---------------------------
