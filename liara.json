@@ -1,9 +1,12 @@
 {
-    "app": "gizmoshop",
+    "app": "gn01",
     "disks": [
         {
           "name": "data",
           "mountTo": "media"
         }
-      ] 
+      ] ,
+    "django": {
+        "mirror": false
+      }
 }
