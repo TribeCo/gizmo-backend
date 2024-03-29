@@ -60,7 +60,7 @@ class ReadCommentForProductAPIView(APIView):
             return Response({'message': messages_for_front['product_not_found']}, status=status.HTTP_404_NOT_FOUND)
 
 
-        serializer = ReadCommentSerializer(product.comments.all(),many=True)
+        serializer = ReadCommentProductSerializer(product.comments.all(),many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 #---------------------------
 class ReadCommentForArticleAPIView(APIView):

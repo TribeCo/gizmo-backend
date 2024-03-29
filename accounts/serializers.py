@@ -51,7 +51,7 @@ class ProductCommentCreateSerializer(serializers.ModelSerializer):
     user = UserCommentSerializer(required=False)
     class Meta:
         model = ProductComment
-        fields = ('user', 'text', 'anonymous','product')
+        fields = ('user', 'text', 'anonymous','product','rating','satisfaction')
 #---------------------------
 class ArticleCommentCreateSerializer(serializers.ModelSerializer):
     user = UserCommentSerializer(required=False)
@@ -65,11 +65,17 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ('id', 'user', 'user_full_name', 'text', 'created', 'valid', 'rating', 'likes', 'dislikes', 'parent_comment','anonymous','days_since_creation')
 #---------------------------
+class ReadCommentProductSerializer(serializers.ModelSerializer):
+    user_full_name = serializers.ReadOnlyField(source='user.full_name')
+    class Meta:
+        model = ProductComment
+        fields = ( 'user', 'user_full_name', 'text', 'valid','anonymous','days_since_creation','rating','satisfaction')
+#---------------------------
 class ReadCommentSerializer(serializers.ModelSerializer):
     user_full_name = serializers.ReadOnlyField(source='user.full_name')
     class Meta:
         model = Comment
-        fields = ( 'user', 'user_full_name', 'text', 'valid','anonymous','days_since_creation')
+        fields = ( 'user', 'user_full_name', 'text', 'valid','anonymous','days_since_creation','rating')
 #---------------------------
 class ArticleCommentSerializer(serializers.ModelSerializer):
     class Meta:
