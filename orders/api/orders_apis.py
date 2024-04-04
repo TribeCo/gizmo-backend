@@ -255,6 +255,7 @@ class VerifyAPIView(APIView):
                     order.save()    
 
                     for item in cart_items:
+                        item.product.update_warehouse(item.quantity)
                         order_item = OrderItem(product= item.product,
                         price= item.price,quantity= item.quantity,color= item.color,
                         order= order)

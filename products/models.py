@@ -97,6 +97,15 @@ class Product(models.Model):
 
     def get_absolute_url(self):
         return reverse('stuff:product_detail',args=[self.slug,self.id])
+    
+    def update_warehouse(self,amount=1):
+        self.warehouse = self.warehouse - amount
+        if(self.warehouse < 0):
+            self.warehouse = 0
+            self.available = False   
+    
+        self.ordered = self.ordered + amount
+        self.save()
 
     @property
     def discounted_price(self):
@@ -162,6 +171,16 @@ class Product(models.Model):
         similar_products = Product.objects.filter(id__in=product_ids).distinct()
 
         return similar_products
+#---------------------------
+class ProductColor(models.Model):
+    product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='product_color')
+    color = models.ForeignKey(Color,on_delete=models.CASCADE,related_name='product_color')
+    quantity = models.IntegerField()
+    
+    def __str__(self):
+        return f"{self.product}-{self.color}-{self.quantity}"
+        
+    
 #---------------------------
 class ProductImage(models.Model):
     image = models.ImageField(upload_to='media/products/%Y/%m/')
