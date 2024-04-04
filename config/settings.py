@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DOMAIN = "http://localhost:8000"
 
 
-deploy = True
+deploy = False
 if(deploy):
     # deploy
     SECRET_KEY = os.getenv('SECRET_KEY', 'LIARA_URL is not set.')
@@ -28,7 +28,7 @@ else:
     # hotel_email = config('EMAIL_HOST')
     # password_email = config('EMAIL_HOST_PASSWORD')
     merchant = config('MERCHANT')
-    JWT_SECRET_KEY = config('JWT_SECERT_KEY')
+    JWT_SECRET_KEY = config('JWT_SECRET_KEY')
     admin_url = config('ADMIN')
     SMS_PASSWORD = config('SMS_PASSWORD')
     SMS_USERNAME = config('SMS_USERNAME')

@@ -32,6 +32,8 @@ urlpatterns = [
     path('messages/update/<int:pk>/', UpdateMessageAPIView.as_view(), name='update_messages'),
     path('messages/delete/<int:pk>/', DeleteMessageAPIView.as_view(), name='delete_messages'),
     path('messages/user/', UserMessageAPIView.as_view(), name='user_messages'),
+    path('messages/user/all/seen/', UserSeenMessagesAPIView.as_view(), name='all_seen_messages'),
+    
 
     path('favorites/', FavoriteProductsAPIView.as_view(), name='favorite_products'),
     path('favorites/add/', AddFavoriteProductAPIView.as_view(), name='favorite_product_addtion'),
