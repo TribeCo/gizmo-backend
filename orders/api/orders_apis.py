@@ -45,7 +45,7 @@ message_for_front = {
     "success_upload" : "آپلود با موفقیت انجام شد. برای پیگیری سفارش به داشبورد مراجعه کنید.",
 }
 #---------------------------
-if True:
+if False:
     sandbox = 'sandbox'
 else:
     sandbox = 'www'
