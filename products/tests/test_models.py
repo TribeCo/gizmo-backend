@@ -33,7 +33,7 @@ class TestProductImageModel(TestCase):
             price=100,
             image=SimpleUploadedFile("test_image.jpg", b"file_content"),
             alt='Test Product Image',
-            available=True,
+            is_available=True,
             short_description='Short description of test product',
             description='Description of test product',
             more_info='More info about test product',

@@ -60,10 +60,13 @@ class AddProductToCartAPIView(APIView):
             user.save()
 
         if serializer.is_valid():
-            product = item.product
-            item = serializer.save(cart=cart,price=0)
-            if(product.available):
-                if(product.warehouse >= item.quantity):
+            product = serializer.validated_data['product']
+            color = serializer.validated_data['color']
+            quantity = serializer.validated_data['quantity']
+            if(product.is_available):
+                product_color_object = product.product_color.get(color__id=color.id)
+                if(product_color_object.quantity >= quantity):
+                    item = serializer.save(cart=cart,price=0)
                     item.price = item.product.discounted_price_int
                     item.save()
                 else:

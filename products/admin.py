@@ -11,36 +11,35 @@ class ProductImageItemInline(admin.TabularInline):
     raw_id_fields = ('product',)
     fields = ('alt', 'image')
 #---------------------------
+class ProductColorInline(admin.TabularInline):
+    model = ProductColor
+    raw_id_fields = ('product',)
+    fields = ('quantity','color')
+#---------------------------
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name','price','available','updated','is_new')
+    list_display = ('name','price','updated','is_new','id')
     search_fields = ['name', 'description',]
     prepopulated_fields = {'slug':('name',)}
-    list_filter = ('available','created')
+    list_filter = ('created',)
     list_editable = ('price',)
     raw_id_fields = ('category',)
     actions = ('make_available','make_unavailable','add_specific_color')
-    inlines = (ProductImageItemInline,AttributeItemInline)
+    inlines = (ProductImageItemInline,AttributeItemInline,ProductColorInline)
 
     def make_available(self,request,queryset):
-        rows = queryset.update(available=True)
+        rows = queryset.update(is_available=True)
         self.message_user(request,f'{rows} updated')
 
     def make_unavailable(self,request,queryset):
-        rows = queryset.update(available=False)
+        rows = queryset.update(is_available=False)
         self.message_user(request,f'{rows} updated')
-
-    def add_specific_color(self, request, queryset):
-        color = Color.objects.get(en='custom')
-        for product in queryset:
-            product.colors.add(color)
-        self.message_user(request, f'The specific color has been added to selected products.')
 
 
     make_available.short_description = 'make all available'
-    add_specific_color.short_description = 'Add specific color to selected products'
 #---------------------------
 admin.site.register(Category)
 admin.site.register(Color)
+admin.site.register(ProductColor)
 admin.site.register(Brand)
 #---------------------------
