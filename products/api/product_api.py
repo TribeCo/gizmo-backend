@@ -95,7 +95,7 @@ class ProductDetailAPIViewBySlug(APIView):
 #---------------------------
 class ProductListAPIView(ListAPIView):
     """List of all Products"""    
-    serializer_class  = ProductSerializer
+    serializer_class  = ProductSliderSerializer
     queryset = Product.objects.all()
 #---------------------------
 class ProductDeleteAPIView(DestroyAPIView):
