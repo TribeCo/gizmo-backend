@@ -25,7 +25,7 @@ messages_for_front = {
     'update_product' : 'محصول آپدیت شد.',
     'cart_cleared' : 'سبد خرید خالی شد.',
     'not_availble_product' : 'محصول مورد نظر موجود نمی باشد',
-    
+    'not_enough_product' : 'محصول به تعداد کافی موجود نمی باشد.',
 }
 #---------------------------
 class CartDetailAPIView(APIView):
@@ -60,12 +60,17 @@ class AddProductToCartAPIView(APIView):
             user.save()
 
         if serializer.is_valid():
-            
-            item = serializer.save(cart=cart,price=0)
-            item.price = item.product.discounted_price_int
-            product = item.product
-            if(product.available):
-                item.save()
+            product = serializer.validated_data['product']
+            color = serializer.validated_data['color']
+            quantity = serializer.validated_data['quantity']
+            if(product.is_available):
+                product_color_object = product.product_color.get(color__id=color.id)
+                if(product_color_object.quantity >= quantity):
+                    item = serializer.save(cart=cart,price=0)
+                    item.price = item.product.discounted_price_int
+                    item.save()
+                else:
+                    return Response({'message':messages_for_front['not_enough_product']}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'message':messages_for_front['not_availble_product']}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'message':messages_for_front['add_product']}, status=status.HTTP_201_CREATED)

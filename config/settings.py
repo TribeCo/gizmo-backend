@@ -20,7 +20,7 @@ if(deploy):
     JWT_SECRET_KEY = os.getenv('JWT_SECERT_KEY', 'LIARA_URL is not set.')
     SMS_PASSWORD = os.getenv('SMS_PASSWORD', 'LIARA_URL is not set.')
     SMS_USERNAME = os.getenv('SMS_USERNAME', 'LIARA_URL is not set.')
-    DOMAIN = "https://gizmoshop.liara.run"
+    DOMAIN = os.getenv('DOMAIN', 'LIARA_URL is not set.')
     
 else:
     # local
@@ -28,7 +28,7 @@ else:
     # hotel_email = config('EMAIL_HOST')
     # password_email = config('EMAIL_HOST_PASSWORD')
     merchant = config('MERCHANT')
-    JWT_SECRET_KEY = config('JWT_SECERT_KEY')
+    JWT_SECRET_KEY = config('JWT_SECRET_KEY')
     admin_url = config('ADMIN')
     SMS_PASSWORD = config('SMS_PASSWORD')
     SMS_USERNAME = config('SMS_USERNAME')

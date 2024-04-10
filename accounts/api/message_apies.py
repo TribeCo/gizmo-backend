@@ -4,7 +4,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from accounts.models import WatchedProduct
-
 from products.models import Product
 from ..serializers import *
 from rest_framework.generics import ListAPIView,DestroyAPIView,RetrieveAPIView,UpdateAPIView
@@ -18,12 +17,15 @@ from rest_framework.permissions import IsAuthenticated
     2- ReadMessageAPIView --> read all messages
     3- UpdateMessageAPIView --> update message with id
     4- DeleteMessageAPIView --> delete message with id
+    5- UserMessageAPIView --> get an user messagees
+    6- UserSeenMessagesAPIView --> Change all user's messages to seen.
 
 """
 #---------------------------
 messages_for_front = {
     'message_created' : 'آدرس جدید ذخیره شد.',
     'product_not_found' : 'محصول مورد نظر وجود ندارد',
+    'message_all_seen' : 'همه پیام ها به خوانده شده تغییر یافت.'
 }
 #---------------------------
 class CreateMessageAPIView(APIView):
@@ -79,4 +81,18 @@ class UserMessageAPIView(APIView):
 #         serializer = MessageSerializer(request.user.messages,many=True)
 #         return Response({'data':serializer.data,}, status=status.HTTP_201_CREATED)
 #---------------------------
-
+class UserSeenMessagesAPIView(APIView):
+    """Change all user's messages to seen."""
+    permission_classes = [IsAuthenticated]
+    
+    def put(self, request):
+        
+        user = request.user
+        messages = user.messages.all()
+        
+        for message in messages:
+            message.seen = True
+            message.save()
+            
+        return Response({'message': messages_for_front['message_all_seen'],},status = status.HTTP_200_OK)
+#---------------------------

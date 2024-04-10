@@ -47,5 +47,5 @@ class GizmoLogSerializer(serializers.ModelSerializer):
    
     class Meta:
         model = Article
-        fields = ['id','title','Author','date','cover']
+        fields = ['id','title','Author','date','cover','slug']
 #---------------------------
