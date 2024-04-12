@@ -5,7 +5,7 @@ from .models import *
 class ForeignOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = ForeignOrder
-        fields = ['name','link','price','discounted','discounted_price','image','admin_checked','profit']
+        fields = ['tracking_code','name','website_name','link','shamsi_date','toman_price','toman_total','admin_checked']
 #---------------------------
 class DubaiSitesSerializer(serializers.ModelSerializer):
     class Meta:

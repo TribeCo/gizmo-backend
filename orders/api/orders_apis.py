@@ -241,7 +241,7 @@ class VerifyAPIView(APIView):
             status = response_dict['Status']
             RefID = response_dict['RefID']
 
-            if status == 100:
+            if status == 100 or status == 101:
                     pay_obj.ref_id = RefID
                     pay_obj.save()
 
@@ -256,7 +256,7 @@ class VerifyAPIView(APIView):
                     order.save()    
 
                     for item in cart_items:
-                        item.product.update_warehouse(item.quantity)
+                        item.product.update_warehouse(item.color.id,item.quantity)
                         order_item = OrderItem(product= item.product,
                         price= item.price,quantity= item.quantity,color= item.color,
                         order= order)
@@ -268,7 +268,8 @@ class VerifyAPIView(APIView):
                     user.delivery_info = None
                     user.save()
 
-                    order.discount = cart.coupon.discount
+                    if(cart.coupon):
+                        order.discount = cart.coupon.discount
 
                     order.authority = t_authority
                     order.ref_id = RefID
@@ -280,9 +281,6 @@ class VerifyAPIView(APIView):
                     info = OrderSerializerForCart(order)
                                 
                     return Response({'message':message_for_front['success'],'data':info.data})
-
-            elif status == 101:
-                return Response({'message':message_for_front['payed'],})
 
             else:
                 return Response({'message':message_for_front['not_success_connect'],})

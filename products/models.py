@@ -65,12 +65,9 @@ class Product(models.Model):
     
     price = models.IntegerField()
     
-    available = models.BooleanField(default=True)
     created = models.DateField(auto_now_add=True)
     updated = models.DateField(auto_now=True)
     rating = models.IntegerField(default=0, validators=[MaxValueValidator(5), MinValueValidator(0)])
-    colors = models.ManyToManyField(Color,blank=True)
-    warehouse = models.IntegerField(default=0)
 
     ordered = models.IntegerField(default=0)
 
@@ -98,12 +95,15 @@ class Product(models.Model):
     def get_absolute_url(self):
         return reverse('stuff:product_detail',args=[self.slug,self.id])
     
-    def update_warehouse(self,amount=1):
-        self.warehouse = self.warehouse - amount
-        if(self.warehouse < 0):
-            self.warehouse = 0
-            self.available = False   
+    def update_warehouse(self,color_id,amount=1):
+        product_color_object = self.product_color.get(color__id=color_id)
+        
+        product_color_object.quantity = product_color_object.quantity - amount
+
+        if(product_color_object.quantity == 0):
+            product_color_object.available = False   
     
+        product_color_object.save()
         self.ordered = self.ordered + amount
         self.save()
 
@@ -112,6 +112,20 @@ class Product(models.Model):
         show = int(((self.price)*(100-self.discount))/100)
         formatted_price = "{:,.0f}".format(show)
         return formatted_price
+
+    @property
+    def is_available(self):
+        return self.warehouse > 0
+
+    @property
+    def warehouse(self):
+        pcolors = self.product_color.all() 
+
+        total = 0
+        for pcolor in pcolors:
+            total += pcolor.quantity
+
+        return total
         
     @property
     def discounted_price_int(self):
@@ -133,12 +147,6 @@ class Product(models.Model):
     @property
     def is_new(self):
         return True if(timezone.now().day - self.updated.day <= 4) else False
-
-    def change_available(self,quantity):
-        self.warehouse -= quantity
-        self.available = True if(self.warehouse > 0) else False
-        self.save()
-        return 
 
     def __str__(self):
         return self.name
@@ -176,6 +184,7 @@ class ProductColor(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='product_color')
     color = models.ForeignKey(Color,on_delete=models.CASCADE,related_name='product_color')
     quantity = models.IntegerField()
+    available = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.product}-{self.color}-{self.quantity}"

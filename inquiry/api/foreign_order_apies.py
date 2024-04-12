@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView,DestroyAPIView,RetrieveAPIView,UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from ..serializers import *
+import random
 #---------------------------
 """
     The codes related to the Dubai Order.
@@ -43,6 +44,8 @@ class CreateForeignOrder(APIView):
         product=product,name=product.name,
         image=product.image_link)
 
+        order_product.tracking_code = random.randint(1000000000, 9999999999)
+
         order_product.save()
 
         info = ForeignOrderSerializer(order_product)
@@ -67,7 +70,7 @@ class ForeignOrderUserListAPIView(APIView):
 
         info = ForeignOrderSerializer(orders,many=True)
 
-        return Response({'data':info.data,},status=status.HTTP_201_CREATED)     
+        return Response({'data':info.data,},status=status.HTTP_200_OK)     
 #---------------------------
 class ForeignOrderDetailView(RetrieveAPIView):
     """Getting the information of a Foreign Order with ID(domain.com/..../pk/)"""
