@@ -112,7 +112,7 @@ class OrderItem(models.Model):
 
     def get_cost(self):
         return self.product.discounted_price_int * self.quantity
-
+    @property
     def get_cost_from_product(self):
         return format(self.product.discounted_price_int * self.quantity)
 #---------------------------

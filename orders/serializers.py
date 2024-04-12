@@ -6,12 +6,19 @@ class ProductSerializerForCart(serializers.ModelSerializer):
     discount_price = serializers.CharField(source='discounted_price')
     class Meta:
         model = Product
-        fields = ('name', 'image', 'price', 'id', 'price', 'discount', 'discounted','discount_price')
+        fields = ('name', 'image1', 'price', 'id', 'price', 'discount', 'discounted','discount_price')
+#---------------------------
+class ProductSerializerForFactor(serializers.ModelSerializer):
+    discount_price = serializers.CharField(source='discounted_price')
+    class Meta:
+        model = Product
+        fields = ('name', 'price', 'id', 'price', 'discount', 'discounted','discount_price')
 #---------------------------
 class OrderItemsSerializerForOrder(serializers.ModelSerializer):
+    product = ProductSerializerForFactor()
     class Meta:
         model = OrderItem
-        fields = ('product', 'price', 'quantity',)
+        fields = ('product', 'price', 'quantity','get_cost_from_product')
 #---------------------------
 class UserSerializerForOrder(serializers.ModelSerializer):
     class Meta:
