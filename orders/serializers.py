@@ -39,7 +39,7 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = ('user' ,'address','items','shamsi_date','paid', 'discount', 'ref_id'
         , 'authority', 'address', 'processed', 'packing', 'shipped', 
         'deliveried', 'total_price', 'discount_string',
-        'discount_amount' ,'pay_amount')
+        'discount_amount' ,'pay_amount','get_order_number')
 #---------------------------
 class OrderSerializerForCart(serializers.ModelSerializer):
     class Meta:

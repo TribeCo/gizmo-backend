@@ -92,7 +92,7 @@ class Order(models.Model):
     @property
     def shamsi_date(self):
         return jalali_converter(self.created)
-
+    @property
     def get_order_number(self):
         order_id = self.id
         order_num = abs(hash(self.created)) % (10 ** 5)
