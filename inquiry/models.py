@@ -36,6 +36,8 @@ class ForeignOrder(models.Model):
     tracking_code = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    derham = models.IntegerField(default=17000)
     
 
 
@@ -58,11 +60,11 @@ class ForeignOrder(models.Model):
 
     @property
     def toman_price(self):
-        return 17000 * self.price 
+        return self.derham * self.price 
     
     @property
     def toman_total(self):
-        return 17000 * self.total_price 
+        return self.derham * self.total_price 
 
     @property
     def is_valid(self):
