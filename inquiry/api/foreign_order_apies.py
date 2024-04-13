@@ -5,6 +5,7 @@ from rest_framework.generics import ListAPIView,DestroyAPIView,RetrieveAPIView,U
 from rest_framework.permissions import IsAuthenticated
 from ..serializers import *
 import random
+from temsah import Currency
 #---------------------------
 """
     The codes related to the Dubai Order.
@@ -38,11 +39,15 @@ class CreateForeignOrder(APIView):
         except ForeignProduct.DoesNotExist:
             return Response({'message': messages_for_front['product_not_found']}, status=status.HTTP_404_NOT_FOUND)
 
+        object_currency = Currency()
+        derham_price = int(object_currency.scrape()['AED_currency'].replace(',', ''))
+
         order_product = ForeignOrder(user=request.user,
         link=product.product_url,price=product.price,
         discounted=product.discounted,discounted_price=product.discounted_price_int,
         product=product,name=product.name,
-        image=product.image_link)
+        image=product.image_link,
+        derham = derham_price)
 
         order_product.tracking_code = random.randint(1000000000, 9999999999)
 
