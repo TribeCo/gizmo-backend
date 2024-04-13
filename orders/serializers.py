@@ -23,7 +23,7 @@ class OrderItemsSerializerForOrder(serializers.ModelSerializer):
 class UserSerializerForOrder(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('phoneNumber', 'full_name')
+        fields = ('phoneNumber', 'full_name','email')
 #---------------------------
 class AddressSerializerForOrder(serializers.ModelSerializer):
     class Meta:

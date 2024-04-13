@@ -30,7 +30,7 @@ class Category(models.Model):
     name = models.CharField(max_length=200)
     image = models.ImageField(upload_to='media/categories/',blank=True,null=True)
     slug = models.SlugField(max_length=200,unique=True, allow_unicode=True)
-
+    # tags = models.
     color = models.CharField(max_length=10,blank=True,null=True)
 
     class Meta:
