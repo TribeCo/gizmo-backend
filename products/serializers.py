@@ -15,15 +15,21 @@ class BrandSerializer(serializers.ModelSerializer):
         model = Brand
         fields = ('name', 'slug', 'logo', 'description','id','website')
 #---------------------------
+class TagsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tags
+        fields = ['name',]
+#---------------------------
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = 'all'
 #---------------------------
 class CategoryProductPageSerializer(serializers.ModelSerializer):
+    tags = TagsSerializer(many=True)
     class Meta:
         model = Category
-        fields = ['id','name','slug',]
+        fields = ['id','name','slug','tags',]
 #---------------------------
 class ColorSerializer(serializers.ModelSerializer):
     class Meta:
