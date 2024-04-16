@@ -40,6 +40,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
+    @property
+    def type(self):
+        return "category"
 
     def get_absolute_url(self):
         return reverse('stuff:category_detail',args=[self.id,1])
@@ -51,7 +55,8 @@ class Category(models.Model):
 class Tags(models.Model):
     name = models.CharField(max_length=100)
     category = models.ForeignKey(Category,related_name = 'tags',on_delete = models.CASCADE,blank=True,null=True)
-    def str(self):
+    
+    def __str__(self):
         return self.name
            
 #---------------------------
@@ -123,6 +128,10 @@ class Product(models.Model):
     @property
     def is_available(self):
         return self.warehouse > 0
+    
+    @property
+    def type(self):
+        return "product"
 
     @property
     def warehouse(self):

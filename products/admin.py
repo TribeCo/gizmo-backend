@@ -54,4 +54,5 @@ class CategoryAdmin(admin.ModelAdmin):
 admin.site.register(Color)
 admin.site.register(ProductColor)
 admin.site.register(Brand)
+admin.site.register(Tags)
 #---------------------------
