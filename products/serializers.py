@@ -15,15 +15,36 @@ class BrandSerializer(serializers.ModelSerializer):
         model = Brand
         fields = ('name', 'slug', 'logo', 'description','id','website')
 #---------------------------
+class TagsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tags
+        fields = ['name',]
+#---------------------------
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
 #---------------------------
-class CategoryProductPageSerializer(serializers.ModelSerializer):
+class CategorySearchSerializer(serializers.ModelSerializer):
+    tags = serializers.SerializerMethodField()
+
+    def get_tags(self, obj):
+        tags = obj.tags.all()
+        tags_name = []
+        for tag in tags:
+            tags_name.append(tag.name)
+        
+        return tags_name
+
     class Meta:
         model = Category
-        fields = ['id','name','slug',]
+        fields = ['id','name','slug','tags','type']
+#---------------------------
+class CategoryProductPageSerializer(serializers.ModelSerializer):
+    tags = TagsSerializer(many=True)
+    class Meta:
+        model = Category
+        fields = ['id','name','slug','tags',]
 #---------------------------
 class ColorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -113,4 +134,10 @@ class ProductSliderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id','slug','name','image1','image2','price','discounted','discounted_price','discount','is_new','net_sale','is_available','send_free']
+#---------------------------
+class ProductSearchSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Product
+        fields = ['id','slug','name','type']
 #---------------------------

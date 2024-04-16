@@ -52,7 +52,7 @@ class CategoryDetailAPIView(RetrieveAPIView):
 #---------------------------
 class CategoryListAPIView(ListAPIView):
     """List of all Category"""
-    serializer_class  = CategorySerializer
+    serializer_class  = CategorySearchSerializer
     queryset = Category.objects.all()
 #---------------------------
 class CategoryDeleteAPIView(DestroyAPIView):

@@ -22,6 +22,7 @@ class Brand(models.Model):
 
     # def get_absolute_url(self):
     #     return reverse('stuff:product_detail',args=[self.slug,self.id])
+
 #---------------------------
 class Category(models.Model):
     sub_category = models.ForeignKey('self',on_delete=models.CASCADE, related_name='scategory',null=True,blank=True)
@@ -30,7 +31,6 @@ class Category(models.Model):
     name = models.CharField(max_length=200)
     image = models.ImageField(upload_to='media/categories/',blank=True,null=True)
     slug = models.SlugField(max_length=200,unique=True, allow_unicode=True)
-    # tags = models.
     color = models.CharField(max_length=10,blank=True,null=True)
 
     class Meta:
@@ -40,6 +40,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
+    @property
+    def type(self):
+        return "category"
 
     def get_absolute_url(self):
         return reverse('stuff:category_detail',args=[self.id,1])
@@ -47,7 +51,15 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         self.slug = self.name.replace(" ","-")
         super(Category, self).save(*args, **kwargs)
-#---------------------------        
+#--------------------------- 
+class Tags(models.Model):
+    name = models.CharField(max_length=100)
+    category = models.ForeignKey(Category,related_name = 'tags',on_delete = models.CASCADE,blank=True,null=True)
+    
+    def __str__(self):
+        return self.name
+           
+#---------------------------
 class Color(models.Model):
     name = models.CharField(max_length=50)
     en = models.CharField(max_length=50)
@@ -116,6 +128,10 @@ class Product(models.Model):
     @property
     def is_available(self):
         return self.warehouse > 0
+    
+    @property
+    def type(self):
+        return "product"
 
     @property
     def warehouse(self):
