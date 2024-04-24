@@ -4,11 +4,11 @@ from .views import *
 urlpatterns = [
     path('article/', ArticleCreateAPIView.as_view(),name="article_create"),
     path('article/<int:pk>/', ArticleDetailView.as_view(),name="article_read"),
-    path('article/<slug:slug>/', ArticleDetailSlugView.as_view(),name="article_read_with_slug"),
     path('article/all/', ArticleListView.as_view(),name="article_list"),
     path('article/update/<int:pk>/', ArticleUpdateView.as_view(),name="article_update"),
     path('article/delete/<int:pk>/', ArticleDeleteAPIView.as_view(),name="article_delete"),
     path('article/similar/<int:pk>/', SimilarArticle.as_view(),name="similar_article"),
+    path('article/<slug:slug>/', ArticleDetailSlugView.as_view(),name="article_read_with_slug"),
 
     path('landing/', LastThreeGizmologs.as_view(),name="last_three_gizmologs"),
     path('news/', NewsGizmologs.as_view(),name="news_gizmologs"),
