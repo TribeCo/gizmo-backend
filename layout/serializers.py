@@ -64,3 +64,8 @@ class ConfigForEnamadSerializer(serializers.ModelSerializer):
         model = Config
         fields = ['e_namad', 'phone', 'insta', 'telegram', 'email']
 #---------------------------
+class RuleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rule
+        fields = ['title', 'text',]
+    
