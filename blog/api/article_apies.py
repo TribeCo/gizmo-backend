@@ -63,7 +63,19 @@ class ArticleCreateAPIView(APIView, ArticlePostPermission):
 class ArticleDetailView(generics.RetrieveAPIView):
     """Getting the details of an Article with ID(domain.com/..../pk/)"""
     queryset = Article.objects.all()
-    serializer_class = ArticleSerializer    
+    serializer_class = ArticleSerializer  
+#---------------------------
+class ArticleDetailSlugView(APIView):
+    """Getting the details of an Article with slug(domain.com/..../slug/)""" 
+    serializer_class = ArticleSerializer  
+    def get(self, request,slug):
+        try:
+            articles = Article.objects.get(slug=slug)
+        except:
+            return Response({'message': message_for_front['article_not_found']}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = ArticleSerializer(articles)
+        return Response({'data': serializer.data})      
 #---------------------------
 class ArticleUpdateView(generics.UpdateAPIView, ArticlePostPermission):
     """Updating the informations of an Article with ID(domain.com/..../pk/)"""
