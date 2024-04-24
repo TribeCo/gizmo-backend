@@ -34,7 +34,7 @@ class ForeignProductCreateAPIView(APIView):
         
         
         if serializer.is_valid():
-            url = 'https://scrapt.liara.run/server/scraper/'
+            url = 'https://gn01.liara.run/server/scraper/'
             data = {"url": request.data.get('url'),}
 
             response = requests.post(url, data=data)
