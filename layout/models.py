@@ -66,12 +66,12 @@ class Picture(models.Model):
     def __str__(self):
         return self.name
 #---------------------------
-# class Rule(models.Model):
-#     title = models.CharField(max_length=100)
-#     text = models.TextField()
+class Rule(models.Model):
+    title = models.CharField(max_length=100)
+    text = models.TextField()
 
-#     def __str__(self):
-#         return self.title
+    def __str__(self):
+        return self.title
 #---------------------------
 # class shop(models.Model):
 #     name = models.CharField(max_length=100)
