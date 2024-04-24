@@ -1,5 +1,8 @@
 {
     "app": "gn01",
+    "node": {
+      "mirror" : false
+    },
     "disks": [
         {
           "name": "data",
