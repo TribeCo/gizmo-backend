@@ -36,6 +36,14 @@ class CartDetailAPIView(APIView):
         serializer = CartSerializer(request.user.cart)
         return Response({'cart':serializer.data}, status=status.HTTP_200_OK)
 #---------------------------
+class CartDetailLocalAPIView(APIView):
+    """Getting the user's shopping cart information"""
+    serializer_class = CartLocalSerializer
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        serializer = CartLocalSerializer(request.user.cart)
+        return Response({'cart':serializer.data}, status=status.HTTP_200_OK)
+#---------------------------
 class AddProductToCartAPIView(APIView):
     """
         Add a product to the cart
