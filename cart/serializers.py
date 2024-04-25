@@ -41,7 +41,7 @@ class CartItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CartItem
-        fields = ['quantity','color','product']  
+        fields = ['id','quantity','color','product']  
 #---------------------------
 class CartItemUpdateSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(),required=False)
