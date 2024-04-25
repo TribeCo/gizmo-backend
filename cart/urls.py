@@ -5,6 +5,7 @@ app_name = 'cart'
 
 urlpatterns = [
     path('cart/', CartDetailAPIView.as_view(),name="cart_detail"),
+    path('cart/local/', CartDetailLocalAPIView.as_view(),name="cart_detail_local"),
     path('cart/item/add/', AddProductToCartAPIView.as_view(),name="cart_add"),
     path('cart/item/add/list/', AddListOfProductsToCartAPIView.as_view(),name="cart_add_list"),
     path('cart/item/delete/<int:pk>/', DeleteProductToCartAPIView.as_view(),name="cart_delete"),
