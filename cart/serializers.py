@@ -35,7 +35,7 @@ class CartItemSerializerLocalForCart(serializers.ModelSerializer):
         fields = ['id','color','product'] 
 #--------------------------- 
 class CartLocalSerializer(serializers.ModelSerializer):
-    items = CartItemSerializerForCart(many=True)
+    items = CartItemSerializerLocalForCart(many=True)
     class Meta:
         model = Cart
         fields = ['id','items',]
