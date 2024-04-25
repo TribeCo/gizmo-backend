@@ -126,7 +126,7 @@ class AddListOfProductsToCartAPIView(APIView):
                     else:
                         return Response({'message': messages_for_front['not_enough_product']}, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response({'message': messages_for_front['not_available_product']}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message': messages_for_front['not_enough_product']}, status=status.HTTP_400_BAD_REQUEST)
 
                 serializer_list.append(serializer)
             else:
