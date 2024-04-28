@@ -60,7 +60,7 @@ class ReadCommentForProductAPIView(APIView):
             return Response({'message': messages_for_front['product_not_found']}, status=status.HTTP_404_NOT_FOUND)
 
 
-        serializer = ReadCommentProductSerializer(product.comments.all(),many=True)
+        serializer = ReadCommentProductSerializer(product.comments.all().filter(valid=True),many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 #---------------------------
 class ReadCommentForArticleAPIView(APIView):
@@ -72,7 +72,7 @@ class ReadCommentForArticleAPIView(APIView):
             return Response({'message': messages_for_front['product_not_found']}, status=status.HTTP_404_NOT_FOUND)
 
 
-        serializer = ReadCommentSerializer(article.comments.all(),many=True)
+        serializer = ReadCommentSerializer(article.comments.all().filter(valid=True),many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 #---------------------------
 class DeleteCommentAPIView(APIView):
