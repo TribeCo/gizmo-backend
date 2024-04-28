@@ -31,7 +31,7 @@ class TicketCreateAPIView(APIView):
             "text": "text."
         }
     """
-    permission_classes = [IsAuthenticated]
+    
     def post(self, request):
         serializer = TicketSerializer(data=request.data)
 
