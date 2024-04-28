@@ -81,6 +81,8 @@ class ProductPageSerializer(serializers.ModelSerializer):
     product_color = ProductColorSerializer(many=True)
     images = ProductImageSerializer(many=True)
     attributes = AttributeSerializer(many=True)
+    discounted_price = serializers.CharField(source='discounted_price_int')
+    
 
     image1 = serializers.SerializerMethodField()
     image2 = serializers.SerializerMethodField()
@@ -102,7 +104,7 @@ class ProductPageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id','attributes','brand','category','images' ,'content','name','En','slug','price','image1','image2','special_image','alt','is_available',
-        'created','updated','rating','ordered','send_free','net_sale','code','discount','discounted','comment_count','product_color','warehouse']
+        'created','updated','rating','ordered','send_free','net_sale','code','discount','discounted','comment_count','product_color','warehouse','discounted_price']
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['content'] = strip_tags(instance.content)
