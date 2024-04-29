@@ -57,7 +57,7 @@ class ConfigForAboutUsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Config
-        fields = ['description', 'gif', 'address', 'phone', 'insta', 'telegram', 'email']
+        fields = ['description', 'gif', 'address', 'phone', 'insta', 'telegram', 'email','e_namad']
 #---------------------------
 class ConfigForEnamadSerializer(serializers.ModelSerializer):
     class Meta:
