@@ -31,6 +31,12 @@ class ArticleSerializer(serializers.ModelSerializer):
     comments = BlogCommentSerializer(many=True)
     products = ProductSliderSerializer(many=True)
     date = serializers.CharField(source='shamsi_date', required=False)
+    cover = serializers.SerializerMethodField()
+
+    def get_cover(self, obj):
+        image_url = '{}{}'.format(DOMAIN, obj.cover.url) if obj.cover else None
+        return image_url
+    
     class Meta:
         model = Article
         fields = ['id','title','Author','cover','slug','status','Category','views','content',
