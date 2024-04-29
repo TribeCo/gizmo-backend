@@ -74,6 +74,12 @@ class ProductManager(models.Manager):
         products_ids = [o.id for o in products if o.dubai_product()]
         products_filtered = products.filter(id__in=products_ids)
         return products_filtered
+
+    def are_available(self):
+        products = self.all()
+        products_ids = [o.id for o in products if o.is_available()]
+        products_filtered = products.filter(id__in=products_ids)
+        return products_filtered
 #---------------------------
 class Product(models.Model):
     category = models.ManyToManyField(Category,related_name='products',blank=True)
@@ -195,8 +201,8 @@ class Product(models.Model):
     def get_similar_products(self):
         product_ids = []
         for category in self.category.all():
-            product_ids.extend(category.products.filter(available=True).exclude(id=self.id).values_list('id', flat=True)[:6])
-            product_ids.extend(Product.objects.filter(available=True).exclude(id=self.id).values_list('id', flat=True))
+            product_ids.extend(category.products.are_available().exclude(id=self.id).values_list('id', flat=True)[:6])
+            product_ids.extend(Product.objects.are_available().exclude(id=self.id).values_list('id', flat=True))
                 
         # remain = 6 - len(product_ids)
         # while(remain > 0):
