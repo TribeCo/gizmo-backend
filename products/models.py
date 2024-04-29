@@ -77,7 +77,7 @@ class ProductManager(models.Manager):
 
     def are_available(self):
         products = self.all()
-        products_ids = [o.id for o in products if o.is_available()]
+        products_ids = [o.id for o in products if o.is_available]
         products_filtered = products.filter(id__in=products_ids)
         return products_filtered
 #---------------------------
