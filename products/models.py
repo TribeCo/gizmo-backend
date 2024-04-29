@@ -68,6 +68,13 @@ class Color(models.Model):
     def __str__(self):
         return self.name
 #---------------------------
+class ProductManager(models.Manager):
+    def non_dubai(self):
+        products = self.all()
+        products_ids = [o.id for o in products if o.dubai_product()]
+        products_filtered = products.filter(id__in=products_ids)
+        return products_filtered
+#---------------------------
 class Product(models.Model):
     category = models.ManyToManyField(Category,related_name='products',blank=True)
     brand = models.ForeignKey(Brand,related_name='products',null=True,blank=True,on_delete=models.CASCADE)
@@ -98,8 +105,11 @@ class Product(models.Model):
     alt = models.CharField(max_length=200)
 
 
+
     discount = models.IntegerField(default=0)
     discounted = models.BooleanField(default=False)
+
+    objects = ProductManager()
 
     class Meta:
         ordering = ('name',)
@@ -124,7 +134,10 @@ class Product(models.Model):
         show = int(((self.price)*(100-self.discount))/100)
         formatted_price = "{:,.0f}".format(show)
         return formatted_price
-
+        
+    def dubai_product(self):
+        return False
+    
     @property
     def is_available(self):
         return self.warehouse > 0
