@@ -1,3 +1,4 @@
+from functools import partial
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -75,7 +76,7 @@ class UserUpdateAPIView(APIView):
     def put(self, request, user_id):
         try:
             user = User.objects.get(id=user_id)
-            serializer = UserReadSerializer(user, data=request.data)
+            serializer = UserUpdateSerializer(user, data=request.data,partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
