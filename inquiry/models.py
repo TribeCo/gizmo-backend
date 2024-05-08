@@ -1,3 +1,4 @@
+from typing import overload
 from django.db import models
 from accounts.models import User
 from products.models import Product
@@ -19,9 +20,6 @@ class ForeignProduct(Product):
     image_link = models.CharField(max_length=500)
     product_url = models.CharField(max_length=500)
     
-    def dubai_product(self):
-        return True
-
 #---------------------------
 class ForeignOrder(models.Model):
     user = models.ForeignKey(User,on_delete=models.Model,related_name='foreign_orders')

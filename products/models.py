@@ -69,12 +69,6 @@ class Color(models.Model):
         return self.name
 #---------------------------
 class ProductManager(models.Manager):
-    def non_dubai(self):
-        products = self.all()
-        products_ids = [o.id for o in products if o.dubai_product()]
-        products_filtered = products.filter(id__in=products_ids)
-        return products_filtered
-
     def are_available(self):
         products = self.all()
         products_ids = [o.id for o in products if o.is_available]
