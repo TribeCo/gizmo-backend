@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DOMAIN = "http://localhost:8000"
 
 
-deploy = True
+deploy = False
 if(deploy):
     # deploy
     SECRET_KEY = os.getenv('SECRET_KEY', 'LIARA_URL is not set.')
@@ -33,6 +33,12 @@ else:
     SMS_PASSWORD = config('SMS_PASSWORD')
     SMS_USERNAME = config('SMS_USERNAME')
     DEBUG = True
+
+    database_name = config('DB_Name')
+    database_username = config('DB_USERNAME')
+    password = config('DB_PASSWORD')
+    database_hostname_or_ip = config('DB_HOST')
+    database_port = config('DB_PORT')
 
 ALLOWED_HOSTS = ["*","89.199.35.132","192.168.45.68",]
 AUTH_USER_MODEL = 'accounts.User'
@@ -139,10 +145,20 @@ if(deploy):
         }
     }
 else:
+    # DATABASES = {
+    #     'default': {
+    #         'ENGINE': 'django.db.backends.sqlite3',
+    #         'NAME': BASE_DIR / 'db.sqlite3',
+    #     }
+    # }
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': database_name,
+            'USER': database_username,
+            'PASSWORD': password,
+            'HOST': database_hostname_or_ip,
+            'PORT': database_port
         }
     }
 
