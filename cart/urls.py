@@ -11,6 +11,7 @@ urlpatterns = [
     path('cart/item/delete/<int:pk>/', DeleteProductToCartAPIView.as_view(),name="cart_delete"),
     path('cart/item/update/<int:pk>/', CartItemUpdateView.as_view(),name="cart_item_update"),
     path('cart/clear/', ClearCartAPIView.as_view(),name="cart_clear"),
+    path('cart/unknown/', UnknownCartAPIView.as_view(),name="cart_unknown"),
     
     path('coupon/', CouponCreateAPIView.as_view(),name="coupon_create"),
     path('coupon/<int:pk>/', CouponDetailView.as_view(),name="coupon_read"),
