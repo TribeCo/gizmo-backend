@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DOMAIN = "http://localhost:8000"
 
 
-deploy = False
+deploy = True
 if(deploy):
     # deploy
     SECRET_KEY = os.getenv('SECRET_KEY', 'LIARA_URL is not set.')
@@ -145,22 +145,22 @@ if(deploy):
         }
     }
 else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
     # DATABASES = {
     #     'default': {
-    #         'ENGINE': 'django.db.backends.postgresql',
-    #         'NAME': database_name,
-    #         'USER': database_username,
-    #         'PASSWORD': password,
-    #         'HOST': database_hostname_or_ip,
-    #         'PORT': database_port
+    #         'ENGINE': 'django.db.backends.sqlite3',
+    #         'NAME': BASE_DIR / 'db.sqlite3',
     #     }
     # }
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': database_name,
+            'USER': database_username,
+            'PASSWORD': password,
+            'HOST': database_hostname_or_ip,
+            'PORT': database_port
+        }
+    }
 
 
 
