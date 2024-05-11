@@ -1,3 +1,4 @@
+from typing import overload
 from django.db import models
 from accounts.models import User
 from products.models import Product
@@ -18,6 +19,7 @@ class ForeignProduct(Product):
     website = models.ForeignKey(DubaiSites,on_delete=models.CASCADE,related_name='products')
     image_link = models.CharField(max_length=500)
     product_url = models.CharField(max_length=500)
+    
 #---------------------------
 class ForeignOrder(models.Model):
     user = models.ForeignKey(User,on_delete=models.Model,related_name='foreign_orders')
@@ -36,10 +38,10 @@ class ForeignOrder(models.Model):
     tracking_code = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+    derham = models.IntegerField(default=17000)
+
     
-
-
-
 
     def __str__(self):
         return f"{self.name} - {self.price}"
@@ -58,11 +60,11 @@ class ForeignOrder(models.Model):
 
     @property
     def toman_price(self):
-        return 17000 * self.price 
+        return self.derham * self.price 
     
     @property
     def toman_total(self):
-        return 17000 * self.total_price 
+        return self.derham * self.total_price 
 
     @property
     def is_valid(self):

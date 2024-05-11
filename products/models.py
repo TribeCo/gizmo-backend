@@ -22,6 +22,7 @@ class Brand(models.Model):
 
     # def get_absolute_url(self):
     #     return reverse('stuff:product_detail',args=[self.slug,self.id])
+
 #---------------------------
 class Category(models.Model):
     sub_category = models.ForeignKey('self',on_delete=models.CASCADE, related_name='scategory',null=True,blank=True)
@@ -30,7 +31,6 @@ class Category(models.Model):
     name = models.CharField(max_length=200)
     image = models.ImageField(upload_to='media/categories/',blank=True,null=True)
     slug = models.SlugField(max_length=200,unique=True, allow_unicode=True)
-
     color = models.CharField(max_length=10,blank=True,null=True)
 
     class Meta:
@@ -40,6 +40,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
+    @property
+    def type(self):
+        return "category"
 
     def get_absolute_url(self):
         return reverse('stuff:category_detail',args=[self.id,1])
@@ -47,7 +51,15 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         self.slug = self.name.replace(" ","-")
         super(Category, self).save(*args, **kwargs)
-#---------------------------        
+#--------------------------- 
+class Tags(models.Model):
+    name = models.CharField(max_length=100)
+    category = models.ForeignKey(Category,related_name = 'tags',on_delete = models.CASCADE,blank=True,null=True)
+    
+    def __str__(self):
+        return self.name
+           
+#---------------------------
 class Color(models.Model):
     name = models.CharField(max_length=50)
     en = models.CharField(max_length=50)
@@ -55,6 +67,13 @@ class Color(models.Model):
 
     def __str__(self):
         return self.name
+#---------------------------
+class ProductManager(models.Manager):
+    def are_available(self):
+        products = self.all()
+        products_ids = [o.id for o in products if o.is_available]
+        products_filtered = products.filter(id__in=products_ids)
+        return products_filtered
 #---------------------------
 class Product(models.Model):
     category = models.ManyToManyField(Category,related_name='products',blank=True)
@@ -86,8 +105,11 @@ class Product(models.Model):
     alt = models.CharField(max_length=200)
 
 
+
     discount = models.IntegerField(default=0)
     discounted = models.BooleanField(default=False)
+
+    objects = ProductManager()
 
     class Meta:
         ordering = ('name',)
@@ -112,10 +134,17 @@ class Product(models.Model):
         show = int(((self.price)*(100-self.discount))/100)
         formatted_price = "{:,.0f}".format(show)
         return formatted_price
-
+        
+    def dubai_product(self):
+        return False
+    
     @property
     def is_available(self):
         return self.warehouse > 0
+    
+    @property
+    def type(self):
+        return "product"
 
     @property
     def warehouse(self):
@@ -166,8 +195,8 @@ class Product(models.Model):
     def get_similar_products(self):
         product_ids = []
         for category in self.category.all():
-            product_ids.extend(category.products.filter(available=True).exclude(id=self.id).values_list('id', flat=True)[:6])
-            product_ids.extend(Product.objects.filter(available=True).exclude(id=self.id).values_list('id', flat=True))
+            product_ids.extend(category.products.are_available().exclude(id=self.id).values_list('id', flat=True)[:6])
+            product_ids.extend(Product.objects.are_available().exclude(id=self.id).values_list('id', flat=True))
                 
         # remain = 6 - len(product_ids)
         # while(remain > 0):

@@ -15,15 +15,36 @@ class BrandSerializer(serializers.ModelSerializer):
         model = Brand
         fields = ('name', 'slug', 'logo', 'description','id','website')
 #---------------------------
+class TagsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tags
+        fields = ['name',]
+#---------------------------
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
 #---------------------------
-class CategoryProductPageSerializer(serializers.ModelSerializer):
+class CategorySearchSerializer(serializers.ModelSerializer):
+    tags = serializers.SerializerMethodField()
+
+    def get_tags(self, obj):
+        tags = obj.tags.all()
+        tags_name = []
+        for tag in tags:
+            tags_name.append(tag.name)
+        
+        return tags_name
+
     class Meta:
         model = Category
-        fields = ['id','name','slug',]
+        fields = ['id','name','slug','tags','type']
+#---------------------------
+class CategoryProductPageSerializer(serializers.ModelSerializer):
+    tags = TagsSerializer(many=True)
+    class Meta:
+        model = Category
+        fields = ['id','name','slug','tags',]
 #---------------------------
 class ColorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -60,6 +81,8 @@ class ProductPageSerializer(serializers.ModelSerializer):
     product_color = ProductColorSerializer(many=True)
     images = ProductImageSerializer(many=True)
     attributes = AttributeSerializer(many=True)
+    discounted_price = serializers.CharField(source='discounted_price_int')
+    
 
     image1 = serializers.SerializerMethodField()
     image2 = serializers.SerializerMethodField()
@@ -81,7 +104,7 @@ class ProductPageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id','attributes','brand','category','images' ,'content','name','En','slug','price','image1','image2','special_image','alt','is_available',
-        'created','updated','rating','ordered','send_free','net_sale','code','discount','discounted','comment_count','product_color','warehouse']
+        'created','updated','rating','ordered','send_free','net_sale','code','discount','discounted','comment_count','product_color','warehouse','discounted_price']
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['content'] = strip_tags(instance.content)
@@ -113,4 +136,10 @@ class ProductSliderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id','slug','name','image1','image2','price','discounted','discounted_price','discount','is_new','net_sale','is_available','send_free']
+#---------------------------
+class ProductSearchSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Product
+        fields = ['id','slug','name','type']
 #---------------------------

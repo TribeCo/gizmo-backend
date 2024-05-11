@@ -43,6 +43,7 @@ message_for_front = {
     "payed" : 'پرداخت انجام شده بوده است.',
     "not_upload" : 'آپلود با مشکل مواجه شد.',
     "success_upload" : "آپلود با موفقیت انجام شد. برای پیگیری سفارش به داشبورد مراجعه کنید.",
+    "user_not_match" : "این کاربر دسترسی لازم ندارد"
 }
 #---------------------------
 if False:
@@ -285,6 +286,26 @@ class VerifyAPIView(APIView):
                 return Response({'message':message_for_front['not_success_connect'],})
         else:
             return Response({'message':message_for_front['not_success_connect'],})
+#---------------------------
+class FactorAPIView(APIView):
+    """
+        This api give front exepcted data for factor.
+    """
+    permission_classes = [IsAuthenticated]
+    def get(self , request,pk):
+        try:
+            order = Order.objects.get(id = pk)
+        except Order.DoesNotExist:
+            return Response({'message':message_for_front['order_not_found']},status.HTTP_404_NOT_FOUND)
+        
+        if order.user != request.user :
+            return Response({'message':message_for_front['user_not_match']},status.HTTP_400_BAD_REQUEST)
+
+        serialized_order = OrderSerializer(order)
+
+        return Response({'data': serialized_order.data})
+
+        
 #---------------------------
 from django.template.loader import get_template
 from django.http import HttpResponse

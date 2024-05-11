@@ -29,6 +29,17 @@ class CartItemSerializerForCart(serializers.ModelSerializer):
         model = CartItem
         fields = ['id','quantity','color','product'] 
 #--------------------------- 
+class CartItemSerializerLocalForCart(serializers.ModelSerializer):
+    class Meta:
+        model = CartItem
+        fields = ['id','color','product'] 
+#--------------------------- 
+class CartLocalSerializer(serializers.ModelSerializer):
+    items = CartItemSerializerLocalForCart(many=True)
+    class Meta:
+        model = Cart
+        fields = ['id','items',]
+#---------------------------
 class CartSerializer(serializers.ModelSerializer):
     user = UserSerializerForCart(required=False)
     items = CartItemSerializerForCart(many=True)
@@ -41,7 +52,7 @@ class CartItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CartItem
-        fields = ['quantity','color','product']  
+        fields = ['id','quantity','color','product']  
 #---------------------------
 class CartItemUpdateSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(),required=False)

@@ -32,5 +32,7 @@ urlpatterns = [
 
     path('config/aboutus/', ConfigForAboutUsAPIView.as_view(),name="config_aboutus"),
     path('config/enamad/', ConfigForEnamadAPIView.as_view(),name="config_enamad"),
+    
+    path('rules/', RuleAPIView.as_view(),name="rule"),
 ]
 

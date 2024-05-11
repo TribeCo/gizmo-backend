@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView,DestroyAPIView,UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
+from products.filters import shop_products
 from products.serializers import *
 from django.utils import timezone
 from datetime import timedelta
@@ -95,8 +96,8 @@ class ProductDetailAPIViewBySlug(APIView):
 #---------------------------
 class ProductListAPIView(ListAPIView):
     """List of all Products"""    
-    serializer_class  = ProductSerializer
-    queryset = Product.objects.all()
+    serializer_class  = ProductSearchSerializer
+    queryset = shop_products()
 #---------------------------
 class ProductDeleteAPIView(DestroyAPIView):
     """Remove a Product with an ID(domain.com/..../pk/)"""
@@ -114,7 +115,7 @@ class ProductDiscountedListAPIView(APIView):
     """Retrieve a list of discounted products"""
     def get(self, request):        
         try:
-            products = Product.objects.filter(discounted=True)
+            products = Product.objects.non_dubai().filter(discounted=True)
         except Product.DoesNotExist:
             return Response({"message": messages_for_front['discounted_product_not_found']}, status=status.HTTP_404_NOT_FOUND)
         
@@ -140,8 +141,8 @@ class SimilarProductsAPIView(APIView):
 #---------------------------
 class NewProductAPIView(APIView):
     """get 10 New Product"""
-    def get(self, request):    
-        new_products = Product.objects.all().order_by('-id')[:4]
+    def get(self, request):
+        new_products = shop_products().order_by('-id')[:4]
         serializer = ProductSliderSerializer(new_products,many=True)
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 #---------------------------

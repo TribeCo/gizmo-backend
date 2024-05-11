@@ -16,6 +16,11 @@ class ProductColorInline(admin.TabularInline):
     raw_id_fields = ('product',)
     fields = ('quantity','color')
 #---------------------------
+class CategoryTagsInline(admin.TabularInline):
+    model = Tags
+    raw_id_fields = ('category',)
+    fields = ('name',)
+#---------------------------
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name','price','updated','is_new','id')
@@ -38,8 +43,16 @@ class ProductAdmin(admin.ModelAdmin):
 
     make_available.short_description = 'make all available'
 #---------------------------
-admin.site.register(Category)
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name','id')
+    search_fields = ['name',]
+    prepopulated_fields = {'slug':('name',)}
+    # raw_id_fields = ('category',)
+    inlines = (CategoryTagsInline,)
+#---------------------------
 admin.site.register(Color)
 admin.site.register(ProductColor)
 admin.site.register(Brand)
+admin.site.register(Tags)
 #---------------------------

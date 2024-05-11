@@ -1,7 +1,7 @@
 from itertools import product
 from rest_framework import serializers
 from .models import Category, Article,ArticleComment
-from accounts.models import User
+from accounts.models import User,ProfileUser
 from config.settings import DOMAIN
 from products.serializers import ProductSliderSerializer 
 #---------------------------
@@ -10,10 +10,16 @@ class BlogCategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
 #---------------------------
+class ProfileUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProfileUser
+        fields = '__all__'
+#---------------------------
 class UserSerializerForGizmoLog(serializers.ModelSerializer):
+    profile = ProfileUserSerializer()
     class Meta:
         model = User
-        fields = ['phoneNumber', 'full_name','id']
+        fields = ['phoneNumber', 'full_name','id','profile']
 #---------------------------
 class BlogCommentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,6 +31,12 @@ class ArticleSerializer(serializers.ModelSerializer):
     comments = BlogCommentSerializer(many=True)
     products = ProductSliderSerializer(many=True)
     date = serializers.CharField(source='shamsi_date', required=False)
+    cover = serializers.SerializerMethodField()
+
+    def get_cover(self, obj):
+        image_url = '{}{}'.format(DOMAIN, obj.cover.url) if obj.cover else None
+        return image_url
+    
     class Meta:
         model = Article
         fields = ['id','title','Author','cover','slug','status','Category','views','content',

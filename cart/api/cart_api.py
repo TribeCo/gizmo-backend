@@ -36,6 +36,14 @@ class CartDetailAPIView(APIView):
         serializer = CartSerializer(request.user.cart)
         return Response({'cart':serializer.data}, status=status.HTTP_200_OK)
 #---------------------------
+class CartDetailLocalAPIView(APIView):
+    """Getting the user's shopping cart information"""
+    serializer_class = CartLocalSerializer
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        serializer = CartLocalSerializer(request.user.cart)
+        return Response({'cart':serializer.data}, status=status.HTTP_200_OK)
+#---------------------------
 class AddProductToCartAPIView(APIView):
     """
         Add a product to the cart
@@ -73,9 +81,67 @@ class AddProductToCartAPIView(APIView):
                     return Response({'message':messages_for_front['not_enough_product']}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'message':messages_for_front['not_availble_product']}, status=status.HTTP_400_BAD_REQUEST)
-            return Response({'message':messages_for_front['add_product']}, status=status.HTTP_201_CREATED)
+            data_r = CartItemSerializer(item)
+            return Response({'message':messages_for_front['add_product'],'data':data_r.data}, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)      
+#---------------------------
+class AddListOfProductsToCartAPIView(APIView):
+    """
+        Add a list of products to the cart
+        [
+            {
+                "quantity": 1,
+                "color": 3, --> color id
+                "product": 6 --> product id
+            },
+            {
+                "quantity": 2,
+                "color": 1, --> color id
+                "product": 11 --> product id
+            }
+        ]  
+    """
+    permission_classes = [IsAuthenticated]
+    serializer_class = CartItemSerializer
+
+    def post(self, request):
+        data = request.data
+        serializer_list = []
+
+        try:
+            cart = request.user.cart
+        except Cart.DoesNotExist:
+            user = request.user
+            cart = Cart(user=user)
+            cart.save()
+            user.cart = cart
+            user.save()
+
+        for item_data in data:
+            serializer = CartItemSerializer(data=item_data)
+            if serializer.is_valid():
+                product = serializer.validated_data['product']
+                color = serializer.validated_data['color']
+                quantity = serializer.validated_data['quantity']
+
+                if product.is_available:
+                    product_color_object = product.product_color.get(color__id=color.id)
+                    if product_color_object.quantity >= quantity:
+                        item = serializer.save(cart=cart, price=0)
+                        item.price = item.product.discounted_price_int
+                        item.save()
+                    else:
+                        return Response({'message': messages_for_front['not_enough_product']}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({'message': messages_for_front['not_enough_product']}, status=status.HTTP_400_BAD_REQUEST)
+
+                serializer_list.append(serializer)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = CartSerializer(request.user.cart)
+        return Response({'message': messages_for_front['add_product'],'data':serializer.data}, status=status.HTTP_201_CREATED)
+
 #---------------------------
 class DeleteProductToCartAPIView(APIView):
     """Remove a product from the cart"""
@@ -118,4 +184,58 @@ class ClearCartAPIView(APIView):
             item.delete()
 
         return Response({'message':messages_for_front['cart_cleared']}, status=status.HTTP_204_NO_CONTENT) 
+#---------------------------
+class UnknownCartAPIView(APIView):
+    """
+        Ceate cart for front-end.
+        [
+            {
+                "quantity": 1,
+                "color": 3, --> color id
+                "product": 6 --> product id
+            },
+            {
+                "quantity": 2,
+                "color": 1, --> color id
+                "product": 11 --> product id
+            }
+        ]  
+    """
+    serializer_class = CartItemSerializer
+
+    def post(self, request):
+        data = request.data
+        serializer_list = []
+
+
+        user = User.objects.get(phoneNumber="093012345")
+        cart = user.cart
+
+        for item_data in data:
+            serializer = CartItemSerializer(data=item_data)
+            if serializer.is_valid():
+                product = serializer.validated_data['product']
+                color = serializer.validated_data['color']
+                quantity = serializer.validated_data['quantity']
+
+                if product.is_available:
+                    product_color_object = product.product_color.get(color__id=color.id)
+                    if product_color_object.quantity >= quantity:
+                        item = serializer.save(cart=cart, price=0)
+                        item.price = item.product.discounted_price_int
+                        item.save()
+                    else:
+                        return Response({'message': messages_for_front['not_enough_product']}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({'message': messages_for_front['not_enough_product']}, status=status.HTTP_400_BAD_REQUEST)
+
+                serializer_list.append(serializer)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = CartSerializer(cart)
+        data_for_front = serializer.data
+        cart_items = cart.items.all()
+        for item in cart_items:
+            item.delete()
+        return Response({'message': messages_for_front['add_product'],'data':data_for_front}, status=status.HTTP_201_CREATED)
 #---------------------------

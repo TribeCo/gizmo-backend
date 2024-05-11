@@ -42,6 +42,11 @@ class UserReadSerializer(serializers.ModelSerializer):
         model = User
         fields = ('phoneNumber','first_name','last_name','birth_day','gender','email','birth_day')
 #---------------------------
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('first_name','last_name','birth_day','gender','birth_day')
+#---------------------------
 class UserCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

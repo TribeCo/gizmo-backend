@@ -7,7 +7,7 @@ from inquiry.serializers import *
 import requests
 import random 
 import string
-import os
+from temsah import Temsah
 #---------------------------
 """
     The codes related to the site's products are in this app.
@@ -34,14 +34,19 @@ class ForeignProductCreateAPIView(APIView):
         
         
         if serializer.is_valid():
-            url = 'https://scrapt.liara.run/server/scraper/'
-            data = {"url": request.data.get('url'),}
+            # url = 'https://sc01.liara.run/server/scraper/'
+            # data = {"url": request.data.get('url'),}
 
-            response = requests.post(url, data=data)
-            data_res = response.json()['data']
-            print(data_res)
+
+            # response = requests.post(url, data=data)
+            # print(response)
+            # data_res = response.json()['data']
+            # print(data_res)
             
 
+            scraper = Temsah(request.data.get('url'))
+            product_obj = scraper.scrape()
+            data_res = product_obj.convert_to_dictionary()
 
 
             name = data_res['name']
