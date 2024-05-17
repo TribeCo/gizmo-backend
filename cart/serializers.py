@@ -68,8 +68,13 @@ class CouponSerializer(serializers.ModelSerializer):
         model = Coupon
         fields = ['code','valid_from','valid_to','discount','valid']  
 #---------------------------
-class TempCartItemSerializer(serializers.ModelSerializer):
+class TempCartItemOneSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    class Meta:
+        model = TempCartItem
+        fields = ['id','quantity','color','product']  
+#---------------------------
+class TempCartItemSerializer(serializers.ModelSerializer):
     product = ProductSerializerForCart()
     color = ColorSerializerForCart()
     class Meta:

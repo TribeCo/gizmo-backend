@@ -201,16 +201,15 @@ class UnknownCartAPIView(APIView):
             }
         ]  
     """
-
+    serializer_class = TempCartItemOneSerializer()
     def post(self, request):
         data = request.data
-        serializer_list = []
 
-        cart = TempCart()
-        cart.save()
+        temp_cart = TempCart()
+        temp_cart.save()
 
         for item_data in data:
-            serializer = TempCartItemSerializer(data=item_data)
+            serializer = TempCartItemOneSerializer(data=item_data)
             if serializer.is_valid():
                 product = serializer.validated_data['product']
                 color = serializer.validated_data['color']
@@ -219,21 +218,22 @@ class UnknownCartAPIView(APIView):
                 if product.is_available:
                     product_color_object = product.product_color.get(color__id=color.id)
                     if product_color_object.quantity >= quantity:
-                        item = serializer.save(cart=cart, price=0)
+                        item = serializer.save(cart=temp_cart, price=0)
                         item.price = item.product.discounted_price_int
                         item.save()
                     else:
                         return Response({'message': messages_for_front['not_enough_product']}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response({'message': messages_for_front['not_enough_product']}, status=status.HTTP_400_BAD_REQUEST)
-
-                serializer_list.append(serializer)
+    
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        serializer = TempCartSerializer(cart)
+
+        serializer = TempCartSerializer(temp_cart)
         data_for_front = serializer.data
-        cart_items = cart.temp_items.all()
+        cart_items = temp_cart.temp_items.all()
         for item in cart_items:
             item.delete()
+        temp_cart.delete()
         return Response({'message': messages_for_front['add_product'],'data':data_for_front}, status=status.HTTP_201_CREATED)
 #---------------------------
