@@ -32,7 +32,7 @@ class CartItemSerializerForCart(serializers.ModelSerializer):
 class CartItemSerializerLocalForCart(serializers.ModelSerializer):
     class Meta:
         model = CartItem
-        fields = ['id','color','product'] 
+        fields = ['id','color','product','quantity'] 
 #--------------------------- 
 class CartLocalSerializer(serializers.ModelSerializer):
     items = CartItemSerializerLocalForCart(many=True)
@@ -67,4 +67,17 @@ class CouponSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coupon
         fields = ['code','valid_from','valid_to','discount','valid']  
+#---------------------------
+class TempCartItemSerializer(serializers.ModelSerializer):
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+
+    class Meta:
+        model = TempCartItem
+        fields = ['id','quantity','color','product']  
+#---------------------------
+class TempCartSerializer(serializers.ModelSerializer):
+    temp_items = TempCartItemSerializer(many=True)
+    class Meta:
+        model = Cart
+        fields = ['get_total_price','id','temp_items',]
 #---------------------------

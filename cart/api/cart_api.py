@@ -201,18 +201,16 @@ class UnknownCartAPIView(APIView):
             }
         ]  
     """
-    serializer_class = CartItemSerializer
 
     def post(self, request):
         data = request.data
         serializer_list = []
 
-
-        user = User.objects.get(phoneNumber="093012345")
-        cart = user.cart
+        cart = TempCart()
+        cart.save()
 
         for item_data in data:
-            serializer = CartItemSerializer(data=item_data)
+            serializer = TempCartItemSerializer(data=item_data)
             if serializer.is_valid():
                 product = serializer.validated_data['product']
                 color = serializer.validated_data['color']
@@ -232,9 +230,9 @@ class UnknownCartAPIView(APIView):
                 serializer_list.append(serializer)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        serializer = CartSerializer(cart)
+        serializer = TempCartSerializer(cart)
         data_for_front = serializer.data
-        cart_items = cart.items.all()
+        cart_items = cart.temp_items.all()
         for item in cart_items:
             item.delete()
         return Response({'message': messages_for_front['add_product'],'data':data_for_front}, status=status.HTTP_201_CREATED)
