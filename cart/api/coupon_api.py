@@ -95,7 +95,8 @@ class ApplyCouponToCartAPIView(APIView):
             cart.discount = coupon.discount
             cart.coupon = coupon
             cart.save()
-            return Response({'message':messages_for_front['coupon_applied']}, status=status.HTTP_201_CREATED)
+            data_cop = CouponSerializer(coupon)
+            return Response({'message':messages_for_front['coupon_applied'],'data':data_cop}, status=status.HTTP_201_CREATED)
         
         return Response({'message':messages_for_front['coupon_is_not_valid']}, status=status.HTTP_400_BAD_REQUEST)  
 #---------------------------
