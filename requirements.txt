@@ -48,7 +48,7 @@ soupsieve==2.5
 sqlparse==0.4.4
 tinycss2==1.2.1
 tqdm==4.66.1
-temsah
+temsah==2.1.4
 typing-extensions==4.8.0
 tzdata==2023.3
 uritemplate==4.1.1
