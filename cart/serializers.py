@@ -50,9 +50,12 @@ class CartLocalSerializer(serializers.ModelSerializer):
 class CartSerializer(serializers.ModelSerializer):
     user = UserSerializerForCart(required=False)
     items = CartItemSerializerForCart(many=True)
+    total_price_method = serializers.IntegerField(source='total_price')
+    delta_discounted_method = serializers.IntegerField(source='delta_discounted')
+    total_discounted_price_method = serializers.IntegerField(source='total_discounted_price')
     class Meta:
         model = Cart
-        fields = ['get_total_price','id','user','items',]
+        fields = ['total_price_method','total_discounted_price_method','delta_discounted_method','id','user','items',]
 #---------------------------
 class CartItemSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
@@ -89,8 +92,11 @@ class TempCartItemSerializer(serializers.ModelSerializer):
         fields = ['id','quantity','color','product']  
 #---------------------------
 class TempCartSerializer(serializers.ModelSerializer):
+    total_price_method = serializers.IntegerField(source='total_price')
+    delta_discounted_method = serializers.IntegerField(source='delta_discounted')
+    total_discounted_price_method = serializers.IntegerField(source='total_discounted_price')
     temp_items = TempCartItemSerializer(many=True)
     class Meta:
-        model = Cart
-        fields = ['get_total_price','id','temp_items',]
+        model = TempCart
+        fields = ['total_price_method','total_discounted_price_method','delta_discounted_method','id','temp_items',]
 #---------------------------

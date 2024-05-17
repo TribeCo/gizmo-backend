@@ -34,20 +34,29 @@ class Cart(models.Model):
         return formatPay(self.total_price())
 
     def total_price(self):
+        total = sum(item.get_total_cost() for item in self.items.all())
+        return total
+    
+    def total_discounted_price(self):
         total = sum(item.get_cost() for item in self.items.all())
         if self.discount:
-            discount_price = (self.coupon.discount/100)* total
+            discount_price = (self.coupon.discount/100) * total
             return total - discount_price
         return total
+    
+    def delta_discounted(self):
+        return (self.total_price() - self.total_discounted_price())
+
+    
 
     def tax(self):
-        return 9 * self.total_price() / 100
+        return 9 * self.total_discounted_price() / 100
     
     def get_tax(self):
-        return formatPay(9 * self.total_price() / 100)
+        return formatPay(9 * self.total_discounted_price() / 100)
 
     def taxAndTotal(self):
-        return formatPay(self.total_price() + self.tax())
+        return formatPay(self.total_discounted_price() + self.tax())
 #---------------------------
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart,on_delete=models.CASCADE,related_name='items')
@@ -58,6 +67,9 @@ class CartItem(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+    def get_total_cost(self):
+        return self.product.price * self.quantity
 
     def get_cost(self):
         return self.product.discounted_price_int * self.quantity
@@ -77,11 +89,13 @@ class TempCart(models.Model):
         return formatPay(self.total_price())
 
     def total_price(self):
-        total = sum(item.get_cost() for item in self.items.all())
-        if self.discount:
-            discount_price = (self.coupon.discount/100)* total
-            return total - discount_price
-        return total
+        return sum(item.get_total_cost() for item in self.temp_items.all())
+    
+    def total_discounted_price(self):
+        return sum(item.get_cost() for item in self.temp_items.all())
+    
+    def delta_discounted(self):
+        return (self.total_price() - self.total_discounted_price())
 
     def tax(self):
         return 9 * self.total_price() / 100
@@ -104,6 +118,9 @@ class TempCartItem(models.Model):
 
     def get_cost(self):
         return self.product.discounted_price_int * self.quantity
+    
+    def get_total_cost(self):
+        return self.product.price * self.quantity
 
     def get_cost_from_product(self):
         return format(self.product.discounted_price_int * self.quantity)
