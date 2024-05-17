@@ -139,7 +139,7 @@ class AddListOfProductsToCartAPIView(APIView):
                 serializer_list.append(serializer)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        serializer = CartSerializer(request.user.cart)
+        serializer = CartLocalSerializer(request.user.cart)
         return Response({'message': messages_for_front['add_product'],'data':serializer.data}, status=status.HTTP_201_CREATED)
 
 #---------------------------
