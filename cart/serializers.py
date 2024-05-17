@@ -5,9 +5,16 @@ from rest_framework import serializers
 from .models import *
 from accounts.models import User
 from products.models import Product
+from config.settings import DOMAIN
 #---------------------------
 class ProductSerializerForCart(serializers.ModelSerializer):
-    discount_price = serializers.CharField(source='discounted_price')
+    discount_price = serializers.IntegerField(source='discounted_price_int')
+    image1 = serializers.SerializerMethodField()
+
+    def get_image1(self, obj):
+        image_url = '{}{}'.format(DOMAIN, obj.image1.url) if obj.image1 else None
+        return image_url
+
     class Meta:
         model = Product
         fields = ('id','name', 'image1', 'code', 'price', 'price', 'discount', 'discounted','discount_price')
