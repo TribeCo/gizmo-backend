@@ -65,3 +65,47 @@ class CartItem(models.Model):
     def get_cost_from_product(self):
         return format(self.product.discounted_price_int * self.quantity)
 #---------------------------
+class TempCart(models.Model):
+    discount = models.IntegerField(blank=True,null=True,default=None)
+    coupon = models.ForeignKey(Coupon,blank=True,null=True,default=None,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.id}'
+
+    @property
+    def get_total_price(self):
+        return formatPay(self.total_price())
+
+    def total_price(self):
+        total = sum(item.get_cost() for item in self.items.all())
+        if self.discount:
+            discount_price = (self.coupon.discount/100)* total
+            return total - discount_price
+        return total
+
+    def tax(self):
+        return 9 * self.total_price() / 100
+    
+    def get_tax(self):
+        return formatPay(9 * self.total_price() / 100)
+
+    def taxAndTotal(self):
+        return formatPay(self.total_price() + self.tax())
+#---------------------------
+class TempCartItem(models.Model):
+    cart = models.ForeignKey(TempCart,on_delete=models.CASCADE,related_name='temp_items')
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    price = models.IntegerField()
+    quantity = models.PositiveSmallIntegerField(default=1)
+    color = models.ForeignKey(Color,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.id)
+
+    def get_cost(self):
+        return self.product.discounted_price_int * self.quantity
+
+    def get_cost_from_product(self):
+        return format(self.product.discounted_price_int * self.quantity)
+#---------------------------
+
