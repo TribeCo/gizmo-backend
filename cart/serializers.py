@@ -70,7 +70,8 @@ class CouponSerializer(serializers.ModelSerializer):
 #---------------------------
 class TempCartItemSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
-
+    product = ProductSerializerForCart()
+    color = ColorSerializerForCart()
     class Meta:
         model = TempCartItem
         fields = ['id','quantity','color','product']  
