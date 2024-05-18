@@ -81,23 +81,24 @@ class ApplyCouponToCartAPIView(APIView):
         try:
             coupon = Coupon.objects.get(code=code)
         except Coupon.DoesNotExist:
-            return Response({'message':messages_for_front['coupon_not_found']}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'message':messages_for_front['coupon_not_found'],}, status=status.HTTP_404_NOT_FOUND)
 
         cart = user.cart
 
 
         if coupon.is_valid():
             if(user in coupon.users.all()):
-                return Response({'message':messages_for_front['coupon_is_used']}, status=status.HTTP_400_BAD_REQUEST) 
+                return Response({'message':messages_for_front['coupon_is_used'],}, status=status.HTTP_400_BAD_REQUEST) 
             coupon.users.add(user)
             coupon.save()
 
             cart.discount = coupon.discount
             cart.coupon = coupon
             cart.save()
-            return Response({'message':messages_for_front['coupon_applied']}, status=status.HTTP_201_CREATED)
+            data_cop = CouponSerializer(coupon).data
+            return Response({'message':messages_for_front['coupon_applied'],'data':data_cop}, status=status.HTTP_201_CREATED)
         
-        return Response({'message':messages_for_front['coupon_is_not_valid']}, status=status.HTTP_400_BAD_REQUEST)  
+        return Response({'message':messages_for_front['coupon_is_not_valid'],}, status=status.HTTP_400_BAD_REQUEST)  
 #---------------------------
 class RevokeCouponToCartAPIView(APIView):
     """Revoke coupon to cart"""

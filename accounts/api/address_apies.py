@@ -22,6 +22,7 @@ messages_for_front = {
     'address_created' : 'آدرس جدید ذخیره شد.',
     'address_not_found' : 'آدرس یافت نشد.',
     'address_changed' : 'آدرس با موفقیت تغییر کرد.',
+    'address_deleted' : 'آدرس با موفقیت حذف شد.',
     'not_id' : 'آیدی مورد نیاز است.',
     'tomany_address' : 'تعداد آدرس های ذخیره شده زیاد است.',
 }
@@ -63,9 +64,20 @@ class UpdateAddressAPIView(UpdateAPIView):
 class DeleteAddressAPIView(DestroyAPIView):
     """delete address with id"""
     permission_classes = [IsAuthenticated]
-    queryset = Address.objects.all()
     serializer_class = AddressSerializer
-    lookup_field = 'pk'
+    def delete(self, request,pk):
+
+        if(not pk):
+            return Response({'message': messages_for_front['not_id']}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            address_obj = Address.objects.get(id = pk)
+        except:
+            return Response({'message': messages_for_front['address_not_found']}, status=status.HTTP_404_NOT_FOUND)
+    
+        address_obj.delete()
+
+        return Response({'message': messages_for_front['address_deleted']}, status=status.HTTP_204_NO_CONTENT)
 #---------------------------
 class UserAddressAPIView(APIView):
     """get an user addresses"""

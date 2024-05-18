@@ -5,9 +5,16 @@ from rest_framework import serializers
 from .models import *
 from accounts.models import User
 from products.models import Product
+from config.settings import DOMAIN
 #---------------------------
 class ProductSerializerForCart(serializers.ModelSerializer):
-    discount_price = serializers.CharField(source='discounted_price')
+    discount_price = serializers.IntegerField(source='discounted_price_int')
+    image1 = serializers.SerializerMethodField()
+
+    def get_image1(self, obj):
+        image_url = '{}{}'.format(DOMAIN, obj.image1.url) if obj.image1 else None
+        return image_url
+
     class Meta:
         model = Product
         fields = ('id','name', 'image1', 'code', 'price', 'price', 'discount', 'discounted','discount_price')
@@ -32,7 +39,7 @@ class CartItemSerializerForCart(serializers.ModelSerializer):
 class CartItemSerializerLocalForCart(serializers.ModelSerializer):
     class Meta:
         model = CartItem
-        fields = ['id','color','product'] 
+        fields = ['id','color','product','quantity'] 
 #--------------------------- 
 class CartLocalSerializer(serializers.ModelSerializer):
     items = CartItemSerializerLocalForCart(many=True)
@@ -43,9 +50,12 @@ class CartLocalSerializer(serializers.ModelSerializer):
 class CartSerializer(serializers.ModelSerializer):
     user = UserSerializerForCart(required=False)
     items = CartItemSerializerForCart(many=True)
+    total_price_method = serializers.IntegerField(source='total_price')
+    delta_discounted_method = serializers.IntegerField(source='delta_discounted')
+    total_discounted_price_method = serializers.IntegerField(source='total_discounted_price')
     class Meta:
         model = Cart
-        fields = ['get_total_price','id','user','items',]
+        fields = ['total_price_method','total_discounted_price_method','delta_discounted_method','id','user','items',]
 #---------------------------
 class CartItemSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
@@ -67,4 +77,26 @@ class CouponSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coupon
         fields = ['code','valid_from','valid_to','discount','valid']  
+#---------------------------
+class TempCartItemOneSerializer(serializers.ModelSerializer):
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    class Meta:
+        model = TempCartItem
+        fields = ['id','quantity','color','product']  
+#---------------------------
+class TempCartItemSerializer(serializers.ModelSerializer):
+    product = ProductSerializerForCart()
+    color = ColorSerializerForCart()
+    class Meta:
+        model = TempCartItem
+        fields = ['id','quantity','color','product']  
+#---------------------------
+class TempCartSerializer(serializers.ModelSerializer):
+    total_price_method = serializers.IntegerField(source='total_price')
+    delta_discounted_method = serializers.IntegerField(source='delta_discounted')
+    total_discounted_price_method = serializers.IntegerField(source='total_discounted_price')
+    temp_items = TempCartItemSerializer(many=True)
+    class Meta:
+        model = TempCart
+        fields = ['total_price_method','total_discounted_price_method','delta_discounted_method','id','temp_items',]
 #---------------------------
