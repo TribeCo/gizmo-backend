@@ -71,12 +71,18 @@ class ProductDetailAPIView(APIView):
         if(request.user.is_authenticated):
             wp = WatchedProduct(user=request.user,product=product)
             wp.save()
+            if(product in request.user.wishlist.all()):
+                is_fav = True
+            else:
+                is_fav = False
             # this comment
 
         serializer = ProductPageSerializer(product)
 
-        return Response(serializer.data)
-    
+        data = serializer.data
+
+        data['is_fav'] = is_fav
+        return Response(data)    
 #---------------------------
 class ProductDetailAPIViewBySlug(APIView):
     """Getting the information of a Product with slug(domain.com/..../slug/)"""
@@ -89,10 +95,17 @@ class ProductDetailAPIViewBySlug(APIView):
         if(request.user.is_authenticated):
             wp = WatchedProduct(user=request.user,product=product)
             wp.save()
+            if(product in request.user.wishlist.all()):
+                is_fav = True
+            else:
+                is_fav = False
 
         serializer = ProductPageSerializer(product)
-        
-        return Response(serializer.data)
+        data = serializer.data
+
+
+        data['is_fav'] = is_fav
+        return Response(data)
 #---------------------------
 class ProductListAPIView(ListAPIView):
     """List of all Products"""    
