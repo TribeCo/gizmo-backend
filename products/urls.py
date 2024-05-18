@@ -19,6 +19,7 @@ urlpatterns = [
     path('product/observed/', ObservedProductAPIView.as_view(),name="product_observed"),
     path('product/<int:pk>/', ProductDetailAPIView.as_view(),name="product_read"),
     path('product/<str:slug>/', ProductDetailAPIViewBySlug.as_view(),name="product_read_slug"),
+    path('product/<str:slug>/fav/', FavProductDetailAPIViewBySlug.as_view(),name="product_read_slug_fav"),
     path('product/update/<int:pk>/', ProductUpdateAPIView.as_view(),name="product_update"),
     path('product/delete/<int:pk>/', ProductDeleteAPIView.as_view(),name="product_delete"),
     path('products/search/<str:slug>/', ProductSearchAPIView.as_view(), name='product_search'),
