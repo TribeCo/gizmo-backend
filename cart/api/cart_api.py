@@ -124,7 +124,10 @@ class AddListOfProductsToCartAPIView(APIView):
                 product = serializer.validated_data['product']
                 color = serializer.validated_data['color']
                 quantity = serializer.validated_data['quantity']
+                is_sync = serializer.validated_data['is_sync']
 
+                if(is_sync):
+                    continue
                 if product.is_available:
                     product_color_object = product.product_color.get(color__id=color.id)
                     if product_color_object.quantity >= quantity:

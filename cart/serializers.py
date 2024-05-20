@@ -53,16 +53,17 @@ class CartSerializer(serializers.ModelSerializer):
     total_price_method = serializers.IntegerField(source='total_price')
     delta_discounted_method = serializers.IntegerField(source='delta_discounted')
     total_discounted_price_method = serializers.IntegerField(source='total_discounted_price')
+    coupon_discount = serializers.IntegerField(source='get_discount_coupon')
     class Meta:
         model = Cart
-        fields = ['total_price_method','total_discounted_price_method','delta_discounted_method','id','user','items',]
+        fields = ['total_price_method','coupon_discount','total_discounted_price_method','delta_discounted_method','id','user','items',]
 #---------------------------
 class CartItemSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
 
     class Meta:
         model = CartItem
-        fields = ['id','quantity','color','product']  
+        fields = ['id','quantity','color','product','is_sync']  
 #---------------------------
 class CartItemUpdateSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(),required=False)
