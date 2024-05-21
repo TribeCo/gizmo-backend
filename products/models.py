@@ -192,6 +192,11 @@ class Product(models.Model):
     def clean_more_info(self):
         return self.more_info.replace('\n', '<br>')
 
+    def get_most_color(self):
+        colors = sorted(self.product_color.all(), key=lambda x: x.quantity, reverse=True)
+        return colors[0].color.id
+
+
     def get_similar_products(self):
         product_ids = []
         for category in self.category.all():
