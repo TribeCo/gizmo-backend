@@ -55,7 +55,7 @@ class AddProductToCartAPIView(APIView):
     """
     permission_classes = [IsAuthenticated]
     serializer_class = CartItemSerializer
-    def post(self, request,):
+    def post(self, request):
         serializer = CartItemSerializer(data=request.data)
 
         try:
@@ -74,7 +74,7 @@ class AddProductToCartAPIView(APIView):
             if(product.is_available):
                 product_color_object = product.product_color.get(color__id=color.id)
                 if(product_color_object.quantity >= quantity):
-                    item = serializer.save(cart=cart,price=0)
+                    item = serializer.save(cart=cart,price=0,color=product_color_object.color)
                     item.price = item.product.discounted_price_int
                     item.save()
                 else:
