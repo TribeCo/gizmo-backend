@@ -266,16 +266,18 @@ class VerifyAPIView(APIView):
                     order.delivery_info = user.delivery_info
                     user.delivery_info = None
                     user.save()
-
                     if(cart.coupon):
                         order.discount = cart.coupon.discount
 
+                    cart.coupon = None
                     order.authority = t_authority
                     order.ref_id = RefID
                     order.save()
 
                     for item in cart_items:
                         item.delete()
+                    
+                    cart.save()
 
                     info = OrderSerializerForCart(order)
                                 
