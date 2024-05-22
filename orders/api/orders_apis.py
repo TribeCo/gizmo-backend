@@ -209,9 +209,8 @@ class VerifyAPIView(APIView):
         login required. 
     """
     def post(self, request):
-        t_status = request.POST.get('status')
-        t_authority = request.POST.get('authority')
-
+        t_status = request.data.get('status')
+        t_authority = request.data.get('authority')
 
         try:
             pay_obj = Payments.objects.get(authority=t_authority)
