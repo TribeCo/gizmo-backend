@@ -43,6 +43,7 @@ urlpatterns = [
     path('informing/delete/', DeleteInformingProductAPIView.as_view(), name='favorite_product_deletion'),
 
     path('user/update/delivery/', UpdateInfoDelivery.as_view(), name='user_delivery_update'),
+    path('user/get/delivery/', GetDeliveryInfo.as_view(), name='user_delivery_get'),
 
 
     path('users/password/change/', PasswordChangeRequest.as_view(), name='users_password_change'),
