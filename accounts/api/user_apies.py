@@ -55,7 +55,7 @@ class CheckPhoneNumberAPIView(APIView):
 class CreateUserWithPhoneNumberAPIView(APIView):
     """Create user with phone number"""
     def post(self, request):
-        text_sms = "name عزیز به گیزموشاپ خوش آمدید.\nکد احرازسنجی شما: code"
+        text_sms = "کاربر عزیز به گیزموشاپ خوش آمدید.\nکد احرازسنجی شما: code"
         # link_sms = f"https://www.0098sms.com/sendsmslink.aspx?FROM=50002220096&TO=PhoneNumberUser&TEXT=TextCode&USERNAME={SMS_USERNAME}&PASSWORD={SMS_PASSWORD}&DOMAIN=0098"
         link_sms = f"http://ippanel.com/class/sms/webservice/send_url.php?from=5000125475&to=PhoneNumberUser&msg=TextCode&uname={SMS_USERNAME}&pass={SMS_PASSWORD}" 
         
@@ -88,6 +88,7 @@ class CreateUserWithPhoneNumberAPIView(APIView):
             send_sms = send_sms.replace("TextCode",text_sms)
 
             response = requests.get(send_sms)
+            print(response.text)
 
             response_data = {
                 'phoneNumber' : user.phoneNumber,

@@ -46,7 +46,7 @@ message_for_front = {
     "user_not_match" : "این کاربر دسترسی لازم ندارد"
 }
 #---------------------------
-if False:
+if True:
     sandbox = 'sandbox'
 else:
     sandbox = 'www'
@@ -210,7 +210,7 @@ class VerifyAPIView(APIView):
     """
     def get(self, request):
         t_status = request.GET.get('Status')
-        t_authority = request.GET['Authority']
+        t_authority = request.GET.get('Authority')
 
 
         try:
