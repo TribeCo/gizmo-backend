@@ -58,7 +58,7 @@ ZP_API_STARTPAY = f"https://{sandbox}.zarinpal.com/pg/StartPay/"
 # amount = 11000  # Rial / Required
 description = "گیزموشاپ"  # Required
 # Important: need to edit for realy server.
-CallbackURL = 'http://localhost:8000/api/verify/'
+CallbackURL = 'http://localhost:3000/success'
 #---------------------------
 class CreateOrderAPIView(APIView):
     """
