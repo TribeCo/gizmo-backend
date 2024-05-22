@@ -24,6 +24,13 @@ class ColorSerializerForCart(serializers.ModelSerializer):
         model = Color
         fields = ('id','name', 'en', 'code')
 #---------------------------
+class CouponSerializer(serializers.ModelSerializer):
+    valid = serializers.CharField(source='is_valid', required=False)
+    
+    class Meta:
+        model = Coupon
+        fields = ['code','valid_from','valid_to','discount','valid']  
+#---------------------------
 class UserSerializerForCart(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -54,9 +61,10 @@ class CartSerializer(serializers.ModelSerializer):
     delta_discounted_method = serializers.IntegerField(source='delta_discounted')
     total_discounted_price_method = serializers.IntegerField(source='total_discounted_price')
     coupon_discount = serializers.IntegerField(source='get_discount_coupon')
+    coupon = CouponSerializer()
     class Meta:
         model = Cart
-        fields = ['total_price_method','coupon_discount','total_discounted_price_method','delta_discounted_method','id','user','items',]
+        fields = ['total_price_method','coupon_discount','total_discounted_price_method','delta_discounted_method','id','user','items','coupon']
 #---------------------------
 class CartItemSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
@@ -71,13 +79,6 @@ class CartItemUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = ['quantity','color','product']  
-#---------------------------
-class CouponSerializer(serializers.ModelSerializer):
-    valid = serializers.CharField(source='is_valid', required=False)
-    
-    class Meta:
-        model = Coupon
-        fields = ['code','valid_from','valid_to','discount','valid']  
 #---------------------------
 class TempCartItemOneSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
