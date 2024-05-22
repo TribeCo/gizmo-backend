@@ -72,17 +72,13 @@ class UserDeleteAPIView(APIView):
 class UserUpdateAPIView(APIView):
     permission_classes = [IsAuthenticated]
     """update one user with id"""
-    
-    def put(self, request, user_id):
-        try:
-            user = User.objects.get(id=user_id)
-            serializer = UserUpdateSerializer(user, data=request.data,partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except User.DoesNotExist:
-            return Response({'message': messages_for_front['user_not_found']}, status=status.HTTP_404_NOT_FOUND)
+    def put(self, request):
+        user = request.user
+        serializer = UserUpdateSerializer(user, data=request.data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------
 class UserInfoAPIView(APIView):
     permission_classes = [IsAuthenticated]
