@@ -48,3 +48,11 @@ class UpdateInfoDelivery(APIView):
         else:
             return Response(info.errors, status=status.HTTP_400_BAD_REQUEST)
 #---------------------------
+class GetDeliveryInfo(APIView):
+    """Get user delivery info for front"""
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        obj_delivery = request.user.delivery_info 
+        info = DeliveryInfoSerializer(obj_delivery)   
+        return Response({'data': info.data,}, status=status.HTTP_200_OK)
+#---------------------------
