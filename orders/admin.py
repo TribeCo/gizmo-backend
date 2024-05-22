@@ -1,4 +1,6 @@
 from django.contrib import admin
+
+from accounts.models import Payments
 from .models import *
 
 class OrderItemInline(admin.TabularInline):

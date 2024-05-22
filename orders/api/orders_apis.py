@@ -46,7 +46,7 @@ message_for_front = {
     "user_not_match" : "این کاربر دسترسی لازم ندارد"
 }
 #---------------------------
-if False:
+if True:
     sandbox = 'sandbox'
 else:
     sandbox = 'www'
@@ -58,7 +58,7 @@ ZP_API_STARTPAY = f"https://{sandbox}.zarinpal.com/pg/StartPay/"
 # amount = 11000  # Rial / Required
 description = "گیزموشاپ"  # Required
 # Important: need to edit for realy server.
-CallbackURL = 'http://localhost:8000/api/verify/'
+CallbackURL = 'http://localhost:3000/success'
 #---------------------------
 class CreateOrderAPIView(APIView):
     """
@@ -208,10 +208,9 @@ class VerifyAPIView(APIView):
         converts a cart to order.
         login required. 
     """
-    def get(self, request):
-        t_status = request.GET.get('Status')
-        t_authority = request.GET['Authority']
-
+    def post(self, request):
+        t_status = request.data.get('status')
+        t_authority = request.data.get('authority')
 
         try:
             pay_obj = Payments.objects.get(authority=t_authority)
@@ -267,16 +266,18 @@ class VerifyAPIView(APIView):
                     order.delivery_info = user.delivery_info
                     user.delivery_info = None
                     user.save()
-
                     if(cart.coupon):
                         order.discount = cart.coupon.discount
 
+                    cart.coupon = None
                     order.authority = t_authority
                     order.ref_id = RefID
                     order.save()
 
                     for item in cart_items:
                         item.delete()
+                    
+                    cart.save()
 
                     info = OrderSerializerForCart(order)
                                 

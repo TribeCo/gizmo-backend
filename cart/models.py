@@ -39,7 +39,7 @@ class Cart(models.Model):
     
     def total_discounted_price(self):
         total = sum(item.get_cost() for item in self.items.all())
-        if self.discount:
+        if self.coupon:
             discount_price = (self.coupon.discount/100) * total
             return total - discount_price
         return total
@@ -47,7 +47,10 @@ class Cart(models.Model):
     def delta_discounted(self):
         return (self.total_price() - self.total_discounted_price())
 
-    
+    def get_discount_coupon(self):
+        if self.coupon:
+            return self.coupon.discount
+        return 0
 
     def tax(self):
         return 9 * self.total_discounted_price() / 100
@@ -64,6 +67,7 @@ class CartItem(models.Model):
     price = models.IntegerField()
     quantity = models.PositiveSmallIntegerField(default=1)
     color = models.ForeignKey(Color,on_delete=models.CASCADE)
+    is_sync = models.BooleanField(default=True)
 
     def __str__(self):
         return str(self.id)

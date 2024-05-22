@@ -7,6 +7,7 @@ from ..models import User
 from config.settings import SMS_PASSWORD,SMS_USERNAME
 import random
 from rest_framework.permissions import IsAuthenticated
+import requests
 #---------------------------
 """
     The codes related to the site's user model are in this app.
@@ -54,8 +55,9 @@ class CheckPhoneNumberAPIView(APIView):
 class CreateUserWithPhoneNumberAPIView(APIView):
     """Create user with phone number"""
     def post(self, request):
-        text_sms = "name عزیز به گیزموشاپ خوش آمدید.\nکد احرازسنجی شما: code"
-        link_sms = f"https://www.0098sms.com/sendsmslink.aspx?FROM=50002220096&TO=PhoneNumberUser&TEXT=TextCode&USERNAME={SMS_USERNAME}&PASSWORD={SMS_PASSWORD}&DOMAIN=0098"
+        text_sms = "کاربر عزیز به گیزموشاپ خوش آمدید.\nکد احرازسنجی شما: code"
+        # link_sms = f"https://www.0098sms.com/sendsmslink.aspx?FROM=50002220096&TO=PhoneNumberUser&TEXT=TextCode&USERNAME={SMS_USERNAME}&PASSWORD={SMS_PASSWORD}&DOMAIN=0098"
+        link_sms = f"http://ippanel.com/class/sms/webservice/send_url.php?from=5000125475&to=PhoneNumberUser&msg=TextCode&uname={SMS_USERNAME}&pass={SMS_PASSWORD}" 
         
         
         serializer = SignUpSerializer(data=request.data)
@@ -85,7 +87,8 @@ class CreateUserWithPhoneNumberAPIView(APIView):
             send_sms = link_sms.replace("PhoneNumberUser",user.phoneNumber)
             send_sms = send_sms.replace("TextCode",text_sms)
 
-            # response = requests.get(send_sms)
+            response = requests.get(send_sms)
+            print(response.text)
 
             response_data = {
                 'phoneNumber' : user.phoneNumber,
@@ -204,6 +207,9 @@ class PasswordChangeRequest(APIView):
         """
 
         info = PasswordChangeRequestSerializer(data=request.data)
+
+        text_sms = "name عزیز به گیزموشاپ خوش آمدید.\nکد احرازسنجی شما: code"
+        link_sms = f"http://ippanel.com/class/sms/webservice/send_url.php?from=5000125475&to=PhoneNumberUser&msg=TextCode&uname={SMS_USERNAME}&pass={SMS_PASSWORD}" 
         
 
         if info.is_valid():
@@ -218,6 +224,12 @@ class PasswordChangeRequest(APIView):
             user.save()
 
             # send Code to User
+            text_sms = text_sms.replace("code" , str(user.code))
+
+            send_sms = link_sms.replace("PhoneNumberUser",user.phoneNumber)
+            send_sms = send_sms.replace("TextCode",text_sms)
+
+            response = requests.get(send_sms)
             
             return Response({'message': messages_for_front['code_sent']}, status=status.HTTP_201_CREATED)
         else:
