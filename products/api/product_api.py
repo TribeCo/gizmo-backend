@@ -136,7 +136,7 @@ class ProductDiscountedListAPIView(APIView):
     """Retrieve a list of discounted products"""
     def get(self, request):        
         try:
-            products = Product.objects.non_dubai().filter(discounted=True)
+            products = shop_products().filter(discounted=True)
         except Product.DoesNotExist:
             return Response({"message": messages_for_front['discounted_product_not_found']}, status=status.HTTP_404_NOT_FOUND)
         
