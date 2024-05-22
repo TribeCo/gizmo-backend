@@ -74,6 +74,9 @@ class CreateUserWithPhoneNumberAPIView(APIView):
             code = random.randint(10000, 99999)
             user.code = code
 
+            message_obj = Message(user=user,title="به گیزموشاپ خوش آمدید",text="با سلام می تونید خریدتون رو شروع کنید.",abs_link="/")
+            message_obj.save()
+
             cart = Cart(user = user)
             cart.save()
             user.cart = cart
