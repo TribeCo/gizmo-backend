@@ -74,6 +74,9 @@ class ArticleDetailSlugView(APIView):
         except:
             return Response({'message': message_for_front['article_not_found']}, status=status.HTTP_404_NOT_FOUND)
         
+        articles.views = articles.views + 1
+        articles.save()
+        
         serializer = ArticleSerializer(articles)
         return Response({'data': serializer.data})      
 #---------------------------
