@@ -208,9 +208,9 @@ class VerifyAPIView(APIView):
         converts a cart to order.
         login required. 
     """
-    def get(self, request):
-        t_status = request.GET.get('Status')
-        t_authority = request.GET.get('Authority')
+    def post(self, request):
+        t_status = request.POST.get('status')
+        t_authority = request.POST.get('authority')
 
 
         try:
