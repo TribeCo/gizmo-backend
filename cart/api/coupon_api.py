@@ -106,12 +106,6 @@ class RevokeCouponToCartAPIView(APIView):
     def post(self, request):
         user = request.user
         cart = user.cart
-        coupon = cart.coupon
-
-
-        coupon.users.remove(user)
-        cart.discount = 0
-        cart.coupon = None
-        cart.save()
+        cart.remove_coupon(user)
         return Response({'message':messages_for_front['coupon_revoked']}, status=status.HTTP_201_CREATED)
 #---------------------------

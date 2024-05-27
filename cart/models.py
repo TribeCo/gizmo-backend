@@ -52,6 +52,13 @@ class Cart(models.Model):
             return self.coupon.discount
         return 0
 
+    def remove_coupon(self,user):
+        if(self.coupon):
+            self.coupon.users.remove(user)
+            self.discount = 0
+            self.coupon = None
+            self.save()
+
     def tax(self):
         return 9 * self.total_discounted_price() / 100
     
