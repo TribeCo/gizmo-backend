@@ -39,9 +39,10 @@ class UserSerializerForCart(serializers.ModelSerializer):
 class CartItemSerializerForCart(serializers.ModelSerializer):
     product = ProductSerializerForCart()
     color = ColorSerializerForCart()
+    max_amount = serializers.IntegerField(source='get_max_amount')
     class Meta:
         model = CartItem
-        fields = ['id','quantity','color','product'] 
+        fields = ['max_amount','id','quantity','color','product'] 
 #--------------------------- 
 class CartItemSerializerLocalForCart(serializers.ModelSerializer):
     class Meta:
@@ -89,9 +90,10 @@ class TempCartItemOneSerializer(serializers.ModelSerializer):
 class TempCartItemSerializer(serializers.ModelSerializer):
     product = ProductSerializerForCart()
     color = ColorSerializerForCart()
+    max_amount = serializers.IntegerField(source='get_max_amount')
     class Meta:
         model = TempCartItem
-        fields = ['id','quantity','color','product']  
+        fields = ['max_amount','id','quantity','color','product']  
 #---------------------------
 class TempCartSerializer(serializers.ModelSerializer):
     total_price_method = serializers.IntegerField(source='total_price')
