@@ -71,7 +71,7 @@ class CategoryProductsListAPIView(APIView):
     """Retrieve a list of products belonging to a specific category"""
     def get(self, request, category_name):
         try:
-            category = Category.objects.get(name = category_name)
+            category = Category.objects.get(slug = category_name)
         except:
             return Response({'message':messages_for_front['category_not_found']}, status=status.HTTP_404_NOT_FOUND)
 
