@@ -16,6 +16,9 @@ class DubaiSites(models.Model):
     
     def website_name(self):
         return self.name
+    
+    def website_faname(self):
+        return self.fa_name
 #---------------------------
 class ForeignProduct(Product):
     website = models.ForeignKey(DubaiSites,on_delete=models.CASCADE,related_name='products')
