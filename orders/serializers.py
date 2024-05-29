@@ -51,7 +51,7 @@ class OrderDashBoardSerializer(serializers.ModelSerializer):
     address = AddressSerializerForOrder()
     class Meta:
         model = Order
-        fields = ('user' ,'address','shamsi_date', 'discount', 'ref_id', 'address', 'processed', 'packing', 'shipped', 
+        fields = ('id','user' ,'address','shamsi_date', 'discount', 'ref_id', 'address', 'processed', 'packing', 'shipped', 
         'deliveried', 'total_price', 'discount_string',
         'discount_amount' ,'pay_amount')
 #---------------------------

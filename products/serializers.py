@@ -58,9 +58,14 @@ class ProductColorSerializer(serializers.ModelSerializer):
         fields = ['quantity','color']
 #---------------------------
 class ProductImageSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+    def get_image(self, obj):
+        image_url = '{}{}'.format(DOMAIN, obj.image.url) if obj.image else None
+        return image_url
+
     class Meta:
         model = ProductImage
-        fields =  '__all__'
+        fields =  ['id','image','alt','product']
 #---------------------------
 class AttributeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -125,6 +130,7 @@ class ProductSliderSerializer(serializers.ModelSerializer):
     image1 = serializers.SerializerMethodField()
     image2 = serializers.SerializerMethodField()
     most_color = serializers.IntegerField(source='get_most_color')
+    brand_name = serializers.CharField(source='get_brand_name')
 
     def get_image1(self, obj):
         image_url = '{}{}'.format(DOMAIN, obj.image1.url) if obj.image1 else None
@@ -136,7 +142,7 @@ class ProductSliderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id','slug','name','image1','image2','price','discounted','discounted_price','discount','is_new','net_sale','is_available','send_free','most_color']
+        fields = ['id','brand_name','slug','name','image1','image2','price','discounted','discounted_price','discount','is_new','net_sale','is_available','send_free','most_color']
 #---------------------------
 class ProductSearchSerializer(serializers.ModelSerializer):
     

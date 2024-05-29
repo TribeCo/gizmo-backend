@@ -87,6 +87,10 @@ class CartItem(models.Model):
 
     def get_cost_from_product(self):
         return format(self.product.discounted_price_int * self.quantity)
+
+    def get_max_amount(self):
+        product_color_object = self.product.product_color.get(color__id=self.color.id)
+        return product_color_object.quantity
 #---------------------------
 class TempCart(models.Model):
     discount = models.IntegerField(blank=True,null=True,default=None)
@@ -135,5 +139,9 @@ class TempCartItem(models.Model):
 
     def get_cost_from_product(self):
         return format(self.product.discounted_price_int * self.quantity)
+
+    def get_max_amount(self):
+        product_color_object = self.product.product_color.get(color__id=self.color.id)
+        return product_color_object.quantity
 #---------------------------
 
