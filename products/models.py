@@ -129,6 +129,9 @@ class Product(models.Model):
         self.ordered = self.ordered + amount
         self.save()
 
+    def get_brand_name(self):
+        return self.brand.name
+
     @property
     def discounted_price(self):
         show = int(((self.price)*(100-self.discount))/100)
