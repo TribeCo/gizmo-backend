@@ -58,9 +58,14 @@ class ProductColorSerializer(serializers.ModelSerializer):
         fields = ['quantity','color']
 #---------------------------
 class ProductImageSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+    def get_image(self, obj):
+        image_url = '{}{}'.format(DOMAIN, obj.image.url) if obj.image else None
+        return image_url
+
     class Meta:
         model = ProductImage
-        fields =  '__all__'
+        fields =  ['id','image','alt','product']
 #---------------------------
 class AttributeSerializer(serializers.ModelSerializer):
     class Meta:
