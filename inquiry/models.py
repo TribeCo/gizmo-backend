@@ -13,12 +13,17 @@ class DubaiSites(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def website_name(self):
+        return self.name
 #---------------------------
 class ForeignProduct(Product):
     website = models.ForeignKey(DubaiSites,on_delete=models.CASCADE,related_name='products')
     image_link = models.CharField(max_length=500)
     product_url = models.CharField(max_length=500)
-    
+
+    def __str__(self):
+        return self.name   
 #---------------------------
 class ForeignOrder(models.Model):
     user = models.ForeignKey(User,on_delete=models.Model,related_name='foreign_orders')
